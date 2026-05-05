@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LadyVenice.bq</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <h1>Lady<span>Venice</span>.bq</h1>
+  <div class="header-date" id="headerDate"></div>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div style="padding-top:4px;">
+    <div class="summary-grid">
+      <div class="summary-card accent">
+        <div class="summary-label">รายรับวันนี้</div>
+        <div class="summary-value" id="dash-income">฿0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">รายจ่ายวันนี้</div>
+        <div class="summary-value" id="dash-expense">฿0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">ออเดอร์รอดำเนินการ</div>
+        <div class="summary-value" id="dash-pending">0</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">ไอเทมใกล้หมด</div>
+        <div class="summary-value" id="dash-lowstock" style="color:var(--dusty-rose-dark)">0</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title"><span>สต็อคใกล้หมด</span></div>
+    <div class="item-list" id="dash-lowstock-list"></div>
+
+    <div class="divider"></div>
+
+    <div class="section-title"><span>ออเดอร์ล่าสุด</span></div>
+    <div class="item-list" id="dash-recent-orders"></div>
+  </div>
+</div>
+
+<!-- STOCK -->
+<div class="page" id="page-stock">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="ค้นหาสินค้า..." id="stock-search" oninput="renderStock()">
+  </div>
+
+  <div class="filter-chips">
+    <div class="chip active" onclick="setStockFilter('all',this)">ทั้งหมด</div>
+    <div class="chip" onclick="setStockFilter('flower',this)">ดอกไม้</div>
+    <div class="chip" onclick="setStockFilter('supply',this)">อุปกรณ์</div>
+    <div class="chip" onclick="setStockFilter('low',this)">ใกล้หมด</div>
+  </div>
+
+  <div class="section-title">
+    <span>รายการสต็อค</span>
+    <button class="btn-add" onclick="openModal('modal-stock')">+ เพิ่ม</button>
+  </div>
+
+  <div class="item-list" id="stock-list"></div>
+</div>
+
+<!-- FINANCE -->
+<div class="page" id="page-finance">
+  <div class="summary-grid">
+    <div class="summary-card accent">
+      <div class="summary-label">รายรับเดือนนี้</div>
+      <div class="summary-value" id="fin-month-income">฿0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">รายจ่ายเดือนนี้</div>
+      <div class="summary-value" id="fin-month-expense">฿0</div>
+    </div>
+  </div>
+
+  <div class="summary-card">
+    <div class="total-row big">
+      <span class="total-label">กำไร/ขาดทุนเดือนนี้</span>
+      <span class="total-val" id="fin-profit">฿0</span>
+    </div>
+  </div>
+
+  <div class="filter-chips">
+    <div class="chip active" onclick="setFinFilter('all',this)">ทั้งหมด</div>
+    <div class="chip" onclick="setFinFilter('income',this)">รายรับ</div>
+    <div class="chip" onclick="setFinFilter('expense',this)">รายจ่าย</div>
+  </div>
+
+  <div class="section-title">
+    <span>รายการ</span>
+    <button class="btn-add" onclick="openModal('modal-finance')">+ เพิ่ม</button>
+  </div>
+
+  <div class="item-list" id="finance-list"></div>
+</div>
+
+<!-- ORDER -->
+<div class="page" id="page-order">
+  <div class="filter-chips">
+    <div class="chip active" onclick="setOrderFilter('all',this)">ทั้งหมด</div>
+    <div class="chip" onclick="setOrderFilter('pending',this)">รอดำเนินการ</div>
+    <div class="chip" onclick="setOrderFilter('ready',this)">พร้อมส่ง</div>
+    <div class="chip" onclick="setOrderFilter('done',this)">เสร็จแล้ว</div>
+  </div>
+
+  <div class="section-title">
+    <span>รายการออเดอร์</span>
+    <button class="btn-add" onclick="openModal('modal-order')">+ เพิ่ม</button>
+  </div>
+
+  <div class="item-list" id="order-list"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bottom-nav-item active" id="nav-home" onclick="switchTab('home')">
+    <span class="bottom-nav-icon">🌸</span>หน้าหลัก
+  </button>
+  <button class="bottom-nav-item" id="nav-stock" onclick="switchTab('stock')">
+    <span class="bottom-nav-icon">🌷</span>สต็อค
+  </button>
+  <button class="bottom-nav-item" id="nav-finance" onclick="switchTab('finance')">
+    <span class="bottom-nav-icon">💰</span>การเงิน
+  </button>
+  <button class="bottom-nav-item" id="nav-order" onclick="switchTab('order')">
+    <span class="bottom-nav-icon">📋</span>ออเดอร์
+  </button>
+</div>
+
+
+<!-- Stock modal -->
+ <div class="modal-overlay" id="modal-stock">
+  <div class="modal-sheet">
+    <div class="modal-title">เพิ่มสต็อค</div>
+
+    <input type="hidden" id="stock-edit-id">
+
+    <input id="stock-name" placeholder="ชื่อสินค้า">
+    <input id="stock-qty" type="number" placeholder="จำนวน">
+    <input id="stock-unit" placeholder="หน่วย">
+
+    <button onclick="saveStock()">บันทึก</button>
+    <button onclick="closeModal('modal-stock')">ปิด</button>
+  </div>
+</div>
+
+
+<!-- Finance modal -->
+<div class="modal-overlay" id="modal-finance">
+  <div class="modal-sheet">
+    <div class="modal-title">เพิ่มรายรับ/รายจ่าย</div>
+
+    <input id="fin-name" placeholder="รายการ">
+    <input id="fin-amount" type="number" placeholder="จำนวนเงิน">
+
+    <button onclick="saveFinance()">บันทึก</button>
+    <button onclick="closeModal('modal-finance')">ปิด</button>
+  </div>
+</div>
+
+<!-- Order modal -->
+ <div class="modal-overlay" id="modal-order">
+  <div class="modal-sheet">
+    <div class="modal-title">เพิ่มออเดอร์</div>
+
+    <input id="order-customer" placeholder="ลูกค้า">
+    <input id="order-price" type="number" placeholder="ราคา">
+
+    <button onclick="saveOrder()">บันทึก</button>
+    <button onclick="closeModal('modal-order')">ปิด</button>
+  </div>
+</div>
+
+<!-- JS -->
+<script type="module" src="app.js"></script>
+
+
+
+</body>
+</html>
