@@ -16,9 +16,9 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // ===== COLLECTIONS =====
-const colStock = collection(db, "stock");
+const colStock   = collection(db, "stock");
 const colFinance = collection(db, "finance");
-const colOrders = collection(db, "orders");
+const colOrders  = collection(db, "orders");
 
 // ===== DATA =====
 let data = { stock: [], finance: [], orders: [] };
@@ -46,13 +46,17 @@ function initRealtime() {
 
 // ===== UTILS =====
 function todayStr() {
-  return new Date().toISOString().slice(0,10);
+  return new Date().toISOString().slice(0, 10);
+}
+
+function thisMonthStr() {
+  return new Date().toISOString().slice(0, 7); // "YYYY-MM"
 }
 
 function fmtDate(d) {
   if (!d) return '';
   const dt = new Date(d + 'T00:00:00');
-  return dt.toLocaleDateString('th-TH', { day:'numeric', month:'short', year:'2-digit' });
+  return dt.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
 }
 
 function fmtMoney(n) {
@@ -67,7 +71,6 @@ function emptyState(msg) {
 window.switchTab = function(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
-
   document.getElementById('page-' + tab).classList.add('active');
   document.getElementById('nav-' + tab).classList.add('active');
 };
@@ -75,21 +78,30 @@ window.switchTab = function(tab) {
 // ===== MODAL =====
 window.openModal = function(id) {
   const el = document.getElementById(id);
-
-  if (!el) {
-    console.error("Modal not found:", id);
-    return;
-  }
-
+  if (!el) { console.error("Modal not found:", id); return; }
   el.classList.add('open');
 };
 
 window.closeModal = function(id) {
   const el = document.getElementById(id);
-
   if (!el) return;
-
   el.classList.remove('open');
+};
+
+// ===== STOCK MODAL =====
+window.openStockModal = function() {
+  // reset form
+  document.getElementById('stock-edit-id').value = '';
+  document.getElementById('stock-modal-title').textContent = 'เพิ่มสต็อค';
+  document.getElementById('stock-name').value  = '';
+  document.getElementById('stock-type').value  = 'flower';
+  document.getElementById('stock-unit').value  = '';
+  document.getElementById('stock-qty').value   = '';
+  document.getElementById('stock-min').value   = '';
+  document.getElementById('stock-cost').value  = '';
+  document.getElementById('stock-price').value = '';
+  document.getElementById('stock-note').value  = '';
+  openModal('modal-stock');
 };
 
 // ===== STOCK =====
@@ -106,34 +118,38 @@ function renderStock() {
   const q = document.getElementById('stock-search')?.value.toLowerCase() || '';
 
   let list = data.stock.filter(s => {
-    const name = (s.name || '').toLowerCase();
+    const name  = (s.name || '').toLowerCase();
     const match = name.includes(q);
-
     if (stockFilter === 'flower') return match && s.type === 'flower';
     if (stockFilter === 'supply') return match && s.type === 'supply';
-    if (stockFilter === 'low') return match && s.qty <= (s.min || 0);
-
+    if (stockFilter === 'low')    return match && s.qty <= (s.min || 0);
     return match;
   });
 
   const el = document.getElementById('stock-list');
-  if (!list.length) return el.innerHTML = emptyState('ไม่มีรายการ');
+  if (!list.length) { el.innerHTML = emptyState('ไม่มีรายการ'); return; }
 
   el.innerHTML = list.map(s => {
-    const badge =
-      s.qty === 0 ? 'หมด' :
-      s.qty <= (s.min || 0) ? 'ใกล้หมด' : 'มี';
+    let badgeClass, badgeText;
+    if (s.qty === 0)              { badgeClass = 'badge-out'; badgeText = 'หมด'; }
+    else if (s.qty <= (s.min||0)) { badgeClass = 'badge-low'; badgeText = 'ใกล้หมด'; }
+    else                          { badgeClass = 'badge-ok';  badgeText = 'มี'; }
+
+    const typeClass = s.type === 'supply' ? 'supply' : '';
 
     return `
     <div class="item-card">
       <div class="item-card-left">
-        <div class="item-name">${s.name}</div>
-        <div class="item-sub">${s.qty} ${s.unit || ''}</div>
+        <div class="item-name">
+          <span class="tag-type ${typeClass}">${s.type === 'supply' ? 'อุปกรณ์' : 'ดอกไม้'}</span>
+          ${s.name}
+        </div>
+        <div class="item-sub">${s.qty} ${s.unit || ''} ${s.cost ? '· ทุน ' + fmtMoney(s.cost) : ''}</div>
       </div>
       <div class="item-actions">
-        <span>${badge}</span>
-        <button onclick="editStock('${s.id}')">✏️</button>
-        <button onclick="deleteItem('stock','${s.id}')">🗑</button>
+        <span class="item-badge ${badgeClass}">${badgeText}</span>
+        <button class="btn-icon" onclick="editStock('${s.id}')">✏️</button>
+        <button class="btn-icon danger" onclick="deleteItem('stock','${s.id}')">🗑</button>
       </div>
     </div>`;
   }).join('');
@@ -143,73 +159,214 @@ window.editStock = id => {
   const s = data.stock.find(x => x.id === id);
   if (!s) return;
 
-  document.getElementById('stock-edit-id').value = id;
-  document.getElementById('stock-name').value = s.name;
-  document.getElementById('stock-qty').value = s.qty;
+  document.getElementById('stock-edit-id').value   = id;
+  document.getElementById('stock-modal-title').textContent = 'แก้ไขสต็อค';
+  document.getElementById('stock-name').value       = s.name  || '';
+  document.getElementById('stock-type').value       = s.type  || 'flower';
+  document.getElementById('stock-unit').value       = s.unit  || '';
+  document.getElementById('stock-qty').value        = s.qty   ?? '';
+  document.getElementById('stock-min').value        = s.min   ?? '';
+  document.getElementById('stock-cost').value       = s.cost  ?? '';
+  document.getElementById('stock-price').value      = s.price ?? '';
+  document.getElementById('stock-note').value       = s.note  || '';
 
   openModal('modal-stock');
 };
 
 window.saveStock = async () => {
   const name = document.getElementById('stock-name').value.trim();
-  if (!name) return alert('กรอกชื่อ');
+  if (!name) return alert('กรุณากรอกชื่อสินค้า');
 
   const obj = {
     name,
-    type: document.getElementById('stock-type').value,
-    unit: document.getElementById('stock-unit').value,
-    qty: parseFloat(document.getElementById('stock-qty').value) || 0,
-    min: parseFloat(document.getElementById('stock-min').value) || 0,
-    cost: parseFloat(document.getElementById('stock-cost').value) || 0,
+    type:  document.getElementById('stock-type').value,
+    unit:  document.getElementById('stock-unit').value.trim(),
+    qty:   parseFloat(document.getElementById('stock-qty').value)   || 0,
+    min:   parseFloat(document.getElementById('stock-min').value)   || 0,
+    cost:  parseFloat(document.getElementById('stock-cost').value)  || 0,
     price: parseFloat(document.getElementById('stock-price').value) || 0,
-    note: document.getElementById('stock-note').value
+    note:  document.getElementById('stock-note').value.trim()
   };
 
   const id = document.getElementById('stock-edit-id').value;
-
   if (id) {
     await updateDoc(doc(db, "stock", id), obj);
   } else {
     await addDoc(colStock, obj);
   }
-
   closeModal('modal-stock');
 };
 
-// ===== FINANCE =====
-window.saveFinance = async () => {
-  const name = document.getElementById('fin-name').value.trim();
-  const amount = parseFloat(document.getElementById('fin-amount').value);
+// ===== FINANCE MODAL =====
+window.openFinanceModal = function() {
+  document.getElementById('fin-edit-id').value   = '';
+  document.getElementById('fin-type').value      = 'income';
+  document.getElementById('fin-name').value      = '';
+  document.getElementById('fin-amount').value    = '';
+  document.getElementById('fin-date').value      = todayStr();
+  document.getElementById('fin-cat').value       = 'ขายสินค้า';
+  document.getElementById('fin-note').value      = '';
+  openModal('modal-finance');
+};
 
-  if (!name || !amount) return alert('กรอกข้อมูล');
+// ===== FINANCE =====
+let finFilter = 'all';
+
+window.setFinFilter = (f, el) => {
+  finFilter = f;
+  document.querySelectorAll('#page-finance .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderFinance();
+};
+
+function renderFinance() {
+  const month = thisMonthStr();
+
+  const monthFin = data.finance.filter(f => (f.date || '').startsWith(month));
+
+  const income  = monthFin.filter(f => f.type === 'income').reduce((s,f) => s + f.amount, 0);
+  const expense = monthFin.filter(f => f.type === 'expense').reduce((s,f) => s + f.amount, 0);
+  const profit  = income - expense;
+
+  document.getElementById('fin-month-income').textContent  = fmtMoney(income);
+  document.getElementById('fin-month-expense').textContent = fmtMoney(expense);
+
+  const profitEl = document.getElementById('fin-profit');
+  profitEl.textContent = fmtMoney(Math.abs(profit));
+  profitEl.className   = 'total-val ' + (profit >= 0 ? 'profit' : 'loss');
+
+  // filter list
+  let list = [...data.finance].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  if (finFilter === 'income')  list = list.filter(f => f.type === 'income');
+  if (finFilter === 'expense') list = list.filter(f => f.type === 'expense');
+
+  const el = document.getElementById('finance-list');
+  if (!list.length) { el.innerHTML = emptyState('ไม่มีรายการ'); return; }
+
+  el.innerHTML = list.map(f => `
+    <div class="item-card">
+      <div class="item-card-left">
+        <div class="item-name">${f.name}</div>
+        <div class="item-sub">${fmtDate(f.date)} ${f.cat ? '· ' + f.cat : ''}</div>
+      </div>
+      <div class="item-actions">
+        <span class="finance-amount ${f.type === 'income' ? 'income' : 'expense'}">
+          ${f.type === 'income' ? '+' : '-'}${fmtMoney(f.amount)}
+        </span>
+        <button class="btn-icon danger" onclick="deleteItem('finance','${f.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+window.saveFinance = async () => {
+  const name   = document.getElementById('fin-name').value.trim();
+  const amount = parseFloat(document.getElementById('fin-amount').value);
+  if (!name || !amount) return alert('กรุณากรอกรายการและจำนวนเงิน');
 
   await addDoc(colFinance, {
-    type: document.getElementById('fin-type').value,
+    type:   document.getElementById('fin-type').value,
     name,
     amount,
-    date: document.getElementById('fin-date').value || todayStr(),
-    cat: document.getElementById('fin-cat').value,
-    note: document.getElementById('fin-note').value
+    date:   document.getElementById('fin-date').value   || todayStr(),
+    cat:    document.getElementById('fin-cat').value,
+    note:   document.getElementById('fin-note').value.trim()
   });
-
   closeModal('modal-finance');
 };
 
-// ===== ORDER =====
+// ===== ORDER MODAL =====
+window.openOrderModal = function() {
+  document.getElementById('order-edit-id').value    = '';
+  document.getElementById('order-modal-title').textContent = 'เพิ่มออเดอร์';
+  document.getElementById('order-customer').value   = '';
+  document.getElementById('order-desc').value       = '';
+  document.getElementById('order-price').value      = '';
+  document.getElementById('order-date').value       = '';
+  document.getElementById('order-contact').value    = '';
+  document.getElementById('order-status').value     = 'pending';
+  document.getElementById('order-note').value       = '';
+  openModal('modal-order');
+};
+
+// ===== ORDERS =====
+let orderFilter = 'all';
+
+window.setOrderFilter = (f, el) => {
+  orderFilter = f;
+  document.querySelectorAll('#page-order .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderOrders();
+};
+
+const ORDER_STATUS_LABEL = {
+  pending: 'รอดำเนินการ',
+  ready:   'พร้อมส่ง',
+  done:    'เสร็จแล้ว',
+  cancel:  'ยกเลิก'
+};
+
+function renderOrders() {
+  let list = [...data.orders].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  if (orderFilter !== 'all') list = list.filter(o => o.status === orderFilter);
+
+  const el = document.getElementById('order-list');
+  if (!list.length) { el.innerHTML = emptyState('ไม่มีออเดอร์'); return; }
+
+  el.innerHTML = list.map(o => `
+    <div class="item-card">
+      <div class="item-card-left">
+        <div class="item-name">${o.customer}</div>
+        <div class="item-sub">${o.desc || ''}</div>
+        <div class="order-date">${o.date ? '📅 ' + fmtDate(o.date) : ''} ${o.contact ? '· ' + o.contact : ''}</div>
+      </div>
+      <div class="item-actions" style="flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="order-status status-${o.status}">${ORDER_STATUS_LABEL[o.status] || o.status}</span>
+        <span class="order-price">${fmtMoney(o.price)}</span>
+        <div style="display:flex;gap:4px;">
+          <button class="btn-icon" onclick="editOrder('${o.id}')">✏️</button>
+          <button class="btn-icon danger" onclick="deleteItem('orders','${o.id}')">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+window.editOrder = id => {
+  const o = data.orders.find(x => x.id === id);
+  if (!o) return;
+
+  document.getElementById('order-edit-id').value    = id;
+  document.getElementById('order-modal-title').textContent = 'แก้ไขออเดอร์';
+  document.getElementById('order-customer').value   = o.customer || '';
+  document.getElementById('order-desc').value       = o.desc     || '';
+  document.getElementById('order-price').value      = o.price    ?? '';
+  document.getElementById('order-date').value       = o.date     || '';
+  document.getElementById('order-contact').value    = o.contact  || '';
+  document.getElementById('order-status').value     = o.status   || 'pending';
+  document.getElementById('order-note').value       = o.note     || '';
+
+  openModal('modal-order');
+};
+
 window.saveOrder = async () => {
   const customer = document.getElementById('order-customer').value.trim();
-  if (!customer) return alert('กรอกชื่อ');
+  if (!customer) return alert('กรุณากรอกชื่อลูกค้า');
 
-  await addDoc(colOrders, {
+  const obj = {
     customer,
-    desc: document.getElementById('order-desc').value,
-    price: parseFloat(document.getElementById('order-price').value) || 0,
-    date: document.getElementById('order-date').value || todayStr(),
-    contact: document.getElementById('order-contact').value,
-    status: document.getElementById('order-status').value,
-    note: document.getElementById('order-note').value
-  });
+    desc:    document.getElementById('order-desc').value.trim(),
+    price:   parseFloat(document.getElementById('order-price').value) || 0,
+    date:    document.getElementById('order-date').value    || todayStr(),
+    contact: document.getElementById('order-contact').value.trim(),
+    status:  document.getElementById('order-status').value,
+    note:    document.getElementById('order-note').value.trim()
+  };
 
+  const id = document.getElementById('order-edit-id').value;
+  if (id) {
+    await updateDoc(doc(db, "orders", id), obj);
+  } else {
+    await addDoc(colOrders, obj);
+  }
   closeModal('modal-order');
 };
 
@@ -224,40 +381,81 @@ function renderDashboard() {
   const today = todayStr();
 
   const todayFin = data.finance.filter(f => f.date === today);
+  const income   = todayFin.filter(f => f.type === 'income').reduce((s,f) => s + f.amount, 0);
+  const expense  = todayFin.filter(f => f.type === 'expense').reduce((s,f) => s + f.amount, 0);
 
-  const income = todayFin.filter(f => f.type === 'income')
-    .reduce((s,f)=>s+f.amount,0);
-
-  const expense = todayFin.filter(f => f.type === 'expense')
-    .reduce((s,f)=>s+f.amount,0);
-
-  document.getElementById('dash-income').textContent = fmtMoney(income);
+  document.getElementById('dash-income').textContent  = fmtMoney(income);
   document.getElementById('dash-expense').textContent = fmtMoney(expense);
+  document.getElementById('dash-pending').textContent = data.orders.filter(o => o.status === 'pending').length;
 
-  document.getElementById('dash-pending').textContent =
-    data.orders.filter(o => o.status === 'pending').length;
+  const lowItems = data.stock.filter(s => s.qty <= (s.min || 0));
+  document.getElementById('dash-lowstock').textContent = lowItems.length;
 
-  document.getElementById('dash-lowstock').textContent =
-    data.stock.filter(s => s.qty <= (s.min || 0)).length;
+  // low stock list
+  const lowEl = document.getElementById('dash-lowstock-list');
+  if (!lowItems.length) {
+    lowEl.innerHTML = emptyState('สต็อคครบทุกรายการ 🎉');
+  } else {
+    lowEl.innerHTML = lowItems.slice(0, 5).map(s => {
+      const badgeClass = s.qty === 0 ? 'badge-out' : 'badge-low';
+      const badgeText  = s.qty === 0 ? 'หมด' : 'ใกล้หมด';
+      return `
+      <div class="item-card">
+        <div class="item-card-left">
+          <div class="item-name">${s.name}</div>
+          <div class="item-sub">เหลือ ${s.qty} ${s.unit || ''}</div>
+        </div>
+        <span class="item-badge ${badgeClass}">${badgeText}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // recent orders (5 รายการล่าสุด)
+  const recentEl = document.getElementById('dash-recent-orders');
+  const recent   = [...data.orders]
+    .sort((a,b) => (b.date||'').localeCompare(a.date||''))
+    .slice(0, 5);
+
+  if (!recent.length) {
+    recentEl.innerHTML = emptyState('ยังไม่มีออเดอร์');
+  } else {
+    recentEl.innerHTML = recent.map(o => `
+      <div class="item-card">
+        <div class="item-card-left">
+          <div class="item-name">${o.customer}</div>
+          <div class="item-sub">${o.desc || ''}</div>
+          <div class="order-date">${o.date ? fmtDate(o.date) : ''}</div>
+        </div>
+        <div style="text-align:right;">
+          <span class="order-status status-${o.status}">${ORDER_STATUS_LABEL[o.status] || o.status}</span>
+          <div class="order-price" style="margin-top:4px;">${fmtMoney(o.price)}</div>
+        </div>
+      </div>`).join('');
+  }
 }
 
 // ===== RENDER ALL =====
 function renderAll() {
   renderDashboard();
   renderStock();
+  renderFinance();
+  renderOrders();
 }
 
 // ===== INIT =====
 function init() {
   const now = new Date();
-
   document.getElementById('headerDate').textContent =
     now.toLocaleDateString('th-TH', {
-      weekday:'long',
-      day:'numeric',
-      month:'long',
-      year:'numeric'
+      weekday: 'long',
+      day:     'numeric',
+      month:   'long',
+      year:    'numeric'
     });
+
+  // set today as default for fin-date
+  const finDate = document.getElementById('fin-date');
+  if (finDate) finDate.value = todayStr();
 
   initRealtime();
 }

@@ -5,11 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>LadyVenice.bq</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
-  <!-- CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -44,12 +41,10 @@
     </div>
 
     <div class="divider"></div>
-
     <div class="section-title"><span>สต็อคใกล้หมด</span></div>
     <div class="item-list" id="dash-lowstock-list"></div>
 
     <div class="divider"></div>
-
     <div class="section-title"><span>ออเดอร์ล่าสุด</span></div>
     <div class="item-list" id="dash-recent-orders"></div>
   </div>
@@ -61,19 +56,16 @@
     <span class="search-icon">🔍</span>
     <input type="text" placeholder="ค้นหาสินค้า..." id="stock-search" oninput="renderStock()">
   </div>
-
   <div class="filter-chips">
     <div class="chip active" onclick="setStockFilter('all',this)">ทั้งหมด</div>
     <div class="chip" onclick="setStockFilter('flower',this)">ดอกไม้</div>
     <div class="chip" onclick="setStockFilter('supply',this)">อุปกรณ์</div>
     <div class="chip" onclick="setStockFilter('low',this)">ใกล้หมด</div>
   </div>
-
   <div class="section-title">
     <span>รายการสต็อค</span>
-    <button class="btn-add" onclick="openModal('modal-stock')">+ เพิ่ม</button>
+    <button class="btn-add" onclick="openStockModal()">+ เพิ่ม</button>
   </div>
-
   <div class="item-list" id="stock-list"></div>
 </div>
 
@@ -89,25 +81,21 @@
       <div class="summary-value" id="fin-month-expense">฿0</div>
     </div>
   </div>
-
-  <div class="summary-card">
+  <div class="summary-card" style="margin-bottom:16px;">
     <div class="total-row big">
       <span class="total-label">กำไร/ขาดทุนเดือนนี้</span>
       <span class="total-val" id="fin-profit">฿0</span>
     </div>
   </div>
-
   <div class="filter-chips">
     <div class="chip active" onclick="setFinFilter('all',this)">ทั้งหมด</div>
     <div class="chip" onclick="setFinFilter('income',this)">รายรับ</div>
     <div class="chip" onclick="setFinFilter('expense',this)">รายจ่าย</div>
   </div>
-
   <div class="section-title">
     <span>รายการ</span>
-    <button class="btn-add" onclick="openModal('modal-finance')">+ เพิ่ม</button>
+    <button class="btn-add" onclick="openFinanceModal()">+ เพิ่ม</button>
   </div>
-
   <div class="item-list" id="finance-list"></div>
 </div>
 
@@ -119,12 +107,10 @@
     <div class="chip" onclick="setOrderFilter('ready',this)">พร้อมส่ง</div>
     <div class="chip" onclick="setOrderFilter('done',this)">เสร็จแล้ว</div>
   </div>
-
   <div class="section-title">
     <span>รายการออเดอร์</span>
-    <button class="btn-add" onclick="openModal('modal-order')">+ เพิ่ม</button>
+    <button class="btn-add" onclick="openOrderModal()">+ เพิ่ม</button>
   </div>
-
   <div class="item-list" id="order-list"></div>
 </div>
 
@@ -144,54 +130,158 @@
   </button>
 </div>
 
-
-<!-- Stock modal -->
- <div class="modal-overlay" id="modal-stock">
+<!-- STOCK MODAL -->
+<div class="modal-overlay" id="modal-stock">
   <div class="modal-sheet">
-    <div class="modal-title">เพิ่มสต็อค</div>
-
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="stock-modal-title">เพิ่มสต็อค</div>
     <input type="hidden" id="stock-edit-id">
 
-    <input id="stock-name" placeholder="ชื่อสินค้า">
-    <input id="stock-qty" type="number" placeholder="จำนวน">
-    <input id="stock-unit" placeholder="หน่วย">
+    <div class="form-group">
+      <label class="form-label">ชื่อสินค้า</label>
+      <input class="form-input" id="stock-name" placeholder="เช่น กุหลาบแดง, ริบบิ้นซาติน">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">ประเภท</label>
+        <select class="form-select" id="stock-type">
+          <option value="flower">ดอกไม้</option>
+          <option value="supply">อุปกรณ์</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">หน่วย</label>
+        <input class="form-input" id="stock-unit" placeholder="ดอก / ม้วน / ชิ้น">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">จำนวน</label>
+        <input class="form-input" id="stock-qty" type="number" min="0" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">แจ้งเตือนเมื่อเหลือ</label>
+        <input class="form-input" id="stock-min" type="number" min="0" placeholder="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">ราคาทุน / หน่วย</label>
+        <input class="form-input" id="stock-cost" type="number" min="0" placeholder="฿">
+      </div>
+      <div class="form-group">
+        <label class="form-label">ราคาขาย / หน่วย</label>
+        <input class="form-input" id="stock-price" type="number" min="0" placeholder="฿">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <textarea class="form-textarea" id="stock-note" placeholder="เพิ่มเติม..."></textarea>
+    </div>
 
-    <button onclick="saveStock()">บันทึก</button>
-    <button onclick="closeModal('modal-stock')">ปิด</button>
+    <button class="btn-submit" onclick="saveStock()">บันทึก</button>
+    <button class="btn-cancel" onclick="closeModal('modal-stock')">ยกเลิก</button>
   </div>
 </div>
 
-
-<!-- Finance modal -->
+<!-- FINANCE MODAL -->
 <div class="modal-overlay" id="modal-finance">
   <div class="modal-sheet">
-    <div class="modal-title">เพิ่มรายรับ/รายจ่าย</div>
+    <div class="modal-handle"></div>
+    <div class="modal-title">บันทึกรายรับ / รายจ่าย</div>
+    <input type="hidden" id="fin-edit-id">
 
-    <input id="fin-name" placeholder="รายการ">
-    <input id="fin-amount" type="number" placeholder="จำนวนเงิน">
+    <div class="form-group">
+      <label class="form-label">ประเภท</label>
+      <select class="form-select" id="fin-type">
+        <option value="income">รายรับ 💰</option>
+        <option value="expense">รายจ่าย 💸</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">รายการ</label>
+      <input class="form-input" id="fin-name" placeholder="เช่น ขายช่อดอกไม้, ซื้อดอกไม้">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">จำนวนเงิน (฿)</label>
+        <input class="form-input" id="fin-amount" type="number" min="0" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">วันที่</label>
+        <input class="form-input" id="fin-date" type="date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมวดหมู่</label>
+      <select class="form-select" id="fin-cat">
+        <option value="ขายสินค้า">ขายสินค้า</option>
+        <option value="รับจ้างจัดดอกไม้">รับจ้างจัดดอกไม้</option>
+        <option value="ซื้อดอกไม้">ซื้อดอกไม้</option>
+        <option value="ซื้ออุปกรณ์">ซื้ออุปกรณ์</option>
+        <option value="ค่าเดินทาง">ค่าเดินทาง</option>
+        <option value="อื่นๆ">อื่นๆ</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <textarea class="form-textarea" id="fin-note" placeholder="เพิ่มเติม..."></textarea>
+    </div>
 
-    <button onclick="saveFinance()">บันทึก</button>
-    <button onclick="closeModal('modal-finance')">ปิด</button>
+    <button class="btn-submit" onclick="saveFinance()">บันทึก</button>
+    <button class="btn-cancel" onclick="closeModal('modal-finance')">ยกเลิก</button>
   </div>
 </div>
 
-<!-- Order modal -->
- <div class="modal-overlay" id="modal-order">
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="modal-order">
   <div class="modal-sheet">
-    <div class="modal-title">เพิ่มออเดอร์</div>
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="order-modal-title">เพิ่มออเดอร์</div>
+    <input type="hidden" id="order-edit-id">
 
-    <input id="order-customer" placeholder="ลูกค้า">
-    <input id="order-price" type="number" placeholder="ราคา">
+    <div class="form-group">
+      <label class="form-label">ชื่อลูกค้า</label>
+      <input class="form-input" id="order-customer" placeholder="ชื่อลูกค้า">
+    </div>
+    <div class="form-group">
+      <label class="form-label">รายการสั่ง</label>
+      <textarea class="form-textarea" id="order-desc" placeholder="เช่น ช่อดอกไม้วันเกิด สีชมพู-ขาว ขนาดกลาง"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">ราคา (฿)</label>
+        <input class="form-input" id="order-price" type="number" min="0" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">วันส่ง</label>
+        <input class="form-input" id="order-date" type="date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">ช่องทางติดต่อ</label>
+      <input class="form-input" id="order-contact" placeholder="เบอร์โทร / ไลน์">
+    </div>
+    <div class="form-group">
+      <label class="form-label">สถานะ</label>
+      <select class="form-select" id="order-status">
+        <option value="pending">รอดำเนินการ</option>
+        <option value="ready">พร้อมส่ง</option>
+        <option value="done">เสร็จแล้ว</option>
+        <option value="cancel">ยกเลิก</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <textarea class="form-textarea" id="order-note" placeholder="เพิ่มเติม..."></textarea>
+    </div>
 
-    <button onclick="saveOrder()">บันทึก</button>
-    <button onclick="closeModal('modal-order')">ปิด</button>
+    <button class="btn-submit" onclick="saveOrder()">บันทึก</button>
+    <button class="btn-cancel" onclick="closeModal('modal-order')">ยกเลิก</button>
   </div>
 </div>
 
-<!-- JS -->
 <script type="module" src="app.js"></script>
-
-
 
 </body>
 </html>

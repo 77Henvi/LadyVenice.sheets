@@ -44,7 +44,7 @@ body {
 }
 
 .app-header h1 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Playfair Display', serif;
   font-weight: 300;
   font-size: 22px;
   letter-spacing: 0.04em;
@@ -152,7 +152,7 @@ body {
   font-size: 20px;
   font-weight: 500;
   color: var(--charcoal);
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Playfair Display', serif;
 }
 
 .summary-card.accent .summary-value {
@@ -161,7 +161,7 @@ body {
 
 /* SECTION TITLE */
 .section-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Playfair Display', serif;
   font-size: 18px;
   font-weight: 400;
   color: var(--charcoal);
@@ -209,6 +209,7 @@ body {
   background: var(--white);
   border-radius: 20px 20px 0 0;
   padding: 24px 24px 40px;
+  padding-bottom: max(40px, env(safe-area-inset-bottom));
   width: 100%;
   max-width: 430px;
   margin: 0 auto;
@@ -225,7 +226,7 @@ body {
 }
 
 .modal-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Playfair Display', serif;
   font-size: 20px;
   font-weight: 400;
   margin-bottom: 20px;
@@ -254,7 +255,7 @@ body {
   border: 0.5px solid var(--gray-light);
   border-radius: 10px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--charcoal);
   background: var(--gray-lighter);
   appearance: none;
@@ -399,7 +400,7 @@ body {
 
 /* FINANCE */
 .finance-amount {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Playfair Display', serif;
   font-size: 18px;
   font-weight: 600;
 }
@@ -448,7 +449,7 @@ body {
 }
 
 .order-price {
-  font-family: 'Cormorant Garamond', serif;
+  font-family:'Playfair Display', serif;
   font-size: 16px;
   font-weight: 600;
   color: var(--charcoal);
@@ -615,7 +616,7 @@ body {
 }
 
 .total-row.big .total-val {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Playfair Display', serif;
   font-size: 20px;
   font-weight: 600;
 }
@@ -630,4 +631,10 @@ body {
 
 .loss {
   color: var(--dusty-rose-dark);
+}
+
+@media (max-width: 380px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
 }
