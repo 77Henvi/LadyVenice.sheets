@@ -167,13 +167,18 @@
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">ราคาทุน / หน่วย</label>
-        <input class="form-input" id="stock-cost" type="number" min="0" placeholder="฿">
+        <input class="form-input" id="stock-cost" type="number" min="0" placeholder="฿" oninput="calcStockProfit()">
       </div>
       <div class="form-group">
         <label class="form-label">ราคาขาย / หน่วย</label>
-        <input class="form-input" id="stock-price" type="number" min="0" placeholder="฿">
+        <input class="form-input" id="stock-price" type="number" min="0" placeholder="฿" oninput="calcStockProfit()">
       </div>
     </div>
+    <div class="profit-preview" id="stock-profit-preview">
+      <span class="profit-preview-label">กำไรต่อหน่วย</span>
+      <span class="profit-preview-value" id="stock-profit-pct">—</span>
+    </div>
+
     <div class="form-group">
       <label class="form-label">หมายเหตุ</label>
       <textarea class="form-textarea" id="stock-note" placeholder="เพิ่มเติม..."></textarea>

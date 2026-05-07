@@ -638,3 +638,57 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* PROFIT PREVIEW */
+.profit-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--gray-lighter);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.profit-preview.good {
+  background: #edf5ee;
+  border-color: rgba(138,158,140,0.35);
+}
+
+.profit-preview.warn {
+  background: #fef9ed;
+  border-color: rgba(184,134,11,0.3);
+}
+
+.profit-preview.bad {
+  background: #fdeaea;
+  border-color: rgba(192,75,75,0.25);
+}
+
+.profit-preview-label {
+  font-size: 11px;
+  color: var(--gray-mid);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.profit-preview-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gray-mid);
+}
+
+.profit-preview.good .profit-preview-value {
+  color: var(--sage);
+}
+
+.profit-preview.warn .profit-preview-value {
+  color: #b8860b;
+}
+
+.profit-preview.bad .profit-preview-value {
+  color: #c04b4b;
+}

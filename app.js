@@ -88,6 +88,25 @@ window.closeModal = function(id) {
   el.classList.remove('open');
 };
 
+// ===== STOCK PROFIT CALC =====
+window.calcStockProfit = function() {
+  const cost  = parseFloat(document.getElementById('stock-cost').value)  || 0;
+  const price = parseFloat(document.getElementById('stock-price').value) || 0;
+  const box   = document.getElementById('stock-profit-preview');
+  const val   = document.getElementById('stock-profit-pct');
+
+  if (!cost || !price) {
+    val.textContent = '—';
+    box.className = 'profit-preview';
+    return;
+  }
+
+  const pct = ((price - cost) / cost) * 100;
+  val.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%';
+
+  box.className = 'profit-preview ' + (pct >= 30 ? 'good' : pct >= 0 ? 'warn' : 'bad');
+};
+
 // ===== STOCK MODAL =====
 window.openStockModal = function() {
   // reset form
@@ -101,6 +120,8 @@ window.openStockModal = function() {
   document.getElementById('stock-cost').value  = '';
   document.getElementById('stock-price').value = '';
   document.getElementById('stock-note').value  = '';
+  document.getElementById('stock-profit-pct').textContent = '—';
+  document.getElementById('stock-profit-preview').className = 'profit-preview';
   openModal('modal-stock');
 };
 
@@ -144,7 +165,7 @@ function renderStock() {
           <span class="tag-type ${typeClass}">${s.type === 'supply' ? 'อุปกรณ์' : 'ดอกไม้'}</span>
           ${s.name}
         </div>
-        <div class="item-sub">${s.qty} ${s.unit || ''} ${s.cost ? '· ทุน ' + fmtMoney(s.cost) : ''}</div>
+        <div class="item-sub">${s.qty} ${s.unit || ''}</div>
       </div>
       <div class="item-actions">
         <span class="item-badge ${badgeClass}">${badgeText}</span>
@@ -171,6 +192,7 @@ window.editStock = id => {
   document.getElementById('stock-note').value       = s.note  || '';
 
   openModal('modal-stock');
+  calcStockProfit();
 };
 
 window.saveStock = async () => {
