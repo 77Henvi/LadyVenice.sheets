@@ -79,6 +79,9 @@ window.switchTab = function(tab) {
 window.openModal = function(id) {
   const el = document.getElementById(id);
   if (!el) { console.error("Modal not found:", id); return; }
+  el.style.display = 'flex';
+  // Force reflow so transition fires
+  el.offsetHeight;
   el.classList.add('open');
 };
 
@@ -86,6 +89,9 @@ window.closeModal = function(id) {
   const el = document.getElementById(id);
   if (!el) return;
   el.classList.remove('open');
+  el.addEventListener('transitionend', () => {
+    if (!el.classList.contains('open')) el.style.display = '';
+  }, { once: true });
 };
 
 // ===== STOCK PROFIT CALC =====
@@ -102,7 +108,9 @@ window.calcStockProfit = function() {
   }
 
   const pct = ((price - cost) / cost) * 100;
-  val.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%';
+  const diff = price - cost;
+  const sign = diff >= 0 ? '+' : '';
+  val.innerHTML = `${sign}${pct.toFixed(1)}% <span style="font-size:13px;font-weight:400;opacity:0.75;">(${sign}฿${Math.abs(diff).toLocaleString('th-TH')})</span>`;
 
   box.className = 'profit-preview ' + (pct >= 30 ? 'good' : pct >= 0 ? 'warn' : 'bad');
 };
@@ -165,7 +173,7 @@ function renderStock() {
           <span class="tag-type ${typeClass}">${s.type === 'supply' ? 'อุปกรณ์' : 'ดอกไม้'}</span>
           ${s.name}
         </div>
-        <div class="item-sub">${s.qty} ${s.unit || ''}</div>
+        <div class="item-sub">${s.qty} ${s.unit || ''} ${s.cost ? '· ทุน ' + fmtMoney(s.cost) : ''}</div>
       </div>
       <div class="item-actions">
         <span class="item-badge ${badgeClass}">${badgeText}</span>
@@ -233,6 +241,31 @@ window.openFinanceModal = function() {
 
 // ===== FINANCE =====
 let finFilter = 'all';
+let selectedFinMonth = thisMonthStr();
+
+function populateFinMonthSelect() {
+  const select = document.getElementById('fin-month-select');
+  if (!select) return;
+
+  // รวบรวมเดือนที่มีข้อมูล + เดือนปัจจุบันเสมอ
+  const months = new Set(data.finance.map(f => (f.date || '').slice(0, 7)).filter(Boolean));
+  months.add(thisMonthStr());
+
+  const sorted = [...months].sort((a, b) => b.localeCompare(a));
+  const current = selectedFinMonth;
+
+  select.innerHTML = sorted.map(m => {
+    const [y, mo] = m.split('-');
+    const label = new Date(+y, +mo - 1, 1).toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
+    const isNow = m === thisMonthStr() ? ' (เดือนนี้)' : '';
+    return `<option value="${m}" ${m === current ? 'selected' : ''}>${label}${isNow}</option>`;
+  }).join('');
+}
+
+window.onFinMonthChange = function() {
+  selectedFinMonth = document.getElementById('fin-month-select').value;
+  renderFinance();
+};
 
 window.setFinFilter = (f, el) => {
   finFilter = f;
@@ -242,23 +275,32 @@ window.setFinFilter = (f, el) => {
 };
 
 function renderFinance() {
-  const month = thisMonthStr();
+  populateFinMonthSelect();
 
+  const month = selectedFinMonth;
+  const isCurrentMonth = month === thisMonthStr();
   const monthFin = data.finance.filter(f => (f.date || '').startsWith(month));
 
   const income  = monthFin.filter(f => f.type === 'income').reduce((s,f) => s + f.amount, 0);
   const expense = monthFin.filter(f => f.type === 'expense').reduce((s,f) => s + f.amount, 0);
   const profit  = income - expense;
 
+  const suffix = isCurrentMonth ? 'เดือนนี้' : 'เดือนนั้น';
+  document.getElementById('fin-label-income').textContent  = `รายรับ${suffix}`;
+  document.getElementById('fin-label-expense').textContent = `รายจ่าย${suffix}`;
+  document.getElementById('fin-label-profit').textContent  = `กำไร/ขาดทุน${suffix}`;
+
   document.getElementById('fin-month-income').textContent  = fmtMoney(income);
   document.getElementById('fin-month-expense').textContent = fmtMoney(expense);
 
   const profitEl = document.getElementById('fin-profit');
-  profitEl.textContent = fmtMoney(Math.abs(profit));
+  profitEl.textContent = (profit >= 0 ? '' : '-') + fmtMoney(Math.abs(profit));
   profitEl.className   = 'total-val ' + (profit >= 0 ? 'profit' : 'loss');
 
-  // filter list
-  let list = [...data.finance].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  // filter list — เฉพาะเดือนที่เลือก
+  let list = [...data.finance]
+    .filter(f => (f.date || '').startsWith(month))
+    .sort((a,b) => (b.date||'').localeCompare(a.date||''));
   if (finFilter === 'income')  list = list.filter(f => f.type === 'income');
   if (finFilter === 'expense') list = list.filter(f => f.type === 'expense');
 
@@ -312,6 +354,33 @@ window.openOrderModal = function() {
 
 // ===== ORDERS =====
 let orderFilter = 'all';
+let selectedOrderMonth = 'all';
+
+function populateOrderMonthSelect() {
+  const select = document.getElementById('order-month-select');
+  if (!select) return;
+
+  const months = new Set(data.orders.map(o => (o.date || '').slice(0, 7)).filter(Boolean));
+  months.add(thisMonthStr());
+
+  const sorted = [...months].sort((a, b) => b.localeCompare(a));
+  const current = selectedOrderMonth;
+
+  const allOption = `<option value="all" ${current === 'all' ? 'selected' : ''}>📋 ออเดอร์ทั้งหมด</option>`;
+  const monthOptions = sorted.map(m => {
+    const [y, mo] = m.split('-');
+    const label = new Date(+y, +mo - 1, 1).toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
+    const isNow = m === thisMonthStr() ? ' (เดือนนี้)' : '';
+    return `<option value="${m}" ${m === current ? 'selected' : ''}>${label}${isNow}</option>`;
+  }).join('');
+
+  select.innerHTML = allOption + monthOptions;
+}
+
+window.onOrderMonthChange = function() {
+  selectedOrderMonth = document.getElementById('order-month-select').value;
+  renderOrders();
+};
 
 window.setOrderFilter = (f, el) => {
   orderFilter = f;
@@ -328,7 +397,13 @@ const ORDER_STATUS_LABEL = {
 };
 
 function renderOrders() {
+  populateOrderMonthSelect();
+
   let list = [...data.orders].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
+  if (selectedOrderMonth !== 'all') {
+    list = list.filter(o => (o.date || '').startsWith(selectedOrderMonth));
+  }
   if (orderFilter !== 'all') list = list.filter(o => o.status === orderFilter);
 
   const el = document.getElementById('order-list');

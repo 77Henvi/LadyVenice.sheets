@@ -64,55 +64,23 @@ body {
   letter-spacing: 0.05em;
 }
 
-/* NAV TABS */
-.nav-tabs {
-  display: flex;
-  background: var(--white);
-  border-bottom: 0.5px solid var(--border);
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.nav-tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.nav-tab {
-  flex: 1;
-  min-width: 80px;
-  padding: 12px 8px;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--gray-mid);
-  text-align: center;
-  cursor: pointer;
-  border: none;
-  background: none;
-  letter-spacing: 0.04em;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.nav-tab.active {
-  color: var(--dusty-rose-dark);
-  border-bottom-color: var(--dusty-rose);
-}
-
-.nav-tab-icon {
-  font-size: 16px;
-  display: block;
-  margin-bottom: 3px;
-}
-
 /* PAGE */
 .page {
   display: none;
   padding: 20px 20px 100px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: none;
 }
 
 .page.active {
   display: block;
+  animation: pageIn 0.25s ease forwards;
+}
+
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* SUMMARY CARDS */
@@ -184,11 +152,12 @@ body {
   font-family: 'DM Sans', sans-serif;
   cursor: pointer;
   font-weight: 500;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.12s;
 }
 
 .btn-add:active {
   background: var(--dusty-rose-dark);
+  transform: scale(0.93);
 }
 
 /* FORM MODAL */
@@ -196,13 +165,14 @@ body {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(44,44,42,0.4);
+  background: rgba(44,44,42,0);
   z-index: 200;
   align-items: flex-end;
+  transition: background 0.25s ease;
 }
 
 .modal-overlay.open {
-  display: flex;
+  background: rgba(44,44,42,0.4);
 }
 
 .modal-sheet {
@@ -215,6 +185,12 @@ body {
   margin: 0 auto;
   max-height: 90dvh;
   overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.modal-overlay.open .modal-sheet {
+  transform: translateY(0);
 }
 
 .modal-handle {
@@ -293,11 +269,12 @@ body {
   font-weight: 500;
   cursor: pointer;
   margin-top: 8px;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.12s;
 }
 
 .btn-submit:active {
   background: var(--dusty-rose-dark);
+  transform: scale(0.97);
 }
 
 .btn-cancel {
@@ -329,7 +306,20 @@ body {
   justify-content: space-between;
   align-items: center;
   box-shadow: var(--shadow);
+  animation: cardIn 0.2s ease both;
 }
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Stagger children in item-list */
+.item-list .item-card:nth-child(1) { animation-delay: 0ms; }
+.item-list .item-card:nth-child(2) { animation-delay: 40ms; }
+.item-list .item-card:nth-child(3) { animation-delay: 80ms; }
+.item-list .item-card:nth-child(4) { animation-delay: 120ms; }
+.item-list .item-card:nth-child(5) { animation-delay: 160ms; }
 
 .item-card-left {
   flex: 1;
@@ -387,15 +377,17 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.12s;
 }
 
 .btn-icon:active {
   background: var(--gray-light);
+  transform: scale(0.88);
 }
 
 .btn-icon.danger:active {
   background: #fdeaea;
+  transform: scale(0.88);
 }
 
 /* FINANCE */
@@ -479,7 +471,11 @@ body {
   background: var(--white);
   color: var(--gray-mid);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.15s, transform 0.1s;
+}
+
+.chip:active {
+  transform: scale(0.93);
 }
 
 .chip.active {
@@ -637,6 +633,28 @@ body {
   .form-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* MONTH SELECTOR */
+.month-selector-wrap {
+  margin-bottom: 16px;
+}
+
+.month-selector {
+  width: 100%;
+  padding: 9px 14px;
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--charcoal);
+  background: var(--white);
+  appearance: none;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a7a78' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
 }
 
 /* PROFIT PREVIEW */

@@ -71,19 +71,22 @@
 
 <!-- FINANCE -->
 <div class="page" id="page-finance">
+  <div class="month-selector-wrap">
+    <select class="month-selector" id="fin-month-select" onchange="onFinMonthChange()"></select>
+  </div>
   <div class="summary-grid">
     <div class="summary-card accent">
-      <div class="summary-label">รายรับเดือนนี้</div>
+      <div class="summary-label" id="fin-label-income">รายรับ</div>
       <div class="summary-value" id="fin-month-income">฿0</div>
     </div>
     <div class="summary-card">
-      <div class="summary-label">รายจ่ายเดือนนี้</div>
+      <div class="summary-label" id="fin-label-expense">รายจ่าย</div>
       <div class="summary-value" id="fin-month-expense">฿0</div>
     </div>
   </div>
   <div class="summary-card" style="margin-bottom:16px;">
     <div class="total-row big">
-      <span class="total-label">กำไร/ขาดทุนเดือนนี้</span>
+      <span class="total-label" id="fin-label-profit">กำไร/ขาดทุน</span>
       <span class="total-val" id="fin-profit">฿0</span>
     </div>
   </div>
@@ -101,6 +104,9 @@
 
 <!-- ORDER -->
 <div class="page" id="page-order">
+  <div class="month-selector-wrap">
+    <select class="month-selector" id="order-month-select" onchange="onOrderMonthChange()"></select>
+  </div>
   <div class="filter-chips">
     <div class="chip active" onclick="setOrderFilter('all',this)">ทั้งหมด</div>
     <div class="chip" onclick="setOrderFilter('pending',this)">รอดำเนินการ</div>
@@ -194,7 +200,6 @@
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="modal-title">บันทึกรายรับ / รายจ่าย</div>
-    <input type="hidden" id="fin-edit-id">
 
     <div class="form-group">
       <label class="form-label">ประเภท</label>
