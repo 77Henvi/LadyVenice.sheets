@@ -173,7 +173,7 @@ function renderStock() {
           <span class="tag-type ${typeClass}">${s.type === 'supply' ? 'อุปกรณ์' : 'ดอกไม้'}</span>
           ${s.name}
         </div>
-        <div class="item-sub">${s.qty} ${s.unit || ''} ${s.cost ? '· ทุน ' + fmtMoney(s.cost) : ''}${s.cost && s.price ? ' · กำไร ' + (((s.price - s.cost) / s.cost) * 100).toFixed(1) + '%' : ''}</div>
+        <div class="item-sub">${s.qty} ${s.unit || ''} ${s.cost ? '· ทุน ' + fmtMoney(s.cost) : ''}${s.cost && s.price ? ' · กำไร ' + fmtMoney(s.price - s.cost) : ''}</div>
       </div>
       <div class="item-actions">
         <span class="item-badge ${badgeClass}">${badgeText}</span>
