@@ -44,7 +44,7 @@ body {
 }
 
 .app-header h1 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
   font-weight: 300;
   font-size: 22px;
   letter-spacing: 0.04em;
@@ -120,7 +120,7 @@ body {
   font-size: 20px;
   font-weight: 500;
   color: var(--charcoal);
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
 }
 
 .summary-card.accent .summary-value {
@@ -129,7 +129,7 @@ body {
 
 /* SECTION TITLE */
 .section-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
   font-size: 18px;
   font-weight: 400;
   color: var(--charcoal);
@@ -202,7 +202,7 @@ body {
 }
 
 .modal-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
   font-size: 20px;
   font-weight: 400;
   margin-bottom: 20px;
@@ -392,7 +392,7 @@ body {
 
 /* FINANCE */
 .finance-amount {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
   font-size: 18px;
   font-weight: 600;
 }
@@ -441,7 +441,7 @@ body {
 }
 
 .order-price {
-  font-family:'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
   font-size: 16px;
   font-weight: 600;
   color: var(--charcoal);
@@ -615,7 +615,7 @@ body {
 }
 
 .total-row.big .total-val {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
   font-size: 20px;
   font-weight: 600;
 }
@@ -696,7 +696,7 @@ body {
 }
 
 .profit-preview-value {
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
   font-size: 20px;
   font-weight: 600;
   color: var(--gray-mid);
