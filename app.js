@@ -366,7 +366,7 @@ function populateOrderMonthSelect() {
   const sorted = [...months].sort((a, b) => b.localeCompare(a));
   const current = selectedOrderMonth;
 
-  const allOption = `<option value="all" ${current === 'all' ? 'selected' : ''}>📋 ออเดอร์ทั้งหมด</option>`;
+  const allOption = `<option value="all" ${current === 'all' ? 'selected' : ''}> ออเดอร์ทั้งหมด</option>`;
   const monthOptions = sorted.map(m => {
     const [y, mo] = m.split('-');
     const label = new Date(+y, +mo - 1, 1).toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
