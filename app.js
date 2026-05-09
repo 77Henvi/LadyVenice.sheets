@@ -173,7 +173,7 @@ function renderStock() {
           <span class="tag-type ${typeClass}">${s.type === 'supply' ? 'อุปกรณ์' : 'ดอกไม้'}</span>
           ${s.name}
         </div>
-        <div class="item-sub">${s.qty} ${s.unit || ''} ${s.cost ? '· ทุน ' + fmtMoney(s.cost) : ''}${s.cost && s.price ? ' · กำไร ' + fmtMoney(s.price - s.cost) : ''}</div>
+        <div class="item-sub">${s.price ? ' · ขาย ' + fmtMoney(s.price) : ''}${s.cost && s.price ? ' · กำไร ' + fmtMoney(s.price - s.cost) : ''}</div>
       </div>
       <div class="item-actions">
         <span class="item-badge ${badgeClass}">${badgeText}</span>
@@ -556,5 +556,5 @@ function init() {
 
   initRealtime();
 }
-
+lucide.createIcons();
 init();

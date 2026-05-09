@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
@@ -122,16 +123,16 @@
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="bottom-nav-item active" id="nav-home" onclick="switchTab('home')">
-    <span class="bottom-nav-icon">🌸</span>หน้าหลัก
+    <i data-lucide="home" class="bottom-nav-icon"></i>หน้าหลัก
   </button>
   <button class="bottom-nav-item" id="nav-stock" onclick="switchTab('stock')">
-    <span class="bottom-nav-icon">🌷</span>สต็อค
+    <i data-lucide="package" class="bottom-nav-icon"></i>สต็อค
   </button>
   <button class="bottom-nav-item" id="nav-finance" onclick="switchTab('finance')">
-    <span class="bottom-nav-icon">💰</span>การเงิน
+    <i data-lucide="wallet" class="bottom-nav-icon"></i>การเงิน
   </button>
   <button class="bottom-nav-item" id="nav-order" onclick="switchTab('order')">
-    <span class="bottom-nav-icon">📋</span>ออเดอร์
+    <i data-lucide="clipboard-list" class="bottom-nav-icon"></i>ออเดอร์
   </button>
 </div>
 
