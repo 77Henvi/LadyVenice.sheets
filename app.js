@@ -414,7 +414,7 @@ function renderOrders() {
       <div class="item-card-left">
         <div class="item-name">${o.customer}</div>
         <div class="item-sub">${o.desc || ''}</div>
-        <div class="order-date">${o.date ? '📅 ' + fmtDate(o.date) : ''} ${o.contact ? '· ' + o.contact : ''}</div>
+        <div class="order-date">${o.date ? ' ' + fmtDate(o.date) : ''} ${o.contact ? '· ' + o.contact : ''}</div>
       </div>
       <div class="item-actions" style="flex-direction:column;align-items:flex-end;gap:6px;">
         <span class="order-status status-${o.status}">${ORDER_STATUS_LABEL[o.status] || o.status}</span>
