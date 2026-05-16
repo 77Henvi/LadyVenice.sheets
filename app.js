@@ -19,9 +19,10 @@ const db = getFirestore(app);
 const colStock   = collection(db, "stock");
 const colFinance = collection(db, "finance");
 const colOrders  = collection(db, "orders");
+const colTodos   = collection(db, "todos");
 
 // ===== DATA =====
-let data = { stock: [], finance: [], orders: [] };
+let data = { stock: [], finance: [], orders: [], todos: [] };
 
 // ===== REALTIME LOAD =====
 function initRealtime() {
@@ -42,6 +43,12 @@ function initRealtime() {
     snap.forEach(d => data.orders.push({ id: d.id, ...d.data() }));
     renderAll();
   });
+
+  onSnapshot(colTodos, snap => {
+    data.todos = [];
+    snap.forEach(d => data.todos.push({ id: d.id, ...d.data() }));
+    renderTodos();
+  });
 }
 
 // ===== UTILS =====
@@ -50,7 +57,7 @@ function todayStr() {
 }
 
 function thisMonthStr() {
-  return new Date().toISOString().slice(0, 7); // "YYYY-MM"
+  return new Date().toISOString().slice(0, 7);
 }
 
 function fmtDate(d) {
@@ -73,6 +80,10 @@ window.switchTab = function(tab) {
   document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
   document.getElementById('nav-' + tab).classList.add('active');
+
+  // FAB เฉพาะหน้า home
+  const fab = document.getElementById('todo-fab');
+  if (fab) fab.style.display = tab === 'home' ? 'flex' : 'none';
 };
 
 // ===== MODAL =====
@@ -80,7 +91,6 @@ window.openModal = function(id) {
   const el = document.getElementById(id);
   if (!el) { console.error("Modal not found:", id); return; }
   el.style.display = 'flex';
-  // Force reflow so transition fires
   el.offsetHeight;
   el.classList.add('open');
 };
@@ -117,7 +127,6 @@ window.calcStockProfit = function() {
 
 // ===== STOCK MODAL =====
 window.openStockModal = function() {
-  // reset form
   document.getElementById('stock-edit-id').value = '';
   document.getElementById('stock-modal-title').textContent = 'เพิ่มสต็อค';
   document.getElementById('stock-name').value  = '';
@@ -173,7 +182,7 @@ function renderStock() {
           <span class="tag-type ${typeClass}">${s.type === 'supply' ? 'อุปกรณ์' : 'ดอกไม้'}</span>
           ${s.name}
         </div>
-        <div class="item-sub">${s.price ? ' · ขาย ' + fmtMoney(s.price) : ''}${s.cost && s.price ? ' · กำไร ' + fmtMoney(s.price - s.cost) : ''}</div>
+        <div class="item-sub">${s.qty} ${s.unit || ''} ${s.cost ? '· ทุน ' + fmtMoney(s.cost) : ''}${s.price ? ' · ขาย ' + fmtMoney(s.price) : ''}${s.cost && s.price ? ' · กำไร ' + fmtMoney(s.price - s.cost) : ''}</div>
       </div>
       <div class="item-actions">
         <span class="item-badge ${badgeClass}">${badgeText}</span>
@@ -247,7 +256,6 @@ function populateFinMonthSelect() {
   const select = document.getElementById('fin-month-select');
   if (!select) return;
 
-  // รวบรวมเดือนที่มีข้อมูล + เดือนปัจจุบันเสมอ
   const months = new Set(data.finance.map(f => (f.date || '').slice(0, 7)).filter(Boolean));
   months.add(thisMonthStr());
 
@@ -297,7 +305,6 @@ function renderFinance() {
   profitEl.textContent = (profit >= 0 ? '' : '-') + fmtMoney(Math.abs(profit));
   profitEl.className   = 'total-val ' + (profit >= 0 ? 'profit' : 'loss');
 
-  // filter list — เฉพาะเดือนที่เลือก
   let list = [...data.finance]
     .filter(f => (f.date || '').startsWith(month))
     .sort((a,b) => (b.date||'').localeCompare(a.date||''));
@@ -331,7 +338,7 @@ window.saveFinance = async () => {
     type:   document.getElementById('fin-type').value,
     name,
     amount,
-    date:   document.getElementById('fin-date').value   || todayStr(),
+    date:   document.getElementById('fin-date').value || todayStr(),
     cat:    document.getElementById('fin-cat').value,
     note:   document.getElementById('fin-note').value.trim()
   });
@@ -366,7 +373,7 @@ function populateOrderMonthSelect() {
   const sorted = [...months].sort((a, b) => b.localeCompare(a));
   const current = selectedOrderMonth;
 
-  const allOption = `<option value="all" ${current === 'all' ? 'selected' : ''}> ออเดอร์ทั้งหมด</option>`;
+  const allOption = `<option value="all" ${current === 'all' ? 'selected' : ''}>📋 ออเดอร์ทั้งหมด</option>`;
   const monthOptions = sorted.map(m => {
     const [y, mo] = m.split('-');
     const label = new Date(+y, +mo - 1, 1).toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
@@ -412,9 +419,9 @@ function renderOrders() {
   el.innerHTML = list.map(o => `
     <div class="item-card">
       <div class="item-card-left">
-        <div class="item-name">${o.customer}</div>
+        <div class="item-name">${o.customer} ${o.contact ? '<span class="item-sub">· ' + o.contact + '</span>' : ''}</div>
         <div class="item-sub">${o.desc || ''}</div>
-        <div class="order-date">${o.date ? ' ' + fmtDate(o.date) : ''} ${o.contact ? '· ' + o.contact : ''}</div>
+        <div class="order-date">${o.date ? '📅 ' + fmtDate(o.date) : ''}</div>
       </div>
       <div class="item-actions" style="flex-direction:column;align-items:flex-end;gap:6px;">
         <span class="order-status status-${o.status}">${ORDER_STATUS_LABEL[o.status] || o.status}</span>
@@ -488,7 +495,6 @@ function renderDashboard() {
   const lowItems = data.stock.filter(s => s.qty <= (s.min || 0));
   document.getElementById('dash-lowstock').textContent = lowItems.length;
 
-  // low stock list
   const lowEl = document.getElementById('dash-lowstock-list');
   if (!lowItems.length) {
     lowEl.innerHTML = emptyState('สต็อคครบทุกรายการ 🎉');
@@ -507,7 +513,6 @@ function renderDashboard() {
     }).join('');
   }
 
-  // recent orders (5 รายการล่าสุด)
   const recentEl = document.getElementById('dash-recent-orders');
   const recent   = [...data.orders]
     .sort((a,b) => (b.date||'').localeCompare(a.date||''))
@@ -531,6 +536,99 @@ function renderDashboard() {
   }
 }
 
+// ===== TODO =====
+window.addTodo = async () => {
+  const text = document.getElementById('todo-text').value.trim();
+  if (!text) return;
+  const time = document.getElementById('todo-time').value || '';
+
+  await addDoc(colTodos, {
+    text,
+    time,
+    done: false,
+    date: todayStr(),
+    createdAt: Date.now()
+  });
+
+  document.getElementById('todo-text').value = '';
+  document.getElementById('todo-time').value = '';
+};
+
+window.toggleTodo = async (id, current) => {
+  await updateDoc(doc(db, "todos", id), { done: current !== true });
+};
+
+window.deleteTodo = async (id) => {
+  await deleteDoc(doc(db, "todos", id));
+};
+
+function renderTodos() {
+  const today = todayStr();
+  const list = data.todos
+    .filter(t => t.date === today)
+    .sort((a, b) => (a.time || '').localeCompare(b.time || '') || a.createdAt - b.createdAt);
+
+  const el = document.getElementById('todo-list');
+  if (!el) return;
+
+  if (!list.length) {
+    el.innerHTML = emptyState('ยังไม่มีงานวันนี้ 🌸');
+    return;
+  }
+
+  el.innerHTML = list.map(t => `
+    <div class="todo-item ${t.done ? 'done' : ''}">
+      <div class="todo-checkbox ${t.done ? 'checked' : ''}" onclick="toggleTodo('${t.id}', ${t.done === true})"></div>
+      <div class="todo-content">
+        <div class="todo-text">${t.text}</div>
+        ${t.time ? `<div class="todo-time">⏰ ${t.time}</div>` : ''}
+      </div>
+      <button class="btn-icon danger" onclick="deleteTodo('${t.id}')">🗑</button>
+    </div>
+  `).join('');
+}
+
+// ===== ARCHIVE =====
+window.openArchiveModal = function() {
+  renderArchive();
+  openModal('modal-archive');
+};
+
+function renderArchive() {
+  const past = data.todos
+    .filter(t => t.date !== todayStr())
+    .sort((a, b) => b.date.localeCompare(a.date) || (a.time || '').localeCompare(b.time || ''));
+
+  const el = document.getElementById('archive-list');
+  if (!el) return;
+
+  if (!past.length) {
+    el.innerHTML = emptyState('ยังไม่มีประวัติ');
+    return;
+  }
+
+  const groups = {};
+  past.forEach(t => {
+    if (!groups[t.date]) groups[t.date] = [];
+    groups[t.date].push(t);
+  });
+
+  el.innerHTML = Object.entries(groups).map(([date, items]) => `
+    <div class="archive-day-group">
+      <div class="archive-day-label">${fmtDate(date)}</div>
+      ${items.map(t => `
+        <div class="todo-item ${t.done ? 'done' : ''}" style="margin-bottom:6px;">
+          <div class="todo-checkbox ${t.done ? 'checked' : ''}"></div>
+          <div class="todo-content">
+            <div class="todo-text">${t.text}</div>
+            ${t.time ? `<div class="todo-time">⏰ ${t.time}</div>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
 // ===== RENDER ALL =====
 function renderAll() {
   renderDashboard();
@@ -550,11 +648,15 @@ function init() {
       year:    'numeric'
     });
 
-  // set today as default for fin-date
   const finDate = document.getElementById('fin-date');
   if (finDate) finDate.value = todayStr();
 
+  // show FAB on home by default
+  const fab = document.getElementById('todo-fab');
+  if (fab) fab.style.display = 'flex';
+
   initRealtime();
+  lucide.createIcons();
 }
-lucide.createIcons();
+
 init();

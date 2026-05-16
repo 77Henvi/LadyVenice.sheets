@@ -19,6 +19,41 @@
   <div class="header-date" id="headerDate"></div>
 </div>
 
+<!-- TODO FAB -->
+<button class="todo-fab" id="todo-fab" onclick="openModal('modal-todo')">
+  <i data-lucide="check-square" style="width:22px;height:22px;stroke:white;stroke-width:2;"></i>
+  <span class="todo-fab-label">To-do</span>
+</button>
+
+<!-- TODO MODAL -->
+<div class="modal-overlay" id="modal-todo">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div class="modal-title" style="margin-bottom:0;">To-do วันนี้</div>
+      <button class="btn-archive" onclick="openModal('modal-archive')">🗂 Archive</button>
+    </div>
+
+    <div class="todo-input-row">
+      <input class="form-input" id="todo-text" placeholder="งานที่ต้องทำ...">
+      <input class="form-input todo-time-input" id="todo-time" type="time">
+      <button class="btn-add" onclick="addTodo()">+</button>
+    </div>
+
+    <div class="item-list" id="todo-list" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- ARCHIVE MODAL -->
+<div class="modal-overlay" id="modal-archive">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Archive</div>
+    <div class="filter-chips" id="archive-date-chips" style="margin-bottom:16px;"></div>
+    <div class="item-list" id="archive-list"></div>
+  </div>
+</div>
+
 <!-- HOME -->
 <div class="page active" id="page-home">
   <div style="padding-top:4px;">
