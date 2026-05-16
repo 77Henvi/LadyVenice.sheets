@@ -572,7 +572,7 @@ function renderTodos() {
   if (!el) return;
 
   if (!list.length) {
-    el.innerHTML = emptyState('ยังไม่มีงานวันนี้ 🌸');
+    el.innerHTML = emptyState('ยังไม่มีงานวันนี้ ');
     return;
   }
 
@@ -581,7 +581,7 @@ function renderTodos() {
       <div class="todo-checkbox ${t.done ? 'checked' : ''}" onclick="toggleTodo('${t.id}', ${t.done === true})"></div>
       <div class="todo-content">
         <div class="todo-text">${t.text}</div>
-        ${t.time ? `<div class="todo-time">⏰ ${t.time}</div>` : ''}
+        ${t.time ? `<div class="todo-time"> ${t.time}</div>` : ''}
       </div>
       <button class="btn-icon danger" onclick="deleteTodo('${t.id}')">🗑</button>
     </div>

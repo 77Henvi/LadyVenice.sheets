@@ -210,6 +210,32 @@ body {
   color: var(--charcoal);
 }
 
+.btn-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 0.5px solid var(--border);
+  background: var(--gray-lighter);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.12s;
+}
+
+.btn-modal-close:active {
+  background: var(--gray-light);
+  transform: scale(0.9);
+}
+
+.btn-modal-close i {
+  width: 16px;
+  height: 16px;
+  stroke: var(--gray-mid);
+  stroke-width: 2;
+}
+
 /* FORM */
 .form-group {
   margin-bottom: 14px;
@@ -835,7 +861,7 @@ body {
   font-size: 11px;
   color: var(--gray-mid);
   margin-top: 2px;
-  font-family: 'Playfair Display', serif;
+  font-family: 'DM Sans', serif;
 }
 
 /* ARCHIVE BTN */

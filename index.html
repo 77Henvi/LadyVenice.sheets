@@ -30,8 +30,11 @@
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <div class="modal-title" style="margin-bottom:0;">To-do วันนี้</div>
-      <button class="btn-archive" onclick="openModal('modal-archive')">🗂 Archive</button>
+      <div class="modal-title" style="margin-bottom:0;">วันนี้</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn-archive" onclick="openModal('modal-archive')">🗂 จัดเก็บ</button>
+        <button class="btn-modal-close" onclick="closeModal('modal-todo')"><i data-lucide="x"></i></button>
+      </div>
     </div>
 
     <div class="todo-input-row">
@@ -48,7 +51,10 @@
 <div class="modal-overlay" id="modal-archive">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Archive</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div class="modal-title" style="margin-bottom:0;">Archive</div>
+      <button class="btn-modal-close" onclick="closeModal('modal-archive')"><i data-lucide="x"></i></button>
+    </div>
     <div class="filter-chips" id="archive-date-chips" style="margin-bottom:16px;"></div>
     <div class="item-list" id="archive-list"></div>
   </div>
@@ -175,7 +181,10 @@
 <div class="modal-overlay" id="modal-stock">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="stock-modal-title">เพิ่มสต็อค</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div class="modal-title" style="margin-bottom:0;" id="stock-modal-title">เพิ่มสต็อค</div>
+      <button class="btn-modal-close" onclick="closeModal('modal-stock')"><i data-lucide="x"></i></button>
+    </div>
     <input type="hidden" id="stock-edit-id">
 
     <div class="form-group">
@@ -234,7 +243,10 @@
 <div class="modal-overlay" id="modal-finance">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">บันทึกรายรับ / รายจ่าย</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div class="modal-title" style="margin-bottom:0;">บันทึกรายรับ / รายจ่าย</div>
+      <button class="btn-modal-close" onclick="closeModal('modal-finance')"><i data-lucide="x"></i></button>
+    </div>
     <input type="hidden" id="fin-edit-id">
 
     <div class="form-group">
@@ -283,7 +295,10 @@
 <div class="modal-overlay" id="modal-order">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="order-modal-title">เพิ่มออเดอร์</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div class="modal-title" style="margin-bottom:0;" id="order-modal-title">เพิ่มออเดอร์</div>
+      <button class="btn-modal-close" onclick="closeModal('modal-order')"><i data-lucide="x"></i></button>
+    </div>
     <input type="hidden" id="order-edit-id">
 
     <div class="form-group">
