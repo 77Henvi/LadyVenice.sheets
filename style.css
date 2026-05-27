@@ -1255,195 +1255,274 @@ body {
 }
 
 /* ============================================================
-   DESKTOP RESPONSIVE  ≥ 768px
-   Layout: fixed sidebar (left) + scrollable content (right)
+   iPAD RESPONSIVE  768px – 1023px
+   Layout: slim sidebar (64px icon-only) + scrollable content
    ============================================================ */
 
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1023px) {
 
-  /* Remove mobile max-width constraint */
   body {
     max-width: 100%;
-    overflow-x: hidden;
     background: var(--gray-lighter);
+    overflow-x: hidden;
   }
 
-  /* ── SIDEBAR NAV ── */
+  #desktop-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* SLIM ICON-ONLY SIDEBAR */
   .bottom-nav {
     position: fixed;
-    left: 0; top: 0; bottom: 0;
-    width: 220px;
-    height: 100dvh;
+    left: 0; top: 0; bottom: auto;
+    width: 68px;
+    max-width: none;
+    height: 100vh;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: flex-start;
-    border-top: none;
-    border-right: 0.5px solid var(--border);
+    gap: 2px;
     background: var(--white);
-    padding: 80px 12px 24px;
-    gap: 4px;
-    box-shadow: none;
-    z-index: 90;
+    border-top: none;
+    border-right: 1px solid var(--border);
+    padding: 80px 8px 16px;
+    transform: none;
+    overflow-y: auto;
   }
 
   .bottom-nav-item {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 12px;
-    padding: 11px 16px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 400;
-    min-width: unset;
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 4px;
+    border-radius: 10px;
+    font-size: 9px;
+    letter-spacing: 0.03em;
     color: var(--gray-mid);
-    transition: background 0.15s, color 0.15s;
-  }
-
-  .bottom-nav-item:hover {
-    background: var(--gray-lighter);
-    color: var(--charcoal);
+    text-align: center;
+    width: 100%;
   }
 
   .bottom-nav-item.active {
     background: var(--dusty-rose-light);
     color: var(--dusty-rose-dark);
-    font-weight: 500;
   }
 
   .bottom-nav-icon {
-    width: 18px;
-    height: 18px;
-    margin-bottom: 0;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin: 0;
+    display: block;
   }
 
-  /* ── HEADER ── */
+  /* MAIN CONTENT */
+  .main-content {
+    margin-left: 68px;
+    width: calc(100% - 68px);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
   .app-header {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    height: 60px;
-    padding: 0 24px 0 240px;
-    border-bottom: 0.5px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 64px;
+    padding: 0 28px;
     background: var(--white);
-    z-index: 100;
+    border-bottom: 0.5px solid var(--border);
+    z-index: 50;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
 
-  .app-header h1 { font-size: 20px; }
-  .header-date   { font-size: 11px; margin-top: 0; }
-
-  /* ── MAIN APP WRAPPER ── */
-  #main-app {
-    display: flex !important;
-    flex-direction: column;
-    min-height: 100dvh;
-  }
-
-  /* ── PAGES (content area) ── */
+  /* PAGE */
   .page {
-    margin-left: 220px;
-    padding: 80px 40px 48px;
-    min-height: 100dvh;
+    padding: 28px 28px 48px;
+    min-height: calc(100vh - 64px);
   }
 
-  /* ── FAB → hide, replace with sidebar spacing ── */
-  .todo-fab { display: none !important; }
+  /* 2-col summary on iPad */
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
 
-  /* ── MODAL → center dialog style on desktop ── */
+  /* summary card slightly bigger */
+  .summary-card {
+    padding: 18px 20px;
+  }
+
+  .summary-value {
+    font-size: 24px;
+  }
+
+  /* Modal centered on iPad, not bottom-sheet */
   .modal-overlay {
     align-items: center;
     justify-content: center;
-    padding: 24px;
   }
 
   .modal-sheet {
     border-radius: 20px;
     max-width: 520px;
     max-height: 85dvh;
-    width: 100%;
-    transform: translateY(20px) scale(0.97);
-    opacity: 0;
-    transition: transform 0.28s cubic-bezier(0.32,0.72,0,1),
-                opacity 0.28s ease;
-  }
-
-  .modal-overlay.open .modal-sheet {
-    transform: translateY(0) scale(1);
-    opacity: 1;
+    margin: 0 auto;
+    padding: 28px 32px 36px;
   }
 
   .modal-handle { display: none; }
 
-  /* ── SUMMARY GRID → 4 cols on desktop ── */
-  .summary-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  /* Hide FAB — sidebar has To-do */
+  .todo-fab { display: none !important; }
 
-  /* Stats page — 6-card grid stays 2-col but wider */
-  #page-stats .summary-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  #page-stats .summary-grid .summary-card[style*="grid-column:1/2"] { grid-column: auto; }
-  #page-stats .summary-grid .summary-card[style*="grid-column:2/3"] { grid-column: auto; }
-
-  /* ── CHART taller on desktop ── */
-  .stats-chart-wrap { height: 320px; }
-
-  /* ── STOCK search + filter inline ── */
-  #page-stock .search-bar { max-width: 360px; }
-
-  /* ── ITEM CARDS grid on wide screens ── */
-  @media (min-width: 1100px) {
-    #page-home .item-list,
-    #page-stock .item-list,
-    #page-order .item-list,
-    #page-finance .item-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .stats-chart-wrap { height: 360px; }
-  }
-
-  /* ── MONTH SELECTOR row layout ── */
-  .month-selector-wrap {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  /* ── LOGIN centered (already is, just widen card) ── */
-  .login-card { max-width: 420px; }
-
-  /* ── DIVIDER ── */
-  .divider { margin: 20px 0; }
-}
-
-/* Wide desktop ≥ 1280px — even more breathing room */
-@media (min-width: 1280px) {
-  .app-header { padding-left: 260px; }
-  .bottom-nav { width: 240px; padding: 80px 16px 24px; }
-  .page       { margin-left: 240px; padding: 80px 56px 48px; max-width: 1100px; }
-}
-
-/* Sidebar divider + todo btn (hidden on mobile) */
-.sidebar-divider {
-  display: none;
-}
-.sidebar-todo-btn {
-  display: none;
-}
-
-@media (min-width: 768px) {
+  /* Sidebar To-do visible */
   .sidebar-divider {
     display: block;
     height: 0.5px;
     background: var(--border);
-    margin: 8px 4px;
+    margin: 4px 0;
+    margin-top: auto;
   }
-  .sidebar-todo-btn {
+  .sidebar-todo-btn { display: flex; }
+}
+
+/* ============================================================
+   DESKTOP RESPONSIVE  ≥ 1024px
+   Layout: fixed sidebar (left) + scrollable content (right)
+   ============================================================ */
+
+@media (min-width: 1024px) {
+
+  body {
+    max-width: 100%;
+    background: var(--gray-lighter);
+    overflow-x: hidden;
+  }
+
+  #desktop-layout {
     display: flex;
+    min-height: 100vh;
   }
+
+  /* SIDEBAR — reset mobile styles first */
+  .bottom-nav {
+    position: fixed;
+    left: 0; top: 0; bottom: auto;
+    width: 220px;
+    max-width: none;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    background: var(--white);
+    border-top: none;
+    border-right: 1px solid var(--border);
+    padding: 16px 12px;
+    transform: none;
+    overflow-y: auto;
+  }
+
+  .bottom-nav-item {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    text-align: left;
+  }
+
+  .bottom-nav-item.active {
+    background: var(--dusty-rose-light);
+  }
+
+  .bottom-nav-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin: 0;
+    display: block;
+  }
+
+  /* RIGHT CONTENT */
+  .main-content {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .app-header {
+    position: sticky;
+    top: 0;
+    height: 64px;
+    padding: 0 32px;
+    background: var(--white);
+    border-bottom: 0.5px solid var(--border);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* PAGE */
+  .page {
+    padding: 32px 40px 48px;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* GRID */
+  .summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Modal centered on desktop */
+  .modal-overlay {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-sheet {
+    border-radius: 20px;
+    max-width: 540px;
+    max-height: 85dvh;
+    margin: 0 auto;
+    padding: 28px 32px 36px;
+  }
+
+  .modal-handle { display: none; }
+
+  /* Hide FAB */
+  .todo-fab { display: none !important; }
+}
+
+/* Wide desktop ≥ 1280px */
+@media (min-width: 1280px) {
+  .app-header { padding: 0 40px; }
+  .bottom-nav { width: 240px; padding: 16px; }
+  .main-content { margin-left: 240px; width: calc(100% - 240px); }
+  .page { padding: 40px 56px 48px; }
+}
+
+/* Sidebar divider + todo btn (hidden on mobile) */
+.sidebar-divider { display: none; }
+.sidebar-todo-btn { display: none; }
+
+@media (min-width: 1024px) {
+  .sidebar-divider {
+    display: block;
+    height: 0.5px;
+    background: var(--border);
+    margin: 8px 0;
+    margin-top: auto;
+  }
+  .sidebar-todo-btn { display: flex; }
 }

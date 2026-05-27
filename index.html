@@ -53,6 +53,34 @@
 
 <!-- MAIN APP (hidden until logged in) -->
 <div id="main-app" style="display:none;">
+<div id="desktop-layout">
+
+<!-- BOTTOM NAV / SIDEBAR -->
+<div class="bottom-nav">
+  <button class="bottom-nav-item active" id="nav-home" onclick="switchTab('home')">
+    <i data-lucide="home" class="bottom-nav-icon"></i>หน้าหลัก
+  </button>
+  <button class="bottom-nav-item" id="nav-stock" onclick="switchTab('stock')">
+    <i data-lucide="package" class="bottom-nav-icon"></i>สต็อค
+  </button>
+  <button class="bottom-nav-item" id="nav-finance" onclick="switchTab('finance')">
+    <i data-lucide="wallet" class="bottom-nav-icon"></i>การเงิน
+  </button>
+  <button class="bottom-nav-item" id="nav-order" onclick="switchTab('order')">
+    <i data-lucide="clipboard-list" class="bottom-nav-icon"></i>ออเดอร์
+  </button>
+  <button class="bottom-nav-item" id="nav-stats" onclick="switchTab('stats')">
+    <i data-lucide="bar-chart-2" class="bottom-nav-icon"></i>Stats
+  </button>
+  <!-- Desktop only: To-do shortcut in sidebar -->
+  <div class="sidebar-divider"></div>
+  <button class="bottom-nav-item sidebar-todo-btn" onclick="openModal('modal-todo')">
+    <i data-lucide="check-square" class="bottom-nav-icon"></i>To-do
+  </button>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
 
 <!-- HEADER -->
 <div class="app-header">
@@ -294,30 +322,10 @@
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <button class="bottom-nav-item active" id="nav-home" onclick="switchTab('home')">
-    <i data-lucide="home" class="bottom-nav-icon"></i>หน้าหลัก
-  </button>
-  <button class="bottom-nav-item" id="nav-stock" onclick="switchTab('stock')">
-    <i data-lucide="package" class="bottom-nav-icon"></i>สต็อค
-  </button>
-  <button class="bottom-nav-item" id="nav-finance" onclick="switchTab('finance')">
-    <i data-lucide="wallet" class="bottom-nav-icon"></i>การเงิน
-  </button>
-  <button class="bottom-nav-item" id="nav-order" onclick="switchTab('order')">
-    <i data-lucide="clipboard-list" class="bottom-nav-icon"></i>ออเดอร์
-  </button>
-  <button class="bottom-nav-item" id="nav-stats" onclick="switchTab('stats')">
-    <i data-lucide="bar-chart-2" class="bottom-nav-icon"></i>Stats
-  </button>
-  <!-- Desktop only: To-do shortcut in sidebar -->
-  <div class="sidebar-divider"></div>
-  <button class="bottom-nav-item sidebar-todo-btn" onclick="openModal('modal-todo')">
-    <i data-lucide="check-square" class="bottom-nav-icon"></i>To-do
-  </button>
-</div>
+</div><!-- end .main-content -->
+</div><!-- end #desktop-layout -->
 
+<!-- MODALS (fixed position, outside layout flow) -->
 <!-- STOCK MODAL -->
 <div class="modal-overlay" id="modal-stock">
   <div class="modal-sheet">
