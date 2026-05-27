@@ -1048,3 +1048,402 @@ body {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ===== STATS PAGE ===== */
+.stats-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.stats-chart-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 16px 12px 12px;
+  box-shadow: var(--shadow);
+  border: 0.5px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.stats-chart-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-mid);
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+
+.stats-chart-wrap {
+  position: relative;
+  height: 220px;
+  width: 100%;
+}
+
+/* Stats Tooltip / Detail Card */
+.stats-tooltip {
+  background: var(--white);
+  border: 0.5px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+  margin: 8px 0 20px;
+  animation: pageIn 0.2s ease forwards;
+}
+
+.stats-tooltip-month {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 4px;
+}
+
+.stats-tooltip-total {
+  font-size: 13px;
+  color: var(--dusty-rose-dark);
+  font-weight: 500;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.stats-tooltip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tt-order-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.tt-order-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--charcoal);
+}
+
+.tt-order-desc {
+  font-size: 12px;
+  color: var(--gray-mid);
+  margin-top: 1px;
+}
+
+.tt-order-price {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--sage);
+  white-space: nowrap;
+}
+/* ===== STATS DETAIL MODAL ===== */
+.sm-kpi-row {
+  display: flex;
+  align-items: stretch;
+  background: var(--gray-lighter);
+  border-radius: 14px;
+  padding: 14px 0;
+  margin-bottom: 20px;
+}
+
+.sm-kpi {
+  flex: 1;
+  text-align: center;
+  padding: 0 8px;
+}
+
+.sm-kpi-label {
+  font-size: 11px;
+  color: var(--gray-mid);
+  margin-bottom: 4px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+.sm-kpi-val {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+
+.sm-kpi-val.income  { color: var(--dusty-rose); }
+.sm-kpi-val.expense { color: var(--gray-mid); }
+
+.sm-kpi-divider {
+  width: 0.5px;
+  background: var(--border);
+  margin: 2px 0;
+}
+
+.sm-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-mid);
+  margin-bottom: 10px;
+}
+
+.sm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--white);
+  border-radius: 10px;
+  border: 0.5px solid var(--border);
+}
+
+.sm-row-left { flex: 1; min-width: 0; }
+
+.sm-row-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--charcoal);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sm-row-sub {
+  font-size: 11px;
+  color: var(--gray-mid);
+  margin-top: 2px;
+}
+
+.sm-row-date {
+  font-size: 11px;
+  color: var(--gray-mid);
+  margin-top: 2px;
+}
+
+.sm-row-amount {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sm-row-amount.income  { color: var(--dusty-rose); }
+.sm-row-amount.expense { color: var(--gray-mid); }
+
+.sm-empty {
+  font-size: 13px;
+  color: var(--gray-mid);
+  padding: 8px 0;
+  text-align: center;
+}
+
+/* Stats month list row hover */
+.stats-month-row {
+  transition: background 0.15s;
+}
+.stats-month-row:hover {
+  background: var(--gray-lighter);
+}
+
+/* ============================================================
+   DESKTOP RESPONSIVE  ≥ 768px
+   Layout: fixed sidebar (left) + scrollable content (right)
+   ============================================================ */
+
+@media (min-width: 768px) {
+
+  /* Remove mobile max-width constraint */
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+    background: var(--gray-lighter);
+  }
+
+  /* ── SIDEBAR NAV ── */
+  .bottom-nav {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 220px;
+    height: 100dvh;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    border-top: none;
+    border-right: 0.5px solid var(--border);
+    background: var(--white);
+    padding: 80px 12px 24px;
+    gap: 4px;
+    box-shadow: none;
+    z-index: 90;
+  }
+
+  .bottom-nav-item {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 400;
+    min-width: unset;
+    color: var(--gray-mid);
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .bottom-nav-item:hover {
+    background: var(--gray-lighter);
+    color: var(--charcoal);
+  }
+
+  .bottom-nav-item.active {
+    background: var(--dusty-rose-light);
+    color: var(--dusty-rose-dark);
+    font-weight: 500;
+  }
+
+  .bottom-nav-icon {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 0;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 60px;
+    padding: 0 24px 0 240px;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--white);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .app-header h1 { font-size: 20px; }
+  .header-date   { font-size: 11px; margin-top: 0; }
+
+  /* ── MAIN APP WRAPPER ── */
+  #main-app {
+    display: flex !important;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  /* ── PAGES (content area) ── */
+  .page {
+    margin-left: 220px;
+    padding: 80px 40px 48px;
+    min-height: 100dvh;
+  }
+
+  /* ── FAB → hide, replace with sidebar spacing ── */
+  .todo-fab { display: none !important; }
+
+  /* ── MODAL → center dialog style on desktop ── */
+  .modal-overlay {
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .modal-sheet {
+    border-radius: 20px;
+    max-width: 520px;
+    max-height: 85dvh;
+    width: 100%;
+    transform: translateY(20px) scale(0.97);
+    opacity: 0;
+    transition: transform 0.28s cubic-bezier(0.32,0.72,0,1),
+                opacity 0.28s ease;
+  }
+
+  .modal-overlay.open .modal-sheet {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+
+  .modal-handle { display: none; }
+
+  /* ── SUMMARY GRID → 4 cols on desktop ── */
+  .summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Stats page — 6-card grid stays 2-col but wider */
+  #page-stats .summary-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  #page-stats .summary-grid .summary-card[style*="grid-column:1/2"] { grid-column: auto; }
+  #page-stats .summary-grid .summary-card[style*="grid-column:2/3"] { grid-column: auto; }
+
+  /* ── CHART taller on desktop ── */
+  .stats-chart-wrap { height: 320px; }
+
+  /* ── STOCK search + filter inline ── */
+  #page-stock .search-bar { max-width: 360px; }
+
+  /* ── ITEM CARDS grid on wide screens ── */
+  @media (min-width: 1100px) {
+    #page-home .item-list,
+    #page-stock .item-list,
+    #page-order .item-list,
+    #page-finance .item-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stats-chart-wrap { height: 360px; }
+  }
+
+  /* ── MONTH SELECTOR row layout ── */
+  .month-selector-wrap {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  /* ── LOGIN centered (already is, just widen card) ── */
+  .login-card { max-width: 420px; }
+
+  /* ── DIVIDER ── */
+  .divider { margin: 20px 0; }
+}
+
+/* Wide desktop ≥ 1280px — even more breathing room */
+@media (min-width: 1280px) {
+  .app-header { padding-left: 260px; }
+  .bottom-nav { width: 240px; padding: 80px 16px 24px; }
+  .page       { margin-left: 240px; padding: 80px 56px 48px; max-width: 1100px; }
+}
+
+/* Sidebar divider + todo btn (hidden on mobile) */
+.sidebar-divider {
+  display: none;
+}
+.sidebar-todo-btn {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .sidebar-divider {
+    display: block;
+    height: 0.5px;
+    background: var(--border);
+    margin: 8px 4px;
+  }
+  .sidebar-todo-btn {
+    display: flex;
+  }
+}

@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -205,6 +206,94 @@
   <div class="item-list" id="order-list"></div>
 </div>
 
+<!-- STATS PAGE -->
+<div class="page" id="page-stats">
+  <div class="stats-header-row">
+    <select class="month-selector" id="stats-year-select" onchange="renderStats()"></select>
+  </div>
+
+  <!-- KPI Cards — 2 rows -->
+  <div class="summary-grid" style="margin-bottom:10px;">
+    <div class="summary-card accent">
+      <div class="summary-label">ออเดอร์ทั้งปี</div>
+      <div class="summary-value" id="stats-total-orders">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">รายรับรวม</div>
+      <div class="summary-value" id="stats-total-revenue">฿0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">รายจ่ายรวม</div>
+      <div class="summary-value" id="stats-total-expense" style="color:var(--gray-mid);">฿0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">กำไรสุทธิ</div>
+      <div class="summary-value" id="stats-net-profit">฿0</div>
+    </div>
+    <div class="summary-card" style="grid-column:1/2;">
+      <div class="summary-label">เฉลี่ย/เดือน</div>
+      <div class="summary-value" id="stats-avg-month">฿0</div>
+    </div>
+    <div class="summary-card" style="grid-column:2/3;">
+      <div class="summary-label">เดือนทำได้สูงสุด</div>
+      <div class="summary-value" id="stats-best-month" style="font-size:14px;">—</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="stats-chart-card">
+    <div class="stats-chart-title">รายรับ vs รายจ่าย · กดจุดเพื่อดูรายละเอียด</div>
+    <div class="stats-chart-wrap">
+      <canvas id="stats-chart"></canvas>
+    </div>
+  </div>
+
+  <!-- Monthly breakdown -->
+  <div class="section-title" style="margin-top:4px;"><span>รายละเอียดรายเดือน</span></div>
+  <div class="item-list" id="stats-month-list"></div>
+</div>
+
+<!-- STATS DETAIL MODAL -->
+<div class="modal-overlay" id="modal-stats-detail">
+  <div class="modal-sheet" style="max-height:88dvh;">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div class="modal-title" style="margin-bottom:0;" id="sm-month-title">—</div>
+      <button class="btn-modal-close" onclick="closeModal('modal-stats-detail')"><i data-lucide="x"></i></button>
+    </div>
+
+    <!-- Mini KPI -->
+    <div class="sm-kpi-row">
+      <div class="sm-kpi">
+        <div class="sm-kpi-label">รายรับ</div>
+        <div class="sm-kpi-val income" id="sm-revenue">฿0</div>
+      </div>
+      <div class="sm-kpi-divider"></div>
+      <div class="sm-kpi">
+        <div class="sm-kpi-label">รายจ่าย</div>
+        <div class="sm-kpi-val expense" id="sm-expense">฿0</div>
+      </div>
+      <div class="sm-kpi-divider"></div>
+      <div class="sm-kpi">
+        <div class="sm-kpi-label">กำไร</div>
+        <div class="sm-kpi-val" id="sm-profit">฿0</div>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="sm-section-label">
+      <i data-lucide="clipboard-list" style="width:13px;height:13px;"></i> ออเดอร์
+    </div>
+    <div id="sm-orders-list" class="sm-list"></div>
+
+    <!-- Expenses -->
+    <div class="sm-section-label" style="margin-top:16px;">
+      <i data-lucide="receipt" style="width:13px;height:13px;"></i> รายจ่าย
+    </div>
+    <div id="sm-expense-list" class="sm-list"></div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="bottom-nav-item active" id="nav-home" onclick="switchTab('home')">
@@ -218,6 +307,14 @@
   </button>
   <button class="bottom-nav-item" id="nav-order" onclick="switchTab('order')">
     <i data-lucide="clipboard-list" class="bottom-nav-icon"></i>ออเดอร์
+  </button>
+  <button class="bottom-nav-item" id="nav-stats" onclick="switchTab('stats')">
+    <i data-lucide="bar-chart-2" class="bottom-nav-icon"></i>Stats
+  </button>
+  <!-- Desktop only: To-do shortcut in sidebar -->
+  <div class="sidebar-divider"></div>
+  <button class="bottom-nav-item sidebar-todo-btn" onclick="openModal('modal-todo')">
+    <i data-lucide="check-square" class="bottom-nav-icon"></i>To-do
   </button>
 </div>
 
