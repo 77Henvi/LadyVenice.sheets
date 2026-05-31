@@ -98,3 +98,13 @@ onAuthStateChanged(auth, async user => {
     lucide.createIcons();
   }
 });
+
+// ===== BIND EVENTS (แทน onclick ใน HTML) =====
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('login-btn')?.addEventListener('click', window.handleLogin);
+  document.getElementById('github-btn')?.addEventListener('click', window.handleGithubLogin);
+  document.getElementById('login-eye-btn')?.addEventListener('click', window.toggleLoginPass);
+  document.getElementById('login-password')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') window.handleLogin();
+  });
+});
