@@ -1,7 +1,7 @@
 // ===== STATS =====
 // depends on: data, fmtDate, fmtMoney, emptyState, openModal
 
-import { fmtDate, fmtMoney, emptyState } from "./utils.js";
+import { fmtDate, fmtMoney, emptyState } from "./main.js";
 import { openModal } from "./ui.js";
 import { data } from "./main.js";
 
