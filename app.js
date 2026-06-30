@@ -1,95 +1,16 @@
-// ===== FIREBASE IMPORT =====
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, GithubAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// app.js
+// ===== IMPORTS =====
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { auth, db, colStock, colFinance, colOrders, colTodos } from "./firebase-config.js";
+import { todayStr, thisMonthStr, fmtDate, fmtMoney, emptyState } from "./utils.js";
+import "./auth.js"; // โหลดเพื่อให้ window.handleLogin ต่างๆ ทำงาน
 
+// ===== DATA STATE =====
+let data = { stock: [], finance: [], orders: [], todos: [] };
+let appInited = false;
 
-// ===== CONFIG =====
-const firebaseConfig = {
-  apiKey: "AIzaSyC0Txa5vnZbRtYU2wMTb2Qe3heGgF-SV4w",
-  authDomain: "ladyvenice.firebaseapp.com",
-  projectId: "ladyvenice",
-  storageBucket: "ladyvenice.firebasestorage.app",
-  messagingSenderId: "143412816674",
-  appId: "1:143412816674:web:ce46a0bbee26437722537b"
-};
-
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-const db   = getFirestore(app);
-const auth = getAuth(app);
-
-// session 7 วัน — Firebase จะจำ login ไว้ใน localStorage
-setPersistence(auth, browserLocalPersistence);
-
-const githubProvider = new GithubAuthProvider();
-
-// ===== AUTH HELPERS =====
-window.handleLogin = async function() {
-  const username = document.getElementById('login-email').value.trim().toLowerCase();
-  const password = document.getElementById('login-password').value;
-  const btn      = document.getElementById('login-btn');
-
-  if (!username || !password) {
-    showLoginError('กรุณากรอก username และรหัสผ่าน');
-    return;
-  }
-
-  btn.textContent = 'กำลังเข้าสู่ระบบ...';
-  btn.disabled    = true;
-  document.getElementById('login-error').style.display = 'none';
-
-  // แปลง username → fake email สำหรับ Firebase
-  const email = `${username}@ladyvenice.app`;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (e) {
-    showLoginError('username หรือรหัสผ่านไม่ถูกต้อง');
-    btn.textContent = 'เข้าสู่ระบบ';
-    btn.disabled    = false;
-  }
-};
-
-window.handleGithubLogin = async function() {
-  const btn = document.getElementById('github-btn');
-  btn.disabled = true;
-  document.getElementById('login-error').style.display = 'none';
-
-  try {
-    await signInWithPopup(auth, githubProvider);
-    // onAuthStateChanged จะ handle ต่อเอง
-  } catch (e) {
-    if (e.code !== 'auth/popup-closed-by-user') {
-      showLoginError('GitHub login ไม่สำเร็จ ลองใหม่อีกครั้ง');
-    }
-    btn.disabled = false;
-  }
-};
-
-window.handleLogout = async function() {
-  if (!confirm('ต้องการออกจากระบบ?')) return;
-  await signOut(auth);
-};
-
-window.toggleLoginPass = function() {
-  const input = document.getElementById('login-password');
-  const icon  = document.getElementById('login-eye-btn').querySelector('i');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.setAttribute('data-lucide', 'eye-off');
-  } else {
-    input.type = 'password';
-    icon.setAttribute('data-lucide', 'eye');
-  }
-  lucide.createIcons();
-};
-
-function showLoginError(msg) {
-  const el = document.getElementById('login-error');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
+// ===== AUTH HELPERS & UI TOGGLE =====
 function showApp() {
   document.getElementById('login-page').style.display = 'none';
   document.getElementById('main-app').style.display   = 'block';
@@ -100,7 +21,6 @@ function showLogin() {
   document.getElementById('main-app').style.display   = 'none';
 }
 
-let appInited = false;
 onAuthStateChanged(auth, user => {
   if (user) {
     showApp();
@@ -111,15 +31,6 @@ onAuthStateChanged(auth, user => {
     lucide.createIcons();
   }
 });
-
-// ===== COLLECTIONS =====
-const colStock   = collection(db, "stock");
-const colFinance = collection(db, "finance");
-const colOrders  = collection(db, "orders");
-const colTodos   = collection(db, "todos");
-
-// ===== DATA =====
-let data = { stock: [], finance: [], orders: [], todos: [] };
 
 // ===== REALTIME LOAD =====
 function initRealtime() {
@@ -148,29 +59,6 @@ function initRealtime() {
   });
 }
 
-// ===== UTILS =====
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function thisMonthStr() {
-  return new Date().toISOString().slice(0, 7);
-}
-
-function fmtDate(d) {
-  if (!d) return '';
-  const dt = new Date(d + 'T00:00:00');
-  return dt.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
-}
-
-function fmtMoney(n) {
-  return '฿' + Number(n || 0).toLocaleString('th-TH');
-}
-
-function emptyState(msg) {
-  return `<div class="empty-state"><div class="empty-icon">🌸</div><div class="empty-text">${msg}</div></div>`;
-}
-
 // ===== TAB =====
 window.switchTab = function(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -178,14 +66,11 @@ window.switchTab = function(tab) {
   document.getElementById('page-' + tab).classList.add('active');
   document.getElementById('nav-' + tab).classList.add('active');
 
-  // FAB เฉพาะหน้า home
   const fab = document.getElementById('todo-fab');
   if (fab) fab.style.display = tab === 'home' ? 'flex' : 'none';
 
-  // render stats เมื่อเปิด tab
   if (tab === 'stats') renderStats();
 
-  // ซ่อน tooltip เมื่อเปลี่ยน tab
   const tt = document.getElementById('stats-tooltip');
   if (tt) tt.style.display = 'none';
 };
@@ -772,7 +657,6 @@ window.renderStats = function() {
   const yearOrders  = data.orders.filter(o => (o.date || '').startsWith(year));
   const yearFinance = data.finance.filter(f => (f.date || '').startsWith(year));
 
-  // Build monthly data — orders (revenue) + finance expenses
   const monthly = Array.from({ length: 12 }, (_, i) => {
     const mo       = String(i + 1).padStart(2, '0');
     const prefix   = `${year}-${mo}`;
@@ -794,7 +678,6 @@ window.renderStats = function() {
     };
   });
 
-  // KPI
   const totalOrders  = yearOrders.length;
   const totalRevenue = monthly.reduce((s, m) => s + m.revenue, 0);
   const totalExpense = monthly.reduce((s, m) => s + m.expense, 0);
@@ -807,7 +690,6 @@ window.renderStats = function() {
   document.getElementById('stats-avg-month').textContent     = fmtMoney(Math.round(avgMonth));
   document.getElementById('stats-best-month').textContent    = bestMonth.count > 0 ? bestMonth.full : '—';
 
-  // update KPI extra cards
   const netEl = document.getElementById('stats-net-profit');
   if (netEl) {
     const net = totalRevenue - totalExpense;
@@ -817,7 +699,6 @@ window.renderStats = function() {
   const expEl = document.getElementById('stats-total-expense');
   if (expEl) expEl.textContent = fmtMoney(totalExpense);
 
-  // Chart
   const canvas = document.getElementById('stats-chart');
   if (!canvas) return;
   if (statsChartInstance) statsChartInstance.destroy();
@@ -911,7 +792,6 @@ window.renderStats = function() {
     }
   });
 
-  // Monthly breakdown list
   const listEl = document.getElementById('stats-month-list');
   const activeList = monthly.filter(m => m.count > 0 || m.expense > 0).reverse();
   if (!activeList.length) {
@@ -940,10 +820,8 @@ window.renderStats = function() {
 window.showStatsModal = function(month) {
   if (typeof month === 'string') month = JSON.parse(month);
 
-  // populate modal
   document.getElementById('sm-month-title').textContent = month.full;
 
-  // KPI row
   document.getElementById('sm-revenue').textContent = fmtMoney(month.revenue);
   document.getElementById('sm-expense').textContent = fmtMoney(month.expense);
   const profit    = month.profit;
@@ -951,7 +829,6 @@ window.showStatsModal = function(month) {
   profitEl.textContent = (profit >= 0 ? '+' : '') + fmtMoney(profit);
   profitEl.style.color = profit >= 0 ? 'var(--sage)' : 'var(--dusty-rose-dark)';
 
-  // Orders list
   const ordersEl = document.getElementById('sm-orders-list');
   if (!month.orders || !month.orders.length) {
     ordersEl.innerHTML = '<div class="sm-empty">ไม่มีออเดอร์</div>';
@@ -967,7 +844,6 @@ window.showStatsModal = function(month) {
       </div>`).join('');
   }
 
-  // Expense list
   const expEl = document.getElementById('sm-expense-list');
   if (!month.expenses || !month.expenses.length) {
     expEl.innerHTML = '<div class="sm-empty">ไม่มีรายจ่าย</div>';
@@ -989,8 +865,7 @@ window.closeStatsTooltip = function() {
   document.getElementById('stats-tooltip').style.display = 'none';
 };
 
-
-// ===== INIT (called by auth state listener) =====
+// ===== INIT =====
 function init() {
   const now = new Date();
   document.getElementById('headerDate').textContent =
@@ -1004,7 +879,6 @@ function init() {
   const finDate = document.getElementById('fin-date');
   if (finDate) finDate.value = todayStr();
 
-  // show FAB on home by default
   const fab = document.getElementById('todo-fab');
   if (fab) fab.style.display = 'flex';
 
