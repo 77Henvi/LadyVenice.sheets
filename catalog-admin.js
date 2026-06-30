@@ -1,17 +1,17 @@
 // catalog-admin.js
-import { addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { db, storage, colCatalog } from "./firebase-config.js";
+import { supabase } from "./supabase-config.js";
 
 let catalogData = [];
 
 // ===== 1. ดึงข้อมูลมาโชว์ในหน้า ADMIN =====
-const qCatalog = query(colCatalog, orderBy("order", "asc"));
-onSnapshot(qCatalog, snap => {
-  catalogData = [];
-  snap.forEach(d => catalogData.push({ id: d.id, ...d.data() }));
-  renderCatalog();
-});
+async function loadCatalog() {
+  const { data, error } = await supabase.from('catalog').select('*').order('order', { ascending: true });
+  if (!error && data) {
+    catalogData = data;
+    renderCatalog();
+  }
+}
+loadCatalog(); // โหลดข้อมูลทันทีเมื่อเปิดหน้า
 
 function renderCatalog() {
   const el = document.getElementById('catalog-list');
@@ -48,8 +48,10 @@ window.openCatalogModal = function() {
   document.getElementById('catalog-desc').value = '';
   document.getElementById('catalog-image').value = '';
   document.getElementById('catalog-image-preview').style.display = 'none';
-  document.getElementById('btn-save-catalog').textContent = 'บันทึก';
-  document.getElementById('btn-save-catalog').disabled = false;
+  
+  const btn = document.getElementById('btn-save-catalog');
+  btn.textContent = 'บันทึก';
+  btn.disabled = false;
   openModal('modal-catalog');
 };
 
@@ -72,12 +74,13 @@ window.editCatalog = function(id) {
     preview.style.display = 'none';
   }
 
-  document.getElementById('btn-save-catalog').textContent = 'บันทึก';
-  document.getElementById('btn-save-catalog').disabled = false;
+  const btn = document.getElementById('btn-save-catalog');
+  btn.textContent = 'บันทึก';
+  btn.disabled = false;
   openModal('modal-catalog');
 };
 
-// ===== 3. บันทึกข้อมูล (UPLOAD รูป + SAVE) =====
+// ===== 3. บันทึกข้อมูล (UPLOAD รูปเข้า SUPABASE + SAVE) =====
 window.saveCatalog = async function() {
   const name = document.getElementById('catalog-name').value.trim();
   const price = document.getElementById('catalog-price').value.trim();
@@ -96,28 +99,42 @@ window.saveCatalog = async function() {
   try {
     let imageUrl = '';
     
+    // ถ้ามีการเลือกไฟล์รูปใหม่ ให้อัปโหลดขึ้น Supabase Storage ก่อน
+    if (file) {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`; // ตั้งชื่อไฟล์ใหม่กันซ้ำ
+      
+      const { error: uploadError } = await supabase.storage
+        .from('catalog-images')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      // ดึง URL แบบ Public ของรูปที่เพิ่งอัปโหลด
+      const { data } = supabase.storage.from('catalog-images').getPublicUrl(fileName);
+      imageUrl = data.publicUrl;
+    }
+    
     if (id) {
       // โหมดแก้ไข
-      const updateData = { name, price, desc };
-      if (file) {
-        const storageRef = ref(storage, `catalog-images/${id}/image`);
-        await uploadBytes(storageRef, file);
-        updateData.image = await getDownloadURL(storageRef);
-      }
-      await updateDoc(doc(db, "catalog", id), updateData);
+      const updateData = { name, price, "desc": desc };
+      if (imageUrl) updateData.image = imageUrl; // ถ้ามีรูปใหม่ค่อยอัปเดต URL รูป
+      
+      await supabase.from('catalog').update(updateData).eq('id', id);
     } else {
       // โหมดเพิ่มใหม่
       const maxOrder = catalogData.length > 0 ? Math.max(...catalogData.map(c => c.order || 0)) : 0;
-      const docRef = await addDoc(colCatalog, { name, price, desc, order: maxOrder + 1, image: '' });
-      
-      const storageRef = ref(storage, `catalog-images/${docRef.id}/image`);
-      await uploadBytes(storageRef, file);
-      imageUrl = await getDownloadURL(storageRef);
-      
-      await updateDoc(docRef, { image: imageUrl });
+      await supabase.from('catalog').insert([{ 
+        name, 
+        price, 
+        "desc": desc, 
+        "order": maxOrder + 1, 
+        image: imageUrl 
+      }]);
     }
     
     closeModal('modal-catalog');
+    loadCatalog(); // โหลดข้อมูลใหม่มาโชว์
   } catch (error) {
     console.error("Error saving catalog: ", error);
     alert('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่');
@@ -131,9 +148,8 @@ window.saveCatalog = async function() {
 window.deleteCatalog = async function(id) {
   if (!confirm('ยืนยันการลบสินค้านี้ออกจาก Catalog สาธารณะ?')) return;
   try {
-    const storageRef = ref(storage, `catalog-images/${id}/image`);
-    await deleteObject(storageRef).catch(e => console.log('No image to delete or error:', e));
-    await deleteDoc(doc(db, "catalog", id));
+    await supabase.from('catalog').delete().eq('id', id);
+    loadCatalog();
   } catch (error) {
     console.error("Error deleting: ", error);
   }
@@ -164,12 +180,11 @@ window.handleDrop = async function(e) {
   newArray.splice(targetIndex, 0, removed);
 
   try {
-    const batch = writeBatch(db);
-    newArray.forEach((item, index) => {
-      const itemRef = doc(db, "catalog", item.id);
-      batch.update(itemRef, { order: index + 1 });
-    });
-    await batch.commit();
+    // อัปเดตลำดับใน Database
+    for (let i = 0; i < newArray.length; i++) {
+      await supabase.from('catalog').update({ "order": i + 1 }).eq('id', newArray[i].id);
+    }
+    loadCatalog();
   } catch (error) {
     console.error("Error updating order: ", error);
   }

@@ -1,11 +1,5 @@
 // auth.js
-import { signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, GithubAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { auth } from "./firebase-config.js";
-
-// session 7 วัน — Firebase จะจำ login ไว้ใน localStorage
-setPersistence(auth, browserLocalPersistence);
-
-const githubProvider = new GithubAuthProvider();
+import { supabase } from "./supabase-config.js";
 
 window.handleLogin = async function() {
   const username = document.getElementById('login-email').value.trim().toLowerCase();
@@ -21,15 +15,20 @@ window.handleLogin = async function() {
   btn.disabled    = true;
   document.getElementById('login-error').style.display = 'none';
 
-  // แปลง username → fake email สำหรับ Firebase
+  // แปลง username → fake email สำหรับ Supabase
   const email = `${username}@ladyvenice.app`;
 
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (e) {
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
     showLoginError('username หรือรหัสผ่านไม่ถูกต้อง');
     btn.textContent = 'เข้าสู่ระบบ';
     btn.disabled    = false;
+  } else {
+    // ล็อกอินสำเร็จ (app.js จะตรวจเจอ session และเปลี่ยนหน้าเอง)
   }
 };
 
@@ -38,19 +37,20 @@ window.handleGithubLogin = async function() {
   btn.disabled = true;
   document.getElementById('login-error').style.display = 'none';
 
-  try {
-    await signInWithPopup(auth, githubProvider);
-  } catch (e) {
-    if (e.code !== 'auth/popup-closed-by-user') {
-      showLoginError('GitHub login ไม่สำเร็จ ลองใหม่อีกครั้ง');
-    }
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+  });
+
+  if (error) {
+    showLoginError('GitHub login ไม่สำเร็จ');
     btn.disabled = false;
   }
 };
 
 window.handleLogout = async function() {
   if (!confirm('ต้องการออกจากระบบ?')) return;
-  await signOut(auth);
+  await supabase.auth.signOut();
+  window.location.reload(); // รีเฟรชหน้าเพื่อกลับไปหน้า Login
 };
 
 window.toggleLoginPass = function() {

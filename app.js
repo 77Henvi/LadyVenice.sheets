@@ -1,8 +1,6 @@
 // app.js
 // ===== IMPORTS =====
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { auth, db, colStock, colFinance, colOrders, colTodos } from "./firebase-config.js";
+import { supabase } from "./supabase-config.js";
 import { todayStr, thisMonthStr, fmtDate, fmtMoney, emptyState } from "./utils.js";
 import "./auth.js"; 
 import "./catalog-admin.js";
@@ -22,8 +20,9 @@ function showLogin() {
   document.getElementById('main-app').style.display   = 'none';
 }
 
-onAuthStateChanged(auth, user => {
-  if (user) {
+// ตรวจสอบสถานะการล็อกอินด้วย Supabase
+supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session) {
     showApp();
     if (!appInited) { appInited = true; init(); }
   } else {
@@ -33,31 +32,36 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-// ===== REALTIME LOAD =====
-function initRealtime() {
-  onSnapshot(colStock, snap => {
-    data.stock = [];
-    snap.forEach(d => data.stock.push({ id: d.id, ...d.data() }));
-    renderAll();
-  });
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (session) {
+    showApp();
+    if (!appInited) { appInited = true; init(); }
+  } else {
+    showLogin();
+    appInited = false;
+    lucide.createIcons();
+  }
+});
 
-  onSnapshot(colFinance, snap => {
-    data.finance = [];
-    snap.forEach(d => data.finance.push({ id: d.id, ...d.data() }));
-    renderAll();
-  });
+// ===== DATA LOAD =====
+async function loadData() {
+  try {
+    const [resStock, resFin, resOrders, resTodos] = await Promise.all([
+      supabase.from('stock').select('*'),
+      supabase.from('finance').select('*'),
+      supabase.from('orders').select('*'),
+      supabase.from('todos').select('*')
+    ]);
 
-  onSnapshot(colOrders, snap => {
-    data.orders = [];
-    snap.forEach(d => data.orders.push({ id: d.id, ...d.data() }));
+    data.stock   = resStock.data || [];
+    data.finance = resFin.data || [];
+    data.orders  = resOrders.data || [];
+    data.todos   = resTodos.data || [];
+    
     renderAll();
-  });
-
-  onSnapshot(colTodos, snap => {
-    data.todos = [];
-    snap.forEach(d => data.todos.push({ id: d.id, ...d.data() }));
-    renderTodos();
-  });
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
 }
 
 // ===== TAB =====
@@ -219,11 +223,12 @@ window.saveStock = async () => {
 
   const id = document.getElementById('stock-edit-id').value;
   if (id) {
-    await updateDoc(doc(db, "stock", id), obj);
+    await supabase.from('stock').update(obj).eq('id', id);
   } else {
-    await addDoc(colStock, obj);
+    await supabase.from('stock').insert([obj]);
   }
   closeModal('modal-stock');
+  loadData();
 };
 
 // ===== FINANCE MODAL =====
@@ -324,15 +329,17 @@ window.saveFinance = async () => {
   const amount = parseFloat(document.getElementById('fin-amount').value);
   if (!name || !amount) return alert('กรุณากรอกรายการและจำนวนเงิน');
 
-  await addDoc(colFinance, {
+  await supabase.from('finance').insert([{
     type:   document.getElementById('fin-type').value,
     name,
     amount,
     date:   document.getElementById('fin-date').value || todayStr(),
     cat:    document.getElementById('fin-cat').value,
     note:   document.getElementById('fin-note').value.trim()
-  });
+  }]);
+  
   closeModal('modal-finance');
+  loadData();
 };
 
 // ===== ORDER MODAL =====
@@ -457,17 +464,19 @@ window.saveOrder = async () => {
 
   const id = document.getElementById('order-edit-id').value;
   if (id) {
-    await updateDoc(doc(db, "orders", id), obj);
+    await supabase.from('orders').update(obj).eq('id', id);
   } else {
-    await addDoc(colOrders, obj);
+    await supabase.from('orders').insert([obj]);
   }
   closeModal('modal-order');
+  loadData();
 };
 
 // ===== DELETE =====
 window.deleteItem = async (collectionName, id) => {
   if (!confirm('ลบรายการนี้?')) return;
-  await deleteDoc(doc(db, collectionName, id));
+  await supabase.from(collectionName).delete().eq('id', id);
+  loadData();
 };
 
 // ===== DASHBOARD =====
@@ -532,24 +541,27 @@ window.addTodo = async () => {
   if (!text) return;
   const time = document.getElementById('todo-time').value || '';
 
-  await addDoc(colTodos, {
+  await supabase.from('todos').insert([{
     text,
     time,
     done: false,
     date: todayStr(),
     createdAt: Date.now()
-  });
+  }]);
 
   document.getElementById('todo-text').value = '';
   document.getElementById('todo-time').value = '';
+  loadData();
 };
 
 window.toggleTodo = async (id, current) => {
-  await updateDoc(doc(db, "todos", id), { done: current !== true });
+  await supabase.from('todos').update({ done: current !== true }).eq('id', id);
+  loadData();
 };
 
 window.deleteTodo = async (id) => {
-  await deleteDoc(doc(db, "todos", id));
+  await supabase.from('todos').delete().eq('id', id);
+  loadData();
 };
 
 function renderTodos() {
@@ -625,6 +637,7 @@ function renderAll() {
   renderStock();
   renderFinance();
   renderOrders();
+  renderTodos();
   renderStats();
 }
 
@@ -883,6 +896,6 @@ function init() {
   const fab = document.getElementById('todo-fab');
   if (fab) fab.style.display = 'flex';
 
-  initRealtime();
+  loadData();
   lucide.createIcons();
 }
