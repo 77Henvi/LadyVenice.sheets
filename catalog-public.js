@@ -3,7 +3,7 @@ import { onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/1
 import { colCatalog } from "./firebase-config.js";
 
 let publicData = [];
-let bookInstance = null; // ตัวแปรสำหรับเก็บหนังสือ
+let bookInstance = null; 
 
 // 1. ดึงข้อมูลจาก Firestore แบบ Realtime
 const qCatalog = query(colCatalog, orderBy("order", "asc"));
@@ -11,19 +11,20 @@ const qCatalog = query(colCatalog, orderBy("order", "asc"));
 onSnapshot(qCatalog, snap => {
   publicData = [];
   snap.forEach(d => publicData.push({ id: d.id, ...d.data() }));
-  renderFlipbook(); // เปลี่ยนมาเรียกฟังก์ชันสร้างหนังสือแทน
+  renderFlipbook(); 
 });
 
 // 2. ฟังก์ชันสร้าง Flipbook
 function renderFlipbook() {
-  const container = document.getElementById('public-catalog-list');
-  
+  const container = document.getElementById('public-catalog-list') || document.getElementById('flipbook-container');
+  if (!container) return;
+
   if (!publicData.length) {
     container.innerHTML = '<div class="loading-text" style="text-align:center; padding: 40px;">No items available at the moment.</div>';
     return;
   }
 
-  // หั่นสินค้าออกเป็นกองๆ กองละ 4 ชิ้น (เพื่อให้โชว์ 4 ชิ้นต่อ 1 หน้ากระดาษ)
+  // หั่นสินค้าออกเป็นกองๆ กองละ 4 ชิ้น
   const itemsPerPage = 4;
   const pages = [];
   for (let i = 0; i < publicData.length; i += itemsPerPage) {
@@ -31,8 +32,6 @@ function renderFlipbook() {
   }
 
   // เริ่มสร้าง HTML ของหน้าหนังสือ
-  
-  // -- ปกหน้า --
   let html = `
     <div class="page page-cover" style="background: #FDFCFB; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #EBEBEB;">
       <h2 style="font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 8px;">LADY VENICE</h2>
@@ -40,7 +39,6 @@ function renderFlipbook() {
     </div>
   `;
 
-  // -- หน้าเนื้อหา --
   pages.forEach((pageItems, index) => {
     html += `
       <div class="page" style="background: #FFFFFF; border: 1px solid #EEEEEE; overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,0.02);">
@@ -49,8 +47,8 @@ function renderFlipbook() {
           <div class="page-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; row-gap: 24px; flex-grow: 1;">
             ${pageItems.map(item => `
               <div class="product-card" onclick="openProductModal('${item.id}')" style="cursor: pointer;">
-                <div class="product-image-wrap" style="aspect-ratio: 4/5; background: #F7F7F7; margin-bottom: 8px;">
-                  <img src="${item.image || 'https://via.placeholder.com/400'}" alt="${item.name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                <div class="product-image-wrap" style="aspect-ratio: 4/5; background: #F7F7F7; margin-bottom: 8px; overflow: hidden;">
+                  <img src="${item.image || 'https://via.placeholder.com/400'}" alt="${item.name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                 </div>
                 <div class="product-info" style="text-align: left;">
                   <div class="product-name" style="font-family: 'Playfair Display', serif; font-size: 12px; margin-bottom: 4px;">${item.name}</div>
@@ -68,30 +66,25 @@ function renderFlipbook() {
     `;
   });
 
-  // -- เช็คปกหลัง -- (ถ้าหน้าเนื้อหาเป็นเลขคี่ ต้องเติมกระดาษเปล่า 1 แผ่นให้มันคู่กัน)
+  // ถ้าหน้าเนื้อหาเป็นเลขคี่ เติมกระดาษเปล่าให้ปกหลังปิดได้สวยๆ
   if (pages.length % 2 !== 0) {
     html += `<div class="page" style="background: #FFFFFF; border: 1px solid #EEEEEE;"></div>`;
   }
 
-  // -- ปกหลังสุด --
   html += `
     <div class="page page-cover" style="background: #FDFCFB; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #EBEBEB;">
       <div style="font-size: 12px; letter-spacing: 2px; color: #767676;">WWW.LADYVENICE.APP</div>
     </div>
   `;
 
-  // ใส่ HTML ลงไปในกล่อง
   container.innerHTML = html;
-  
-  // ล้างคลาส CSS เดิมที่เป็น Grid ทิ้ง เพื่อให้ Library จัดการ Layout เอง
   container.className = ''; 
 
-  // 3. ปลุกชีพ PageFlip (วาดหนังสือ 3D)
+  // 3. ปลุกชีพ PageFlip 
   if (bookInstance) {
-    bookInstance.destroy(); // ถ้ามีหนังสือเดิมอยู่ให้ลบก่อน (กรณีข้อมูลอัปเดตแบบ Realtime)
+    bookInstance.destroy(); 
   }
 
-  // สั่งให้ St.PageFlip ทำงาน
   if (typeof St !== 'undefined' && St.PageFlip) {
     bookInstance = new St.PageFlip(container, {
       width: 350,       
@@ -107,14 +100,13 @@ function renderFlipbook() {
       usePortrait: true      
     });
 
-    // โหลด Element ที่เราเพิ่งสร้างให้กลายเป็นหน้าหนังสือ
     bookInstance.loadFromHTML(container.querySelectorAll('.page'));
   } else {
     console.error("PageFlip library ไม่ทำงาน กรุณาเช็กว่าใส่ <script> ใน HTML แล้วหรือยัง");
   }
 }
 
-// 4. ฟังก์ชันจัดการ Modal รายละเอียดสินค้า (ใช้ของเดิม)
+// 4. ฟังก์ชันจัดการ Modal ย่อขยายรายละเอียดสินค้า
 window.openProductModal = function(id) {
   const item = publicData.find(x => x.id === id);
   if (!item) return;
@@ -132,5 +124,5 @@ window.openProductModal = function(id) {
   }
 
   document.getElementById('public-product-modal').classList.add('open');
-  lucide.createIcons(); 
+  if (typeof lucide !== 'undefined') lucide.createIcons(); 
 };

@@ -517,6 +517,20 @@
 
 </div>
 
+<script>
+  // ถ้ากดปุ่มแล้ว Error ให้รอโหลดเสร็จแล้วค่อยผูกฟังก์ชัน
+  window.addEventListener('load', () => {
+    // บังคับให้ปุ่มเปิด Modal ได้เสมอ
+    document.querySelector('.btn-add')?.addEventListener('click', () => {
+      if(typeof window.openCatalogModal === 'function') {
+        window.openCatalogModal();
+      } else {
+        console.error("ฟังก์ชันยังโหลดไม่เสร็จ หรือหาไม่เจอ");
+      }
+    });
+  });
+</script>
+
 <script type="module" src="app.js"></script>
 
 </body>
