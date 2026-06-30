@@ -1,6 +1,6 @@
 // catalog-public.js
 import { onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { colCatalog } from "./firebase-config.js";
+import { colCatalog } from "../firebase-config.js";
 
 let publicData = [];
 let bookInstance = null; 
