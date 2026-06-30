@@ -4,7 +4,8 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/f
 import { addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { auth, db, colStock, colFinance, colOrders, colTodos } from "./firebase-config.js";
 import { todayStr, thisMonthStr, fmtDate, fmtMoney, emptyState } from "./utils.js";
-import "./auth.js"; // โหลดเพื่อให้ window.handleLogin ต่างๆ ทำงาน
+import "./auth.js"; 
+import "./catalog-admin.js";
 
 // ===== DATA STATE =====
 let data = { stock: [], finance: [], orders: [], todos: [] };
