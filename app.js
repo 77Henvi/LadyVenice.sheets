@@ -5,7 +5,7 @@ import { addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstat
 import { auth, db, colStock, colFinance, colOrders, colTodos } from "./firebase-config.js";
 import { todayStr, thisMonthStr, fmtDate, fmtMoney, emptyState } from "./utils.js";
 import "./auth.js"; 
-import "./catalog-admin.js";
+import "./catalog-public.js";
 
 // ===== DATA STATE =====
 let data = { stock: [], finance: [], orders: [], todos: [] };
