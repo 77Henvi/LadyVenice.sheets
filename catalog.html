@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Our Catalog | LadyVenice</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="catalog.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+<body>
+    <div class="intro-screen" id="introScreen">
+        <img class="intro-bg-floral" src="images/floral-bg.jpg" alt="">
+        <div class="intro-vignette"></div>
+
+        <div class="intro-inner">
+            <div class="intro-left" id="introLeft">Lady</div>
+            <div class="intro-right">
+            <div class="venice" id="introVenice">Venice</div>
+            <div class="catalog" id="introCatalog">Catalog</div>
+            </div>
+        </div>
+    </div>
+
+  <header class="public-header">
+    <div class="logo">
+      Lady<span>Venice</span>
+    </div>
+    <div class="header-subtitle">COLLECTION</div>
+  </header>
+
+  <main class="catalog-container">
+    <div id="public-catalog-list" class="catalog-grid">
+      <div class="loading-text">Loading Lookbook...</div>
+    </div>
+  </main>
+
+  <footer class="public-footer">
+    <p>© 2026 LadyVenice. All rights reserved.</p>
+  </footer>
+
+  <div class="public-modal-overlay" id="public-product-modal" onclick="closeProductModal(event)">
+    <div class="public-modal-content" id="public-modal-box">
+      <button class="btn-close-modal" onclick="forceCloseModal()">
+        <i data-lucide="x"></i>
+      </button>
+      
+      <div class="modal-image-wrap">
+        <img id="modal-img" src="" alt="Product Image">
+      </div>
+      
+      <div class="modal-details">
+        <h2 id="modal-title" class="modal-title">Product Name</h2>
+        <div id="modal-price" class="modal-price">Price</div>
+        <div class="modal-divider"></div>
+        <p id="modal-desc" class="modal-desc">Description goes here...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
+
+  <script type="module" src="catalog-public.js"></script>
+
+  <script>
+    window.forceCloseModal = function() {
+      document.getElementById('public-product-modal').classList.remove('open');
+    };
+    window.closeProductModal = function(e) {
+      if(e.target.id === 'public-product-modal') forceCloseModal();
+    };
+  </script>
+
+    <script>
+        (function() {
+            const introScreen = document.getElementById('introScreen');
+            if (!introScreen) return;
+
+            if (sessionStorage.getItem('introPlayed')) {
+                introScreen.style.transition = 'none';
+                introScreen.style.opacity = '0';
+                introScreen.style.pointerEvents = 'none';
+                setTimeout(() => { introScreen.style.display = 'none'; }, 0);
+                return;
+            }
+            sessionStorage.setItem('introPlayed', '1');
+
+            const introLeft    = document.getElementById('introLeft');
+            const introVenice   = document.getElementById('introVenice');
+            const introCatalog  = document.getElementById('introCatalog');
+            const introFloral = document.querySelector('.intro-bg-floral');
+
+            setTimeout(() => introFloral.classList.add('-entered'), 200);
+            setTimeout(() => introLeft.classList.add('-entered'), 500);
+            setTimeout(() => introVenice.classList.add('-entered'), 1700);
+            setTimeout(() => introCatalog.classList.add('-entered'), 2700);
+
+            setTimeout(() => {
+                introScreen.classList.add('-fadeOut');
+                setTimeout(() => { introScreen.style.display = 'none'; }, 1000);
+            }, 3800);
+        })();
+    </script>
+
+</body>
+</html>

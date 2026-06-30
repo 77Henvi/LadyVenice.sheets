@@ -14,7 +14,6 @@
 
 <body>
 
-<!-- LOGIN PAGE -->
 <div id="login-page" class="login-page">
   <div class="login-card">
     <div class="login-logo">
@@ -51,11 +50,9 @@
   </div>
 </div>
 
-<!-- MAIN APP (hidden until logged in) -->
 <div id="main-app" style="display:none;">
 <div id="desktop-layout">
 
-<!-- BOTTOM NAV / SIDEBAR -->
 <div class="bottom-nav">
   <button class="bottom-nav-item active" id="nav-home" onclick="switchTab('home')">
     <i data-lucide="home" class="bottom-nav-icon"></i>หน้าหลัก
@@ -72,17 +69,17 @@
   <button class="bottom-nav-item" id="nav-stats" onclick="switchTab('stats')">
     <i data-lucide="bar-chart-2" class="bottom-nav-icon"></i>Stats
   </button>
-  <!-- Desktop only: To-do shortcut in sidebar -->
+  <button class="bottom-nav-item" id="nav-catalog" onclick="switchTab('catalog')">
+    <i data-lucide="book-open" class="bottom-nav-icon"></i>Catalog
+  </button>
   <div class="sidebar-divider"></div>
   <button class="bottom-nav-item sidebar-todo-btn" onclick="openModal('modal-todo')">
     <i data-lucide="check-square" class="bottom-nav-icon"></i>To-do
   </button>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="main-content">
 
-<!-- HEADER -->
 <div class="app-header">
   <div>
     <h1>Lady<span>Venice</span>.bq</h1>
@@ -93,13 +90,11 @@
   </button>
 </div>
 
-<!-- TODO FAB -->
 <button class="todo-fab" id="todo-fab" onclick="openModal('modal-todo')">
   <i data-lucide="check-square" style="width:22px;height:22px;stroke:white;stroke-width:2;"></i>
   <span class="todo-fab-label">To-do</span>
 </button>
 
-<!-- TODO MODAL -->
 <div class="modal-overlay" id="modal-todo">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -120,7 +115,6 @@
   </div>
 </div>
 
-<!-- ARCHIVE MODAL -->
 <div class="modal-overlay" id="modal-archive">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -133,7 +127,6 @@
   </div>
 </div>
 
-<!-- HOME -->
 <div class="page active" id="page-home">
   <div style="padding-top:4px;">
     <div class="summary-grid">
@@ -165,7 +158,6 @@
   </div>
 </div>
 
-<!-- STOCK -->
 <div class="page" id="page-stock">
   <div class="search-bar">
     <input type="text" placeholder="ค้นหาสินค้า..." id="stock-search" oninput="renderStock()">
@@ -183,7 +175,6 @@
   <div class="item-list" id="stock-list"></div>
 </div>
 
-<!-- FINANCE -->
 <div class="page" id="page-finance">
   <div class="month-selector-wrap">
     <select class="month-selector" id="fin-month-select" onchange="onFinMonthChange()"></select>
@@ -216,7 +207,6 @@
   <div class="item-list" id="finance-list"></div>
 </div>
 
-<!-- ORDER -->
 <div class="page" id="page-order">
   <div class="month-selector-wrap">
     <select class="month-selector" id="order-month-select" onchange="onOrderMonthChange()"></select>
@@ -234,13 +224,11 @@
   <div class="item-list" id="order-list"></div>
 </div>
 
-<!-- STATS PAGE -->
 <div class="page" id="page-stats">
   <div class="stats-header-row">
     <select class="month-selector" id="stats-year-select" onchange="renderStats()"></select>
   </div>
 
-  <!-- KPI Cards — 2 rows -->
   <div class="summary-grid" style="margin-bottom:10px;">
     <div class="summary-card accent">
       <div class="summary-label">ออเดอร์ทั้งปี</div>
@@ -268,7 +256,6 @@
     </div>
   </div>
 
-  <!-- Chart -->
   <div class="stats-chart-card">
     <div class="stats-chart-title">รายรับ vs รายจ่าย · กดจุดเพื่อดูรายละเอียด</div>
     <div class="stats-chart-wrap">
@@ -276,12 +263,21 @@
     </div>
   </div>
 
-  <!-- Monthly breakdown -->
   <div class="section-title" style="margin-top:4px;"><span>รายละเอียดรายเดือน</span></div>
   <div class="item-list" id="stats-month-list"></div>
 </div>
 
-<!-- STATS DETAIL MODAL -->
+<div class="page" id="page-catalog">
+  <div class="section-title" style="margin-top: 4px;">
+    <span>รายการสินค้าสาธารณะ</span>
+    <button class="btn-add" onclick="openCatalogModal()">+ เพิ่มสินค้า</button>
+  </div>
+  <p style="font-size: 13px; color: var(--gray-mid); margin-bottom: 16px;">
+    * ลาก-วาง เพื่อสลับตำแหน่งการแสดงผลบนหน้าเว็บลูกค้าได้
+  </p>
+  <div class="item-list" id="catalog-list"></div>
+</div>
+
 <div class="modal-overlay" id="modal-stats-detail">
   <div class="modal-sheet" style="max-height:88dvh;">
     <div class="modal-handle"></div>
@@ -290,7 +286,6 @@
       <button class="btn-modal-close" onclick="closeModal('modal-stats-detail')"><i data-lucide="x"></i></button>
     </div>
 
-    <!-- Mini KPI -->
     <div class="sm-kpi-row">
       <div class="sm-kpi">
         <div class="sm-kpi-label">รายรับ</div>
@@ -308,13 +303,11 @@
       </div>
     </div>
 
-    <!-- Orders -->
     <div class="sm-section-label">
       <i data-lucide="clipboard-list" style="width:13px;height:13px;"></i> ออเดอร์
     </div>
     <div id="sm-orders-list" class="sm-list"></div>
 
-    <!-- Expenses -->
     <div class="sm-section-label" style="margin-top:16px;">
       <i data-lucide="receipt" style="width:13px;height:13px;"></i> รายจ่าย
     </div>
@@ -322,11 +315,9 @@
   </div>
 </div>
 
-</div><!-- end .main-content -->
-</div><!-- end #desktop-layout -->
+</div>
+</div>
 
-<!-- MODALS (fixed position, outside layout flow) -->
-<!-- STOCK MODAL -->
 <div class="modal-overlay" id="modal-stock">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -388,7 +379,6 @@
   </div>
 </div>
 
-<!-- FINANCE MODAL -->
 <div class="modal-overlay" id="modal-finance">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -440,7 +430,6 @@
   </div>
 </div>
 
-<!-- ORDER MODAL -->
 <div class="modal-overlay" id="modal-order">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
@@ -488,6 +477,41 @@
 
     <button class="btn-submit" onclick="saveOrder()">บันทึก</button>
     <button class="btn-cancel" onclick="closeModal('modal-order')">ยกเลิก</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-catalog">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div class="modal-title" style="margin-bottom:0;" id="catalog-modal-title">เพิ่มสินค้า Catalog</div>
+      <button class="btn-modal-close" onclick="closeModal('modal-catalog')"><i data-lucide="x"></i></button>
+    </div>
+    <input type="hidden" id="catalog-edit-id">
+
+    <div class="form-group">
+      <label class="form-label">รูปภาพสินค้า (แนะนำ 1:1, ไม่เกิน 5MB)</label>
+      <input class="form-input" type="file" id="catalog-image" accept="image/jpeg, image/png, image/webp" style="padding-top: 8px;">
+      <img id="catalog-image-preview" style="max-width: 100px; margin-top: 8px; border-radius: 8px; display: none;">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ชื่อสินค้า <span style="color:var(--dusty-rose-dark)">*</span></label>
+      <input class="form-input" id="catalog-name" placeholder="เช่น กุหลาบนำเข้า สีแดง">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">ราคา (ข้อความ) <span style="color:var(--dusty-rose-dark)">*</span></label>
+      <input class="form-input" id="catalog-price" placeholder="เช่น 500 บาท หรือ 1,000 - 1,500">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">รายละเอียดเพิ่มเติม</label>
+      <textarea class="form-textarea" id="catalog-desc" placeholder="คำอธิบายสินค้า..."></textarea>
+    </div>
+
+    <button class="btn-submit" id="btn-save-catalog" onclick="saveCatalog()">บันทึก</button>
+    <button class="btn-cancel" onclick="closeModal('modal-catalog')">ยกเลิก</button>
   </div>
 </div>
 

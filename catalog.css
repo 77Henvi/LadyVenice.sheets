@@ -1,0 +1,411 @@
+/* catalog.css - Luxury Vibe Update */
+:root {
+  --bg-color: #FFFFFF; /* ขาวล้วนคลีนๆ */
+  --text-main: #000000;
+  --text-muted: #767676;
+  --border-color: #EBEBEB;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== HEADER ===== */
+.public-header {
+  text-align: center;
+  padding: 48px 20px 32px;
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 400; /* ลดน้ำหนักลงให้ดูแพง */
+  letter-spacing: -0.5px; /* บีบตัวอักษรหลักนิดๆ */
+}
+
+.logo span {
+  font-style: italic;
+}
+
+.header-subtitle {
+  font-size: 10px;
+  letter-spacing: 4px; /* ถ่างตัวอักษรรองให้กว้าง */
+  color: var(--text-muted);
+  margin-top: 12px;
+  text-transform: uppercase;
+}
+
+/* ===== FLIPBOOK LAYOUT ===== */
+.catalog-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 16px 80px;
+  display: flex;
+  justify-content: center;
+}
+
+.flipbook-wrapper {
+  /* ซ่อนชั่วคราวก่อน JS โหลดเสร็จ */
+  display: none; 
+}
+
+/* สไตล์หน้ากระดาษแต่ละหน้า */
+.page {
+  background-color: #FFFFFF;
+  border: 1px solid #EEEEEE;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.02); /* เงาสันหนังสือด้านใน */
+}
+
+/* ส่วนเนื้อหาในแต่ละหน้ากระดาษ */
+.page-content {
+  padding: 32px 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* เลขหน้า */
+.page-footer {
+  margin-top: auto;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: 'Playfair Display', serif;
+}
+
+/* ปกหนังสือ */
+.page-cover {
+  background-color: #FDFCFB;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #EBEBEB;
+}
+
+.cover-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* จัด Grid สินค้า 4 ชิ้นต่อ 1 หน้ากระดาษ */
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  row-gap: 24px;
+}
+
+/* ===== PRODUCT CARD  ===== */
+.product-card {
+  cursor: pointer;
+}
+
+.product-image-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background-color: #F7F7F7;
+  margin-bottom: 12px;
+}
+
+.product-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  text-align: center;
+}
+
+.product-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-price {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ===== FOOTER ===== */
+.public-footer {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 10px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ===== LUXURY MODAL ===== */
+.public-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.98); /* ขาวเกือบ 100% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.public-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.public-modal-content {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 480px;
+  padding: 0;
+  transform: translateY(20px);
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  max-height: 100vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05); /* เงาบางเฉียบ */
+}
+
+.public-modal-overlay.open .public-modal-content {
+  transform: translateY(0);
+}
+
+.btn-close-modal {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-main);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+}
+
+.modal-image-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: #F7F7F7;
+}
+
+.modal-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-details {
+  text-align: center;
+  padding: 32px 24px 40px;
+}
+
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.modal-price {
+  font-size: 14px;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  margin-bottom: 24px;
+}
+
+.modal-divider {
+  width: 30px;
+  height: 1px;
+  background-color: var(--text-main);
+  margin: 0 auto 24px;
+}
+
+.modal-desc {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  white-space: pre-line;
+}
+
+/* ===== YSL SPLASH SCREEN (Refined) ===== */
+:root {
+  --ease-in-out-simple: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-fade: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.intro-screen {
+  background: #380707;
+  height: 100svh;
+  left: 0;
+  opacity: 1;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: opacity 1s var(--ease-fade);
+}
+
+.intro-screen.-fadeOut {
+  opacity: 0;
+}
+
+.intro-inner {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  justify-content: center;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  z-index: 2;
+}
+
+.intro-left {
+  --introTranslate: calc(7.5px + 50%);
+  transform: translate3d(var(--introTranslate), 0, 0);
+  transition: transform 1.7s var(--ease-in-out-simple), opacity 1.5s var(--ease-fade);
+  font-family: 'Pinyon Script', cursive;
+  text-transform: none;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  font-size: 60px;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.intro-left.-entered {
+  --introTranslate: 0;
+}
+
+.intro-right {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.venice {
+  opacity: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  transform: translateZ(0);
+  transition: transform 1s var(--ease-in-out-simple), opacity 1s var(--ease-in-out-simple);
+  font-family: 'Pinyon Script', cursive;
+  text-transform: none;
+  font-size: 60px;
+  color: #ffffff;
+}
+
+.venice.-entered {
+  opacity: 1;
+}
+
+.catalog {
+  margin-top: 0px;
+  overflow: hidden;
+  opacity: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  transition: opacity .8s var(--ease-in-out-simple);
+  font-family: 'DM Sans', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.catalog.-entered {
+  opacity: 1;
+}
+
+.intro-bg-floral {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  transform: translate3d(-60px, 0, 0);
+  transition: opacity 2.5s var(--ease-fade), transform 2.5s var(--ease-in-out-simple);
+}
+
+.intro-bg-floral.-entered {
+  opacity: 0.35;
+  transform: translate3d(0, 0, 0);
+}
+.intro-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.55) 100%);
+  opacity: 0;
+  animation: vignetteIn 2.5s var(--ease-fade) forwards, vignetteBreathe 6s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+@keyframes vignetteIn {
+  to { opacity: 1; }
+}
+
+@keyframes vignetteBreathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+@keyframes floatDrift {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(2deg);
+  }
+}
+
+.intro-bg-flower--2 {
+  animation-name: floatDriftReverse;
+}
+
+@keyframes floatDriftReverse {
+  0%, 100% {
+    transform: translateY(0) rotate(180deg);
+  }
+  50% {
+    transform: translateY(18px) rotate(178deg);
+  }
+}
