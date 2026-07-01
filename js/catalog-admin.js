@@ -23,8 +23,7 @@ function renderCatalog() {
   }
 
   el.innerHTML = catalogData.map((c, index) => {
-    // 🔴 แก้ไข: ดักจับคำว่า EMPTY เพื่อแสดงรูปรอ (Placeholder)
-    const imgSrc = (c.image && c.image !== 'EMPTY') ? c.image : 'https://via.placeholder.com/60?text=No+Image';
+    const imgSrc = (c.image && c.image !== 'EMPTY') ? c.image : 'https://placehold.co/60x60/f0eee9/8a9e8c?text=No+Img';
     
     return `
     <div class="item-card catalog-item" draggable="true" data-id="${c.id}" data-index="${index}" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
