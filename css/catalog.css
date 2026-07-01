@@ -409,3 +409,96 @@ body {
     transform: translateY(18px) rotate(178deg);
   }
 }
+
+/* catalog.css */
+
+/* --- Preloader --- */
+.flipbook-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px; /* ปรับตามความสูงคอนเทนเนอร์ของคุณ */
+  font-family: 'DM Sans', sans-serif;
+  color: var(--sage, #8a9e8c);
+  font-size: 1.1rem;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* --- Product Card Base --- */
+.product-card {
+  background-color: #fcfbf9;
+  box-sizing: border-box;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  
+  /* Priority 13: เตรียมตัวสำหรับ Scroll Stagger */
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.product-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Image Wrap & Hover Effect (Priority 10) --- */
+.product-image-wrap {
+  width: 100%;
+  height: 70%; /* ปรับสัดส่วนรูปกับข้อความ */
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.product-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease; /* ทำให้ Zoom นุ่มนวล */
+}
+
+/* แทนที่ onmouseover/onmouseout ด้วย CSS ล้วนๆ */
+.product-card:hover .product-image-wrap img {
+  transform: scale(1.05);
+}
+
+/* --- Product Info --- */
+.product-info {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 30%;
+}
+
+.product-name {
+  font-size: 1.25rem;
+  color: #2c2c2a;
+  margin: 0 0 6px 0;
+  font-family: 'Playfair Display', serif; /* หรือฟอนต์ที่คุณใช้ */
+}
+
+.product-price {
+  font-size: 1.1rem;
+  color: var(--dusty-rose, #c9897a);
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.product-desc {
+  font-size: 0.9rem;
+  color: #7a7a78;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* ตัดข้อความถ้าเกิน 2 บรรทัด */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

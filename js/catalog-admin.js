@@ -105,14 +105,14 @@ window.saveCatalog = async function() {
       const fileName = `${Date.now()}.${fileExt}`; // ตั้งชื่อไฟล์ใหม่กันซ้ำ
       
       const { error: uploadError } = await supabase.storage
-        .from('catalog-images')
-        .upload(fileName, file);
+          .from('catalog-images')
+          .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
-      // ดึง URL แบบ Public ของรูปที่เพิ่งอัปโหลด
+        // ดึง Public URL
       const { data } = supabase.storage.from('catalog-images').getPublicUrl(fileName);
-      imageUrl = data.publicUrl;
+      const imageUrl = data.publicUrl;
     }
     
     if (id) {

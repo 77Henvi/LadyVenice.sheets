@@ -15,8 +15,8 @@
 </head>
 
 <body>
-    <div class="intro-screen" id="introScreen">
-        <img class="intro-bg-floral" src="images/floral-bg.jpg" alt="">
+    <div class="intro-screen" id="introScreen" style="display:none;">
+        <img class="intro-bg-floral" src="/images/floral-bg.jpg" alt="Floral Background">
         <div class="intro-vignette"></div>
 
         <div class="intro-inner">
@@ -35,7 +35,7 @@
     <div class="header-subtitle">COLLECTION</div>
   </header>
 
-  <main class="catalog-container">
+  <main id="catalog-container">
     <div id="public-catalog-list" class="catalog-grid">
       <div class="loading-text">Loading Lookbook...</div>
     </div>
@@ -64,7 +64,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
 
   <script type="module" src="/js/catalog-public.js"></script>
 
@@ -89,6 +89,11 @@
                 setTimeout(() => { introScreen.style.display = 'none'; }, 0);
                 return;
             }
+
+            if (!sessionStorage.getItem('introPlayed')) {
+              introScreen.style.display = 'block';
+              sessionStorage.setItem('introPlayed', '1');
+            }
             sessionStorage.setItem('introPlayed', '1');
 
             const introLeft    = document.getElementById('introLeft');
@@ -105,6 +110,8 @@
                 introScreen.classList.add('-fadeOut');
                 setTimeout(() => { introScreen.style.display = 'none'; }, 1000);
             }, 3800);
+
+            
         })();
     </script>
 
