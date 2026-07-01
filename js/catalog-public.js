@@ -19,7 +19,6 @@ async function loadCatalog() {
     return;
   }
 
-  // 🔴 1. กรองคำว่า 'EMPTY' ออกจาก Preloader
   const validImages = data
     .map(item => item.image)
     .filter(img => img && img !== 'EMPTY');
@@ -39,27 +38,25 @@ async function loadCatalog() {
 
   await Promise.allSettled(validImages.map(loadWithTimeout));
 
-  // ส่ง data และ container ไปเรนเดอร์
   renderFlipbook(data, container);
 }
 
 function renderFlipbook(items, container) {
-  // 🔴 2. ถ้าสินค้ามีหน้าเดียว (คี่) ต้องเติมหน้าว่างให้ PageFlip ไม่พัง!
+
   if (items.length % 2 !== 0) {
     items.push({ 
       name: 'Coming Soon', 
       price: '', 
       desc: 'รอพบกับคอลเล็กชันใหม่เร็วๆ นี้', 
-      image: 'EMPTY',
+      image: 'https://placehold.co/400x500/fcfbf9/8a9e8c?font=playfair-display&text=Coming+Soon', 
       isPlaceholder: true 
     });
   }
 
-  // 🔴 3. เช็กคำว่า EMPTY เพื่อสลับไปใช้ Placeholder
   const pagesHtml = items.map(item => {
     const imgSrc = (item.image && item.image !== 'EMPTY') 
       ? item.image 
-      : 'https://via.placeholder.com/400x500?text=LadyVenice';
+      : 'https://placehold.co/400x500/fcfbf9/c9897a?font=playfair-display&text=LadyVenice'; 
       
     const descHtml = (item.desc && item.desc !== 'EMPTY') 
       ? `<p class="product-desc">${item.desc}</p>` 

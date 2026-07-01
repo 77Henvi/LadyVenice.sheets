@@ -429,19 +429,16 @@ body {
   50% { opacity: 1; }
 }
 
-/* --- Product Card Base --- */
+/* --- Product Card Base (หน้ากระดาษ) --- */
 .product-card {
-  background-color: #fcfbf9;
+  background-color: #fcfbf9; /* บังคับให้กระดาษทึบแสง ไม่ทะลุตอนพลิก */
   box-sizing: border-box;
-  padding: 16px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  
-  /* Priority 13: เตรียมตัวสำหรับ Scroll Stagger */
-  opacity: 0;
-  transform: translateY(15px);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.02); /* เพิ่มมิติให้หน้ากระดาษ */
+  border: 1px solid rgba(0,0,0,0.04); /* ขอบหนังสือบางๆ */
 }
 
 .product-card.visible {
@@ -449,25 +446,28 @@ body {
   transform: translateY(0);
 }
 
-/* --- Image Wrap & Hover Effect (Priority 10) --- */
 .product-image-wrap {
   width: 100%;
-  height: 70%; /* ปรับสัดส่วนรูปกับข้อความ */
+  height: 65%; 
   overflow: hidden;
-  border-radius: 8px;
-  margin-bottom: 16px;
+  border-radius: 4px; 
+  margin-bottom: 20px;
+  background-color: #f0eee9; 
 }
 
 .product-image-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease; /* ทำให้ Zoom นุ่มนวล */
+  display: block; 
 }
 
-/* แทนที่ onmouseover/onmouseout ด้วย CSS ล้วนๆ */
 .product-card:hover .product-image-wrap img {
   transform: scale(1.05);
+}
+
+.stf__wrapper {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
 }
 
 /* --- Product Info --- */
