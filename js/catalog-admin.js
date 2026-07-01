@@ -22,11 +22,15 @@ function renderCatalog() {
     return;
   }
 
-  el.innerHTML = catalogData.map((c, index) => `
+  el.innerHTML = catalogData.map((c, index) => {
+    // 🔴 แก้ไข: ดักจับคำว่า EMPTY เพื่อแสดงรูปรอ (Placeholder)
+    const imgSrc = (c.image && c.image !== 'EMPTY') ? c.image : 'https://via.placeholder.com/60?text=No+Image';
+    
+    return `
     <div class="item-card catalog-item" draggable="true" data-id="${c.id}" data-index="${index}" ondragstart="handleDragStart(event)" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
       <div class="item-card-left" style="align-items: center; gap: 12px; cursor: grab;">
         <div style="font-size: 20px; color: #ccc;">⋮⋮</div>
-        <img src="${c.image || 'https://via.placeholder.com/60'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+        <img src="${imgSrc}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
         <div>
           <div class="item-name">${c.name}</div>
           <div class="item-sub">${c.price}</div>
@@ -36,7 +40,8 @@ function renderCatalog() {
         <button class="btn-icon" onclick="editCatalog('${c.id}')">✏️</button>
         <button class="btn-icon danger" onclick="deleteCatalog('${c.id}')">🗑</button>
       </div>
-    </div>`).join('');
+    </div>`
+  }).join('');
 }
 
 // ===== 2. จัดการหน้าต่าง MODAL =====
@@ -67,7 +72,8 @@ window.editCatalog = function(id) {
   document.getElementById('catalog-image').value = '';
   
   const preview = document.getElementById('catalog-image-preview');
-  if (c.image) {
+  // 🔴 แก้ไข: ดักจับคำว่า EMPTY ในโหมดแก้ไข
+  if (c.image && c.image !== 'EMPTY') {
     preview.src = c.image;
     preview.style.display = 'block';
   } else {
@@ -110,14 +116,16 @@ window.saveCatalog = async function() {
 
       if (uploadError) throw uploadError;
 
-        // ดึง Public URL
+      // ดึง Public URL
       const { data } = supabase.storage.from('catalog-images').getPublicUrl(fileName);
-      const imageUrl = data.publicUrl;
+      
+      // 🔴 แก้ไข: เอาคำว่า const ออก เพื่อให้บันทึกค่าลงตัวแปร imageUrl ด้านนอก
+      imageUrl = data.publicUrl;
     }
     
     if (id) {
       // โหมดแก้ไข
-      const updateData = { name, price, "desc": desc };
+      const updateData = { name, price, desc };
       if (imageUrl) updateData.image = imageUrl; // ถ้ามีรูปใหม่ค่อยอัปเดต URL รูป
       
       await supabase.from('catalog').update(updateData).eq('id', id);
@@ -127,9 +135,9 @@ window.saveCatalog = async function() {
       await supabase.from('catalog').insert([{ 
         name, 
         price, 
-        "desc": desc, 
+        desc, 
         "order": maxOrder + 1, 
-        image: imageUrl 
+        image: imageUrl || 'EMPTY' // ป้องกันค่าว่าง
       }]);
     }
     

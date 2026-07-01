@@ -1,11 +1,8 @@
 import { supabase } from "./supabase-config.js";
+
 async function loadCatalog() {
   const container = document.getElementById('catalog-container'); 
-  
-  if (!container) {
-      console.error("❌ หา 'catalog-container' ไม่เจอ รบกวนเช็ก ID ในหน้า HTML ครับ!");
-      return; 
-  }
+  if (!container) return;
 
   const { data, error } = await supabase
     .from('catalog')
@@ -14,7 +11,6 @@ async function loadCatalog() {
 
   if (error) {
     container.innerHTML = '<div class="loading-text" style="text-align:center; padding:40px;">ไม่สามารถโหลดสินค้าได้ในขณะนี้</div>';
-    console.error('Supabase error:', error);
     return;
   }
 
@@ -23,12 +19,14 @@ async function loadCatalog() {
     return;
   }
 
-  const images = data.map(item => item.image).filter(Boolean);
-  
+  // 🔴 1. กรองคำว่า 'EMPTY' ออกจาก Preloader
+  const validImages = data
+    .map(item => item.image)
+    .filter(img => img && img !== 'EMPTY');
+
   container.innerHTML = '<div class="flipbook-loading">กำลังโหลดแคตตาล็อก...</div>';
   
-  
-  const TIMEOUT = 8000; 
+  const TIMEOUT = 8000;
   const loadWithTimeout = (src) => Promise.race([
     new Promise(resolve => {
       const img = new Image();
@@ -39,27 +37,47 @@ async function loadCatalog() {
     new Promise(resolve => setTimeout(resolve, TIMEOUT))
   ]);
 
-  await Promise.allSettled(images.map(loadWithTimeout));
+  await Promise.allSettled(validImages.map(loadWithTimeout));
 
-
-  renderFlipbook(data);
+  // ส่ง data และ container ไปเรนเดอร์
+  renderFlipbook(data, container);
 }
 
-function renderFlipbook(items) {
-  container.innerHTML = ''; 
-  
-  const pagesHtml = items.map(item => `
-    <div class="page product-card">
-      <div class="product-image-wrap">
-        <img src="${item.image || 'https://via.placeholder.com/400x500?text=No+Image'}" alt="${item.name}">
+function renderFlipbook(items, container) {
+  // 🔴 2. ถ้าสินค้ามีหน้าเดียว (คี่) ต้องเติมหน้าว่างให้ PageFlip ไม่พัง!
+  if (items.length % 2 !== 0) {
+    items.push({ 
+      name: 'Coming Soon', 
+      price: '', 
+      desc: 'รอพบกับคอลเล็กชันใหม่เร็วๆ นี้', 
+      image: 'EMPTY',
+      isPlaceholder: true 
+    });
+  }
+
+  // 🔴 3. เช็กคำว่า EMPTY เพื่อสลับไปใช้ Placeholder
+  const pagesHtml = items.map(item => {
+    const imgSrc = (item.image && item.image !== 'EMPTY') 
+      ? item.image 
+      : 'https://via.placeholder.com/400x500?text=LadyVenice';
+      
+    const descHtml = (item.desc && item.desc !== 'EMPTY') 
+      ? `<p class="product-desc">${item.desc}</p>` 
+      : '';
+
+    return `
+      <div class="page product-card">
+        <div class="product-image-wrap">
+          <img src="${imgSrc}" alt="${item.name}">
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">${item.name}</h3>
+          <p class="product-price">${item.price}</p>
+          ${descHtml}
+        </div>
       </div>
-      <div class="product-info">
-        <h3 class="product-name">${item.name}</h3>
-        <p class="product-price">${item.price}</p>
-        ${item.desc ? `<p class="product-desc">${item.desc}</p>` : ''}
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   container.innerHTML = pagesHtml;
 
@@ -75,13 +93,13 @@ function renderFlipbook(items) {
     showCover: true,
     mobileScrollSupport: false,
     useMouseEvents: true,
-    swipeDistance: 30, 
+    swipeDistance: 30,
     clickEventForward: true
   });
 
   pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
-
+  // Scroll Animation Stagger
   const cards = document.querySelectorAll('.product-card');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -92,7 +110,7 @@ function renderFlipbook(items) {
   }, { threshold: 0.1 });
 
   cards.forEach((card, index) => {
-    card.style.transitionDelay = `${(index % 10) * 60}ms`; // ใช้ modulo กัน delay นานเกินถ้าหน้าเยอะ
+    card.style.transitionDelay = `${(index % 10) * 60}ms`;
     observer.observe(card);
   });
 }
