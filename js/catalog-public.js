@@ -1,8 +1,11 @@
 import { supabase } from "./supabase-config.js";
-
-const container = document.getElementById('catalog-container'); // แก้ ID ให้ตรงกับ HTML ของคุณ
-
 async function loadCatalog() {
+  const container = document.getElementById('catalog-container'); 
+  
+  if (!container) {
+      console.error("❌ หา 'catalog-container' ไม่เจอ รบกวนเช็ก ID ในหน้า HTML ครับ!");
+      return; 
+  }
 
   const { data, error } = await supabase
     .from('catalog')
@@ -20,13 +23,12 @@ async function loadCatalog() {
     return;
   }
 
-
   const images = data.map(item => item.image).filter(Boolean);
-
-
+  
   container.innerHTML = '<div class="flipbook-loading">กำลังโหลดแคตตาล็อก...</div>';
   
-  const TIMEOUT = 8000; // 8 วิ max รอรูปโหลด
+  
+  const TIMEOUT = 8000; 
   const loadWithTimeout = (src) => Promise.race([
     new Promise(resolve => {
       const img = new Image();
