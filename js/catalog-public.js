@@ -88,7 +88,9 @@ function renderFlipbook(items, container) {
     swipeDistance: 30,
     clickEventForward: true,
     showCover: true,
-    mobileScrollSupport: false // ป้องกันตีกับ Scroll Snap
+    mobileScrollSupport: false,
+    maxShadowOpacity: 0,
+    drawShadow: false 
   });
 
   pageFlip.loadFromHTML(document.querySelectorAll('.page'));

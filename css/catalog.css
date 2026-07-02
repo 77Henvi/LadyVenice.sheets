@@ -493,3 +493,16 @@ body {
   color: var(--text-muted);
   white-space: pre-line;
 }
+
+/* ===== FOOTER ===== */
+.public-footer {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 10px;
+  color: var(--text-muted, #767676);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'DM Sans', sans-serif;
+  margin-top: auto; /* ดันให้อยู่ล่างสุดเสมอ */
+  background-color: #faf9f7; /* สีเดียวกับพื้นหลัง section 2 */
+}
