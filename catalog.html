@@ -15,6 +15,7 @@
 </head>
 
 <body>
+    <!-- ================= SPLASH SCREEN  ================= -->
     <div class="intro-screen" id="introScreen" style="display:none;">
         <img class="intro-bg-floral" src="/images/floral-bg.jpg" alt="Floral Background">
         <div class="intro-vignette"></div>
@@ -28,23 +29,47 @@
         </div>
     </div>
 
-  <header class="public-header">
-    <div class="logo">
-      Lady<span>Venice</span>
+  <!-- ================= SECTION 1: HERO BANNER ================= -->
+  <section class="hero-section" id="heroSection">
+    <div class="hero-bg">
+      <img src="/images/floral-bg.jpg" alt="Lady Venice Floral">
+      <div class="hero-overlay"></div>
     </div>
-    <div class="header-subtitle">COLLECTION</div>
-  </header>
-
-  <main id="catalog-container">
-    <div id="public-catalog-list" class="catalog-grid">
-      <div class="loading-text">Loading Lookbook...</div>
+    <div class="hero-content" id="heroContent">
+      <h1 class="hero-title">Lady Venice</h1>
+      <p class="hero-subtitle">BOUQUETS</p>
     </div>
-  </main>
+    <div class="scroll-indicator" id="scrollIndicator">
+      <i data-lucide="chevron-down"></i>
+    </div>
+  </section>
 
+  <!-- ================= SECTION 2: FLIPBOOK ================= -->
+  <section class="flipbook-section" id="collectionSection">
+    <div class="collection-header">
+      OUR COLLECTION
+    </div>
+    
+    <div class="flipbook-wrapper">
+      <!-- ปุ่ม Custom Nav (Redesign) -->
+      <button class="flip-btn prev-btn" id="btn-prev"><i data-lucide="arrow-left"></i></button>
+      
+      <!-- คอนเทนเนอร์สมุด -->
+      <div id="catalog-container">
+        <div class="loading-text">Loading Lookbook...</div>
+      </div>
+      
+      <!-- ปุ่ม Custom Nav (Redesign) -->
+      <button class="flip-btn next-btn" id="btn-next"><i data-lucide="arrow-right"></i></button>
+    </div>
+  </section>
+  
+  <!-- ================= FOOTER ================= -->
   <footer class="public-footer">
     <p>© 2026 LadyVenice. All rights reserved.</p>
   </footer>
 
+  <!-- ================= MODAL ================= -->
   <div class="public-modal-overlay" id="public-product-modal" onclick="closeProductModal(event)">
     <div class="public-modal-content" id="public-modal-box">
       <button class="btn-close-modal" onclick="forceCloseModal()">
@@ -64,11 +89,16 @@
     </div>
   </div>
 
+  <!-- ================= SCRIPTS ================= -->
   <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
-
   <script type="module" src="/js/catalog-public.js"></script>
 
   <script>
+    // ฟังก์ชัน Smooth Scroll จากปุ่มลูกศร
+    window.scrollToCollection = function() {
+      document.getElementById('collectionSection').scrollIntoView({ behavior: 'smooth' });
+    };
+
     window.forceCloseModal = function() {
       document.getElementById('public-product-modal').classList.remove('open');
     };
@@ -78,6 +108,7 @@
   </script>
 
     <script>
+        // Splash Screen Logic (ของเดิม)
         (function() {
             const introScreen = document.getElementById('introScreen');
             if (!introScreen) return;
@@ -110,10 +141,12 @@
                 introScreen.classList.add('-fadeOut');
                 setTimeout(() => { introScreen.style.display = 'none'; }, 1000);
             }, 3800);
-
             
         })();
     </script>
-
+    <script>
+      // เรียกใช้ไอคอน Lucide
+      lucide.createIcons();
+    </script>
 </body>
 </html>

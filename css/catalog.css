@@ -1,15 +1,29 @@
-/* catalog.css - Luxury Vibe Update */
+/* =========================================================
+   catalog.css - LadyVenice Phase 3 Final (Cleaned & Merged)
+   ========================================================= */
+
+/* ===== 1. ROOT & BASE ===== */
 :root {
-  --bg-color: #FFFFFF; /* ขาวล้วนคลีนๆ */
+  --bg-color: #FFFFFF;
   --text-main: #000000;
   --text-muted: #767676;
   --border-color: #EBEBEB;
+  --ease-in-out-simple: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-fade: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Scroll Snap System (v3.0) */
+html {
+  scroll-snap-type: y proximity;
+  overflow-y: scroll;
+  height: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -20,253 +34,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== HEADER ===== */
-.public-header {
-  text-align: center;
-  padding: 48px 20px 32px;
-  position: sticky;
-  top: 0;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  z-index: 10;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  font-weight: 400; /* ลดน้ำหนักลงให้ดูแพง */
-  letter-spacing: -0.5px; /* บีบตัวอักษรหลักนิดๆ */
-}
-
-.logo span {
-  font-style: italic;
-}
-
-.header-subtitle {
-  font-size: 10px;
-  letter-spacing: 4px; /* ถ่างตัวอักษรรองให้กว้าง */
-  color: var(--text-muted);
-  margin-top: 12px;
-  text-transform: uppercase;
-}
-
-/* ===== FLIPBOOK LAYOUT ===== */
-.catalog-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px 16px 80px;
-  display: flex;
-  justify-content: center;
-}
-
-.flipbook-wrapper {
-  /* ซ่อนชั่วคราวก่อน JS โหลดเสร็จ */
-  display: none; 
-}
-
-/* สไตล์หน้ากระดาษแต่ละหน้า */
-.page {
-  background-color: #FFFFFF;
-  border: 1px solid #EEEEEE;
-  overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.02); /* เงาสันหนังสือด้านใน */
-}
-
-/* ส่วนเนื้อหาในแต่ละหน้ากระดาษ */
-.page-content {
-  padding: 32px 24px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* เลขหน้า */
-.page-footer {
-  margin-top: auto;
-  text-align: center;
-  font-size: 10px;
-  color: var(--text-muted);
-  font-family: 'Playfair Display', serif;
-}
-
-/* ปกหนังสือ */
-.page-cover {
-  background-color: #FDFCFB;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  border: 1px solid #EBEBEB;
-}
-
-.cover-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  margin-bottom: 8px;
-}
-
-/* จัด Grid สินค้า 4 ชิ้นต่อ 1 หน้ากระดาษ */
-.page-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  row-gap: 24px;
-}
-
-/* ===== PRODUCT CARD  ===== */
-.product-card {
-  cursor: pointer;
-}
-
-.product-image-wrap {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  background-color: #F7F7F7;
-  margin-bottom: 12px;
-}
-
-.product-image-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.product-info {
-  text-align: center;
-}
-
-.product-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 12px;
-  margin-bottom: 4px;
-  color: var(--text-main);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.product-price {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-/* ===== FOOTER ===== */
-.public-footer {
-  text-align: center;
-  padding: 40px 20px;
-  font-size: 10px;
-  color: var(--text-muted);
-  border-top: 1px solid var(--border-color);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-/* ===== LUXURY MODAL ===== */
-.public-modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255, 255, 255, 0.98); /* ขาวเกือบ 100% */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-}
-
-.public-modal-overlay.open {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.public-modal-content {
-  background: #FFFFFF;
-  width: 100%;
-  max-width: 480px;
-  padding: 0;
-  transform: translateY(20px);
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  max-height: 100vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.05); /* เงาบางเฉียบ */
-}
-
-.public-modal-overlay.open .public-modal-content {
-  transform: translateY(0);
-}
-
-.btn-close-modal {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-main);
-  z-index: 10;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.8);
-  border-radius: 50%;
-  backdrop-filter: blur(4px);
-}
-
-.modal-image-wrap {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  background: #F7F7F7;
-}
-
-.modal-image-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.modal-details {
-  text-align: center;
-  padding: 32px 24px 40px;
-}
-
-.modal-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  margin-bottom: 8px;
-}
-
-.modal-price {
-  font-size: 14px;
-  color: var(--text-muted);
-  letter-spacing: 1.5px;
-  margin-bottom: 24px;
-}
-
-.modal-divider {
-  width: 30px;
-  height: 1px;
-  background-color: var(--text-main);
-  margin: 0 auto 24px;
-}
-
-.modal-desc {
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--text-muted);
-  white-space: pre-line;
-}
-
-/* ===== YSL SPLASH SCREEN (Refined) ===== */
-:root {
-  --ease-in-out-simple: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-fade: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
+/* ===== 2. YSL SPLASH SCREEN (Refined) ===== */
 .intro-screen {
   background: #380707;
   height: 100svh;
@@ -368,6 +136,7 @@ body {
   opacity: 0.35;
   transform: translate3d(0, 0, 0);
 }
+
 .intro-vignette {
   position: absolute;
   inset: 0;
@@ -388,62 +157,190 @@ body {
   50% { opacity: 0.85; }
 }
 
-@keyframes floatDrift {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-18px) rotate(2deg);
-  }
+/* ===== 3. HERO BANNER (v3.0) ===== */
+.hero-section {
+  scroll-snap-align: start;
+  height: 100svh;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.intro-bg-flower--2 {
-  animation-name: floatDriftReverse;
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
 }
 
-@keyframes floatDriftReverse {
-  0%, 100% {
-    transform: translateY(0) rotate(180deg);
-  }
-  50% {
-    transform: translateY(18px) rotate(178deg);
-  }
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.1);
+  transform-origin: center top;
 }
 
-/* catalog.css */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.38); /* Dark overlay */
+  z-index: -1;
+}
 
-/* --- Preloader --- */
+.hero-content {
+  text-align: center;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+}
+
+.hero-content.-entered {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-title {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 72px;
+  font-weight: 400;
+  margin: 0 0 10px 0;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 6px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .hero-title { font-size: 96px; }
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  cursor: pointer;
+  animation: bounce 2s ease-in-out infinite;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 10px); }
+}
+
+/* ===== 4. FLIPBOOK SECTION (v3.0) ===== */
+.flipbook-section {
+  scroll-snap-align: start;
+  min-height: 100svh;
+  padding-bottom: 80px;
+  background-color: #faf9f7; /* Cream อุ่นๆ */
+  display: flex;
+  flex-direction: column;
+}
+
+.collection-header {
+  text-align: center;
+  padding: 60px 20px 40px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.collection-header::before,
+.collection-header::after {
+  content: '';
+  flex: 1;
+  height: 0.5px;
+  background: #dcd7ce;
+}
+
+.flipbook-wrapper {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#catalog-container {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08); /* เงาพรีเมียมแทน Border */
+}
+
+/* Custom Nav Buttons */
+.flip-btn {
+  background: none;
+  border: 0.5px solid #d4c5b0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  color: #8a7a6a;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.flip-btn:hover {
+  background: #380707;
+  border-color: #380707;
+  color: #f3df86;
+}
+
+.prev-btn { left: -70px; }
+.next-btn { right: -70px; }
+
+@media (max-width: 768px) {
+  .flip-btn { display: none; }
+}
+
+/* ===== 5. PRODUCT CARD (Flipbook Page Content) ===== */
 .flipbook-loading {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 400px; /* ปรับตามความสูงคอนเทนเนอร์ของคุณ */
+  height: 400px;
   font-family: 'DM Sans', sans-serif;
-  color: var(--sage, #8a9e8c);
+  color: #8a9e8c;
   font-size: 1.1rem;
   animation: pulse 1.5s infinite ease-in-out;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-/* --- Product Card Base (หน้ากระดาษ) --- */
 .product-card {
-  background-color: #fcfbf9; /* บังคับให้กระดาษทึบแสง ไม่ทะลุตอนพลิก */
+  background-color: #fcfbf9;
   box-sizing: border-box;
   padding: 20px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.02); /* เพิ่มมิติให้หน้ากระดาษ */
-  border: 1px solid rgba(0,0,0,0.04); /* ขอบหนังสือบางๆ */
-}
-
-.product-card.visible {
-  opacity: 1;
-  transform: translateY(0);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .product-image-wrap {
@@ -452,25 +349,21 @@ body {
   overflow: hidden;
   border-radius: 4px; 
   margin-bottom: 20px;
-  background-color: #f0eee9; 
+  background-color: #F7F7F7; 
 }
 
 .product-image-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block; 
+  display: block;
+  transition: transform 0.4s ease;
 }
 
 .product-card:hover .product-image-wrap img {
   transform: scale(1.05);
 }
 
-.stf__wrapper {
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
-}
-
-/* --- Product Info --- */
 .product-info {
   text-align: center;
   display: flex;
@@ -481,24 +374,122 @@ body {
 
 .product-name {
   font-size: 1.25rem;
-  color: #2c2c2a;
+  color: var(--text-main);
   margin: 0 0 6px 0;
-  font-family: 'Playfair Display', serif; /* หรือฟอนต์ที่คุณใช้ */
+  font-family: 'Playfair Display', serif;
 }
 
 .product-price {
   font-size: 1.1rem;
-  color: var(--dusty-rose, #c9897a);
+  color: #c9897a;
   font-weight: 600;
   margin: 0 0 8px 0;
 }
 
 .product-desc {
   font-size: 0.9rem;
-  color: #7a7a78;
+  color: var(--text-muted);
   margin: 0;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* ตัดข้อความถ้าเกิน 2 บรรทัด */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ===== 6. LUXURY MODAL ===== */
+.public-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.98);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.public-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.public-modal-content {
+  background: #FFFFFF;
+  width: 100%;
+  max-width: 480px;
+  padding: 0;
+  transform: translateY(20px);
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  max-height: 100vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+}
+
+.public-modal-overlay.open .public-modal-content {
+  transform: translateY(0);
+}
+
+.btn-close-modal {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-main);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+}
+
+.modal-image-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: #F7F7F7;
+}
+
+.modal-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-details {
+  text-align: center;
+  padding: 32px 24px 40px;
+}
+
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+
+.modal-price {
+  font-size: 14px;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  margin-bottom: 24px;
+}
+
+.modal-divider {
+  width: 30px;
+  height: 1px;
+  background-color: var(--text-main);
+  margin: 0 auto 24px;
+}
+
+.modal-desc {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-muted);
+  white-space: pre-line;
 }

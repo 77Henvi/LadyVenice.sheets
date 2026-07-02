@@ -78,23 +78,23 @@ function renderFlipbook(items, container) {
 
   container.innerHTML = pagesHtml;
 
+  // 🔴 อัปเดต v3.0: เช็ก Mobile เพื่อคำนวณขนาดสมุดให้พอดีจอ
+  const isMobile = window.innerWidth < 768;
+
   const pageFlip = new St.PageFlip(container, {
-    width: 400,
-    height: 500,
-    size: "stretch",
-    minWidth: 315,
-    maxWidth: 1000,
-    minHeight: 420,
-    maxHeight: 1350,
-    maxShadowOpacity: 0.5,
-    showCover: true,
-    mobileScrollSupport: false,
+    width: isMobile ? window.innerWidth - 40 : 400,
+    height: isMobile ? (window.innerWidth - 40) * 1.25 : 500,
     useMouseEvents: true,
     swipeDistance: 30,
-    clickEventForward: true
+    clickEventForward: true,
+    showCover: true,
+    mobileScrollSupport: false // ป้องกันตีกับ Scroll Snap
   });
 
   pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+  document.getElementById('btn-prev').addEventListener('click', () => pageFlip.flipPrev());
+  document.getElementById('btn-next').addEventListener('click', () => pageFlip.flipNext());
 
   // Scroll Animation Stagger
   const cards = document.querySelectorAll('.product-card');
@@ -112,5 +112,60 @@ function renderFlipbook(items, container) {
   });
 }
 
+// ================= PHASE 2: HERO, PARALLAX & SNAP LOGIC (v3.0) =================
+document.addEventListener('DOMContentLoaded', () => {
+  const heroContent = document.querySelector('.hero-content');
+  const introScreen = document.getElementById('introScreen');
+  
+  // 1. Event-driven Fade-in
+  if (sessionStorage.getItem('introPlayed')) {
+    setTimeout(() => heroContent.classList.add('-entered'), 100);
+  } else if (introScreen) {
+    introScreen.addEventListener('transitionend', (e) => {
+      if (e.propertyName === 'opacity') {
+        heroContent.classList.add('-entered');
+      }
+    }, { once: true });
+  }
 
+  // 2. Parallax (Desktop Only)
+  const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const heroBg = document.querySelector('.hero-bg img');
+  let ticking = false;
+
+  if (isDesktop && !prefersReduced && heroBg) {
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          heroBg.style.transform = `scale(1.1) translateY(${scrollY * 0.35}px)`;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
+
+  // 3. Scroll Indicator (Fade Out & Smooth Scroll)
+  const scrollIndicator = document.getElementById('scrollIndicator');
+  const flipbookSection = document.querySelector('.flipbook-section');
+
+  if (scrollIndicator) {
+    // Fade out
+    window.addEventListener('scroll', () => {
+      scrollIndicator.style.opacity = Math.max(0, 1 - window.scrollY / 80);
+      scrollIndicator.style.pointerEvents = window.scrollY > 40 ? 'none' : 'auto';
+    });
+
+    // Click to scroll
+    if (flipbookSection) {
+      scrollIndicator.addEventListener('click', () => {
+        flipbookSection.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+  }
+});
+
+// เริ่มโหลด Catalog
 loadCatalog();
