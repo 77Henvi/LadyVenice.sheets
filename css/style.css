@@ -1392,6 +1392,84 @@ body {
   .sidebar-todo-btn { display: flex; }
 }
 
+/* ================= FLOWER TAGS (ADMIN MODAL) ================= */
+.flower-search {
+  margin-bottom: 8px;
+}
+
+.flower-checkbox-list {
+  border: 0.5px solid var(--border-color, #EBEBEB);
+  border-radius: 10px;
+  background: #fcfbf9;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 4px 0;
+  margin-bottom: 10px;
+}
+
+.flower-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flower-checkbox-item:active {
+  background: rgba(0,0,0,0.04);
+}
+
+.flower-checkbox-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #c9897a; /* var(--dusty-rose) */
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.flower-checkbox-item label {
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: #2c2c2a;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+/* Tags preview */
+.flower-tags-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.flower-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #f7eceb;
+  color: #a85d53;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.flower-tag-remove {
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0.6;
+  touch-action: manipulation;
+}
+
+.flower-tag-remove:hover {
+  opacity: 1;
+}
+
 /* ============================================================
    DESKTOP RESPONSIVE  ≥ 1024px
    Layout: fixed sidebar (left) + scrollable content (right)
