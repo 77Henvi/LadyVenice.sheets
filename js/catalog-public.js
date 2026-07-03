@@ -41,8 +41,9 @@ async function loadCatalog() {
   renderFlipbook(data, container);
 }
 
-function renderFlipbook(items, container) {
+// ... (โค้ด loadCatalog บนสุดเหมือนเดิม) ...
 
+function renderFlipbook(items, container) {
   if (items.length % 2 !== 0) {
     items.push({ 
       name: 'Coming Soon', 
@@ -61,6 +62,13 @@ function renderFlipbook(items, container) {
     const descHtml = (item.desc && item.desc !== 'EMPTY') 
       ? `<p class="product-desc">${item.desc}</p>` 
       : '';
+      
+    // 🔴 1. สร้าง HTML สำหรับ Tags ดอกไม้
+    const tagsHtml = (item.flowers && item.flowers.length) 
+      ? `<div class="flower-tags-preview">
+          ${item.flowers.map(f => `<span class="flower-tag">${f}</span>`).join('')}
+         </div>`
+      : '';
 
     return `
       <div class="page product-card">
@@ -70,6 +78,7 @@ function renderFlipbook(items, container) {
         <div class="product-info">
           <h3 class="product-name">${item.name}</h3>
           <p class="product-price">${item.price}</p>
+          ${tagsHtml}
           ${descHtml}
         </div>
       </div>
@@ -78,14 +87,14 @@ function renderFlipbook(items, container) {
 
   container.innerHTML = pagesHtml;
 
-  // 🔴 อัปเดต v3.0: เช็ก Mobile เพื่อคำนวณขนาดสมุดให้พอดีจอ
   const isMobile = window.innerWidth < 768;
 
+  // 🔴 2. อัปเดต swipeDistance เป็น 15
   const pageFlip = new St.PageFlip(container, {
     width: isMobile ? window.innerWidth - 40 : 400,
     height: isMobile ? (window.innerWidth - 40) * 1.25 : 500,
     useMouseEvents: true,
-    swipeDistance: 30,
+    swipeDistance: 15,
     clickEventForward: true,
     showCover: true,
     mobileScrollSupport: false,
@@ -95,8 +104,34 @@ function renderFlipbook(items, container) {
 
   pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
-  document.getElementById('btn-prev').addEventListener('click', () => pageFlip.flipPrev());
-  document.getElementById('btn-next').addEventListener('click', () => pageFlip.flipNext());
+  // ปุ่มบน Desktop
+  document.getElementById('btn-prev')?.addEventListener('click', () => pageFlip.flipPrev());
+  document.getElementById('btn-next')?.addEventListener('click', () => pageFlip.flipNext());
+
+  // 🔴 3. ผูกคำสั่งให้ Swipe Zones
+  document.getElementById('swipe-left')?.addEventListener('click', () => pageFlip.flipPrev());
+  document.getElementById('swipe-right')?.addEventListener('click', () => pageFlip.flipNext());
+
+  // 🔴 4. Mobile Bottom Nav & Page Indicator Logic
+  const indicator = document.querySelector('.flipbook-page-indicator');
+  
+  // อัปเดตเลขหน้าตอนเริ่มต้น (ต้องรอให้ load จบก่อน 1 จังหวะ)
+  setTimeout(() => {
+    if (indicator) indicator.textContent = `1 / ${pageFlip.getPageCount()}`;
+  }, 100);
+
+  // อัปเดตเลขหน้าตอนกำลังพลิก
+  pageFlip.on('flip', (e) => {
+    if (indicator) {
+      const current = e.data + 1;
+      const total = pageFlip.getPageCount();
+      indicator.textContent = `${current} / ${total}`;
+    }
+  });
+
+  // ปุ่ม Nav บนมือถือ
+  document.querySelector('.flipbook-prev')?.addEventListener('click', () => pageFlip.flipPrev());
+  document.querySelector('.flipbook-next')?.addEventListener('click', () => pageFlip.flipNext());
 
   // Scroll Animation Stagger
   const cards = document.querySelectorAll('.product-card');
@@ -113,6 +148,7 @@ function renderFlipbook(items, container) {
     observer.observe(card);
   });
 }
+
 
 // ================= PHASE 2: HERO, PARALLAX & SNAP LOGIC (v3.0) =================
 document.addEventListener('DOMContentLoaded', () => {

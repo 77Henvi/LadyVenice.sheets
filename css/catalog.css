@@ -506,3 +506,116 @@ body {
   margin-top: auto; /* ดันให้อยู่ล่างสุดเสมอ */
   background-color: #faf9f7; /* สีเดียวกับพื้นหลัง section 2 */
 }
+
+/* ================= MOBILE UX & SWIPE ZONES ================= */
+.swipe-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 44px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.swipe-zone-left  { left: 0; }
+.swipe-zone-right { right: 0; }
+
+.swipe-zone-left::after {
+  content: '‹';
+  font-size: 32px;
+  color: rgba(0,0,0,0.15);
+  transition: color 0.2s;
+}
+
+.swipe-zone-right::after {
+  content: '›';
+  font-size: 32px;
+  color: rgba(0,0,0,0.15);
+  transition: color 0.2s;
+}
+
+.swipe-zone:active::after {
+  color: rgba(0,0,0,0.4);
+}
+
+.flipbook-nav-mobile {
+  display: none;
+}
+
+/* แสดง UI เฉพาะบนมือถือ */
+@media (max-width: 767px) {
+  .flipbook-nav-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-top: 0.5px solid #dcd7ce;
+    margin-top: 12px;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ซ่อน Swipe Zone บน Desktop เพราะมีปุ่มซ้าย-ขวาอยู่แล้ว */
+@media (min-width: 768px) {
+  .swipe-zone { display: none; }
+}
+
+.flipbook-nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0.5px solid #d4c5b0;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a7a6a;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.3s ease;
+}
+
+.flipbook-nav-btn:active {
+  background: #380707;
+  border-color: #380707;
+  color: #f3df86;
+}
+
+.flipbook-page-indicator {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-muted, #767676);
+  font-family: 'DM Sans', sans-serif;
+  text-transform: uppercase;
+}
+
+/* ================= FLOWER TAGS (PUBLIC) ================= */
+.flower-tags-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.flower-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: #f7eceb; /* สี dusty-rose-light */
+  color: #a85d53; /* สี dusty-rose-dark */
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+}

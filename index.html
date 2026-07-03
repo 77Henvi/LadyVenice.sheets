@@ -510,6 +510,26 @@
       <textarea class="form-textarea" id="catalog-desc" placeholder="คำอธิบายสินค้า..."></textarea>
     </div>
 
+    <!-- 🌸 ส่วนประกอบดอกไม้ (Flower Tags) -->
+    <div class="form-group">
+      <label class="form-label">ส่วนประกอบดอกไม้</label>
+
+      <!-- Search filter -->
+      <input class="form-input flower-search"
+        id="flower-search"
+        placeholder="ค้นหาดอกไม้..."
+        autocomplete="off"
+        style="margin-bottom: 8px;">
+
+      <!-- Checkbox list -->
+      <div class="flower-checkbox-list" id="flower-checkbox-list">
+        <!-- render โดย JS -->
+      </div>
+
+      <!-- Tags preview -->
+      <div class="flower-tags-preview" id="flower-tags-preview"></div>
+    </div>
+
     <button class="btn-submit" id="btn-save-catalog" onclick="saveCatalog()">บันทึก</button>
     <button class="btn-cancel" onclick="closeModal('modal-catalog')">ยกเลิก</button>
   </div>

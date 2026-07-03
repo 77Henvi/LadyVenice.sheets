@@ -51,16 +51,33 @@
     </div>
     
     <div class="flipbook-wrapper">
-      <!-- ปุ่ม Custom Nav (Redesign) -->
+      <!-- ปุ่ม Custom Nav (Desktop) -->
       <button class="flip-btn prev-btn" id="btn-prev"><i data-lucide="arrow-left"></i></button>
       
+      <!-- 🔴 Swipe Zones สำหรับ Mobile (ซ้าย) -->
+      <div class="swipe-zone swipe-zone-left" id="swipe-left"></div>
+
       <!-- คอนเทนเนอร์สมุด -->
       <div id="catalog-container">
         <div class="loading-text">Loading Lookbook...</div>
       </div>
       
-      <!-- ปุ่ม Custom Nav (Redesign) -->
+      <!-- 🔴 Swipe Zones สำหรับ Mobile (ขวา) -->
+      <div class="swipe-zone swipe-zone-right" id="swipe-right"></div>
+
+      <!-- ปุ่ม Custom Nav (Desktop) -->
       <button class="flip-btn next-btn" id="btn-next"><i data-lucide="arrow-right"></i></button>
+    </div>
+
+    <!-- 🔴 Mobile Nav Bar (แสดงเฉพาะมือถือ) -->
+    <div class="flipbook-nav-mobile">
+      <button class="flipbook-nav-btn flipbook-prev" aria-label="หน้าก่อนหน้า">
+        <i data-lucide="chevron-left"></i>
+      </button>
+      <span class="flipbook-page-indicator">1 / 1</span>
+      <button class="flipbook-nav-btn flipbook-next" aria-label="หน้าถัดไป">
+        <i data-lucide="chevron-right"></i>
+      </button>
     </div>
   </section>
 

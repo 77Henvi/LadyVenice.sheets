@@ -3,6 +3,96 @@ import { supabase } from "./supabase-config.js";
 
 let catalogData = [];
 
+// ==========================================
+// FLOWER TAGS SYSTEM
+// ==========================================
+const FLOWER_LIST = [
+  "ลิลลี่", "ลิลลี่วินเทจ", "Lily of the valley", "กุหลาบโลลิต้า",
+  "กุหลาบกำมะหยี่", "กุหลาบปารีส", "กุหลาบขอบเผา (vintage Rose)",
+  "กุหลาบเรนัน", "กุหลาบ", "Snow flake hibiscus rose", "ฟาแลน",
+  "ฟาแลนผีเสื้อ", "ฟาแลนวินเทจ", "ผีเสื้อคอสมอส", "คอสมอส",
+  "สไปเดอร์ มัม", "คาเนชั่น", "ดาเรีย สเปรย์", "ดาเรีย",
+  "ก้านยูคาแอปเปิ้ล", "เดลฟีเนี่ยม", "เยอบีร่า", "ดอกหน้าวัว",
+  "พีโอนี่", "พีโอนี่แฟนซี", "ทิวลิป", "ดอกผักโขม", "ไฮเดรนเยีย",
+  "ไฮเดรนเยียวินเทจ", "สน", "เบญจมาศ", "ปอม"
+];
+
+function renderFlowerCheckboxes(selectedFlowers = []) {
+  const list = document.getElementById('flower-checkbox-list');
+  if (!list) return;
+  list.innerHTML = FLOWER_LIST.map(flower => `
+    <label class="flower-checkbox-item">
+      <input type="checkbox"
+        value="${flower}"
+        ${selectedFlowers.includes(flower) ? 'checked' : ''}
+        onchange="updateFlowerTags()">
+      <label>${flower}</label>
+    </label>
+  `).join('');
+}
+
+window.updateFlowerTags = function() {
+  const checked = [...document.querySelectorAll('#flower-checkbox-list input:checked')]
+    .map(cb => cb.value);
+
+  const preview = document.getElementById('flower-tags-preview');
+  if (!preview) return;
+  preview.innerHTML = checked.length
+    ? checked.map(flower => `
+        <span class="flower-tag">
+          ${flower}
+          <span class="flower-tag-remove"
+            onclick="uncheckFlower('${flower}')">×</span>
+        </span>
+      `).join('')
+    : '';
+};
+
+window.uncheckFlower = function(flower) {
+  const cb = document.querySelector(`#flower-checkbox-list input[value="${flower}"]`);
+  if (cb) { 
+    cb.checked = false; 
+    updateFlowerTags(); 
+  }
+};
+
+// Search filter logic
+document.addEventListener('DOMContentLoaded', () => {
+  const flowerSearchInput = document.getElementById('flower-search');
+  if (flowerSearchInput) {
+    flowerSearchInput.addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('.flower-checkbox-item').forEach(item => {
+        const name = item.querySelector('label').textContent.toLowerCase();
+        item.style.display = name.includes(q) ? '' : 'none';
+      });
+    });
+  }
+});
+
+function getSelectedFlowers() {
+  return [...document.querySelectorAll('#flower-checkbox-list input:checked')]
+    .map(cb => cb.value);
+}
+
+function resetFlowerCheckboxes() {
+  renderFlowerCheckboxes([]);
+  const preview = document.getElementById('flower-tags-preview');
+  if (preview) preview.innerHTML = '';
+  const search = document.getElementById('flower-search');
+  if (search) search.value = '';
+}
+
+function loadFlowerCheckboxes(existingFlowers = []) {
+  renderFlowerCheckboxes(existingFlowers || []);
+  updateFlowerTags();
+}
+
+
+// ==========================================
+// MAIN ADMIN SYSTEM
+// ==========================================
+
 // ===== 1. ดึงข้อมูลมาโชว์ในหน้า ADMIN =====
 async function loadCatalog() {
   const { data, error } = await supabase.from('catalog').select('*').order('order', { ascending: true });
@@ -53,6 +143,8 @@ window.openCatalogModal = function() {
   document.getElementById('catalog-image').value = '';
   document.getElementById('catalog-image-preview').style.display = 'none';
   
+  resetFlowerCheckboxes(); // 🔴 ล้างค่าดอกไม้เมื่อเพิ่มใหม่
+  
   const btn = document.getElementById('btn-save-catalog');
   btn.textContent = 'บันทึก';
   btn.disabled = false;
@@ -71,13 +163,14 @@ window.editCatalog = function(id) {
   document.getElementById('catalog-image').value = '';
   
   const preview = document.getElementById('catalog-image-preview');
-  // 🔴 แก้ไข: ดักจับคำว่า EMPTY ในโหมดแก้ไข
   if (c.image && c.image !== 'EMPTY') {
     preview.src = c.image;
     preview.style.display = 'block';
   } else {
     preview.style.display = 'none';
   }
+
+  loadFlowerCheckboxes(c.flowers); // 🔴 โหลดรายชื่อดอกไม้เดิมที่มีอยู่
 
   const btn = document.getElementById('btn-save-catalog');
   btn.textContent = 'บันทึก';
@@ -107,7 +200,7 @@ window.saveCatalog = async function() {
     // ถ้ามีการเลือกไฟล์รูปใหม่ ให้อัปโหลดขึ้น Supabase Storage ก่อน
     if (file) {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`; // ตั้งชื่อไฟล์ใหม่กันซ้ำ
+      const fileName = `${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
           .from('catalog-images')
@@ -115,17 +208,16 @@ window.saveCatalog = async function() {
 
       if (uploadError) throw uploadError;
 
-      // ดึง Public URL
       const { data } = supabase.storage.from('catalog-images').getPublicUrl(fileName);
-      
-      // 🔴 แก้ไข: เอาคำว่า const ออก เพื่อให้บันทึกค่าลงตัวแปร imageUrl ด้านนอก
       imageUrl = data.publicUrl;
     }
     
+    const selectedFlowers = getSelectedFlowers(); // 🔴 ดึงค่าดอกไม้ที่เลือกไว้
+
     if (id) {
       // โหมดแก้ไข
-      const updateData = { name, price, desc };
-      if (imageUrl) updateData.image = imageUrl; // ถ้ามีรูปใหม่ค่อยอัปเดต URL รูป
+      const updateData = { name, price, desc, flowers: selectedFlowers }; 
+      if (imageUrl) updateData.image = imageUrl;
       
       await supabase.from('catalog').update(updateData).eq('id', id);
     } else {
@@ -136,7 +228,8 @@ window.saveCatalog = async function() {
         price, 
         desc, 
         "order": maxOrder + 1, 
-        image: imageUrl || 'EMPTY' // ป้องกันค่าว่าง
+        image: imageUrl || 'EMPTY',
+        flowers: selectedFlowers // 🔴 บันทึกรายชื่อดอกไม้
       }]);
     }
     
@@ -187,7 +280,6 @@ window.handleDrop = async function(e) {
   newArray.splice(targetIndex, 0, removed);
 
   try {
-    // อัปเดตลำดับใน Database
     for (let i = 0; i < newArray.length; i++) {
       await supabase.from('catalog').update({ "order": i + 1 }).eq('id', newArray[i].id);
     }
