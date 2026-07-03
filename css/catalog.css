@@ -1,5 +1,5 @@
 /* =========================================================
-   catalog.css - LadyVenice Phase 3 Final (Cleaned & Merged)
+   catalog.css - LadyVenice Phase 3 Final (Editorial Look)
    ========================================================= */
 
 /* ===== 1. ROOT & BASE ===== */
@@ -187,7 +187,7 @@ body {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.38); /* Dark overlay */
+  background: rgba(0, 0, 0, 0.38);
   z-index: -1;
 }
 
@@ -246,7 +246,7 @@ body {
   scroll-snap-align: start;
   min-height: 100svh;
   padding-bottom: 80px;
-  background-color: #faf9f7; /* Cream อุ่นๆ */
+  background-color: #faf9f7;
   display: flex;
   flex-direction: column;
 }
@@ -285,7 +285,7 @@ body {
 }
 
 #catalog-container {
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08); /* เงาพรีเมียมแทน Border */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
 }
 
 /* Custom Nav Buttons */
@@ -343,12 +343,13 @@ body {
   border: 1px solid rgba(0,0,0,0.04);
 }
 
+/* ดีไซน์ขอบเหลี่ยมคมกริบแบบ Editorial */
 .product-image-wrap {
   width: 100%;
-  height: 55%; /* 🔴 ลดจาก 65% เหลือ 55% เพื่อคืนพื้นที่ให้ส่วนข้อความ */
+  height: 55%; 
   overflow: hidden;
-  border-radius: 4px; 
-  margin-bottom: 12px; /* 🔴 ลดระยะห่างลงนิดนึงให้มีที่ว่างมากขึ้น */
+  border-radius: 0; 
+  margin-bottom: 24px; 
   background-color: #F7F7F7; 
 }
 
@@ -369,21 +370,25 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  flex: 1; /* 🔴 เปลี่ยนจาก height: 30% เป็น flex: 1 เพื่อให้กวาดพื้นที่ที่เหลือด้านล่างทั้งหมด */
+  flex: 1; 
 }
 
+/* ชื่อสินค้าตัวใหญ่ หรูหรา */
 .product-name {
-  font-size: 1.25rem;
+  font-size: 1.8rem; 
   color: var(--text-main);
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
   font-family: 'Playfair Display', serif;
+  font-weight: 400; 
 }
 
+/* ปรับราคาให้มีความเรียบง่าย ไม่แย่งซีน */
 .product-price {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #c9897a;
-  font-weight: 600;
+  font-weight: 500;
   margin: 0 0 8px 0;
+  font-family: 'DM Sans', sans-serif;
 }
 
 .product-desc {
@@ -503,8 +508,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 2px;
   font-family: 'DM Sans', sans-serif;
-  margin-top: auto; /* ดันให้อยู่ล่างสุดเสมอ */
-  background-color: #faf9f7; /* สีเดียวกับพื้นหลัง section 2 */
+  margin-top: auto; 
+  background-color: #faf9f7;
 }
 
 /* ================= MOBILE UX & SWIPE ZONES ================= */
@@ -546,7 +551,6 @@ body {
   display: none;
 }
 
-/* แสดง UI เฉพาะบนมือถือ */
 @media (max-width: 767px) {
   .flipbook-nav-mobile {
     display: flex;
@@ -562,7 +566,6 @@ body {
   }
 }
 
-/* ซ่อน Swipe Zone บน Desktop เพราะมีปุ่มซ้าย-ขวาอยู่แล้ว */
 @media (min-width: 768px) {
   .swipe-zone { display: none; }
 }
@@ -597,26 +600,16 @@ body {
   text-transform: uppercase;
 }
 
-/* ================= FLOWER TAGS (PUBLIC) ================= */
-.flower-tags-preview {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: center;
-  margin-top: 8px;
-  margin-bottom: 8px;
+/* ================= FLOWER LIST (EDITORIAL LOOK) ================= */
+.flower-list-italic {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 14px; 
+  color: #555555; 
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-
-.flower-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  background: #f7eceb; /* สี dusty-rose-light */
-  color: #a85d53; /* สี dusty-rose-dark */
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
-}
-

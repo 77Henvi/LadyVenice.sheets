@@ -63,13 +63,11 @@ function renderFlipbook(items, container) {
       ? `<p class="product-desc">${item.desc}</p>` 
       : '';
       
-    // 🔴 1. สร้าง HTML สำหรับ Tags ดอกไม้
     const tagsHtml = (item.flowers && item.flowers.length) 
-      ? `<div class="flower-tags-preview">
-          ${item.flowers.map(f => `<span class="flower-tag">${f}</span>`).join('')}
+      ? `<div class="flower-list-italic">
+          ${item.flowers.join(', ')}
          </div>`
       : '';
-
     return `
       <div class="page product-card">
         <div class="product-image-wrap">
