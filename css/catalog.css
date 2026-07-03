@@ -345,10 +345,10 @@ body {
 
 .product-image-wrap {
   width: 100%;
-  height: 65%; 
+  height: 55%; /* 🔴 ลดจาก 65% เหลือ 55% เพื่อคืนพื้นที่ให้ส่วนข้อความ */
   overflow: hidden;
   border-radius: 4px; 
-  margin-bottom: 20px;
+  margin-bottom: 12px; /* 🔴 ลดระยะห่างลงนิดนึงให้มีที่ว่างมากขึ้น */
   background-color: #F7F7F7; 
 }
 
@@ -369,7 +369,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 30%;
+  flex: 1; /* 🔴 เปลี่ยนจาก height: 30% เป็น flex: 1 เพื่อให้กวาดพื้นที่ที่เหลือด้านล่างทั้งหมด */
 }
 
 .product-name {
