@@ -892,10 +892,10 @@ body {
 /* 2. ดันตัวหนังสือแคตตาล็อกให้ลอยเด่นสุด ผีเสื้อจะได้ไม่บินตัดหน้า */
 #catalog-container {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-  height: 480px !important; /* ล็อกความสูงให้สัมพันธ์กับ JS */
-  margin-bottom: 0 !important;
+  position: relative;
   z-index: 2; 
 }
+
 
 .butterfly-container {
   position: absolute;
