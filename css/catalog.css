@@ -692,7 +692,7 @@ body {
 }
 
 .info-title {
-  font-family: 'Pinyon Script', cursive;
+  font-family: 'Pinyon Script', 'Prompt', cursive;
   font-size: 1.5rem;
   color: #720b0b; 
   margin-bottom: 12px;
@@ -701,7 +701,7 @@ body {
 }
 
 .info-desc {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Prompt', sans-serif;
   font-size: 14px;
   color: #555555;
   line-height: 1.8;
@@ -710,10 +710,11 @@ body {
 
 .info-desc strong {
   color: #4a3f35;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .info-note {
+  font-family: 'Prompt', sans-serif;
   font-style: italic;
   font-size: 13px;
   color: #8a7a6a;
@@ -951,95 +952,129 @@ body {
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
-/* ================= LANGUAGE GLOBE & DROPDOWN ================= */
+/* ================= LANGUAGE GLOBE & DROPDOWN (PREMIUM ANIMATION) ================= */
 .lang-dropdown-container {
   position: absolute;
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 101;
+  -webkit-tap-highlight-color: transparent;
 }
 
+/* กรอบปุ่มโปร่งใสที่จะมีพื้นหลังจางๆ โผล่มาตอน Hover */
 .lang-icon-btn {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0);
+  border: 1px solid rgba(255, 255, 255, 0);
+  border-radius: 30px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 8px;
+  padding: 8px 10px;
   color: #ffffff;
-  -webkit-tap-highlight-color: transparent;
   outline: none;
+  /* 🪄 ใช้ cubic-bezier ให้ดูสมูทแบบมีแรงเฉื่อย */
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.lang-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 🪄 1. Globe Animation (หมุนลูกโลก) */
 .globe-icon {
   width: 20px;
   height: 20px;
   stroke: #ffffff;
-  transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 0.8;
+  /* ใส่ Spring Physics เบาๆ ให้การหมุน */
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
 }
 
 .lang-icon-btn:hover .globe-icon {
   opacity: 1;
+  transform: rotate(45deg); /* เอาเมาส์วางจะหมุนนิดนึงเตรียมพร้อม */
 }
 
+.lang-icon-btn.open .globe-icon {
+  opacity: 1;
+  transform: rotate(180deg); /* พอกดปุ๊บ หมุนตีลังกาอย่างสมูท */
+}
+
+/* 🪄 2. Chevron Animation (ลูกศรเด้งและพลิกกลับ) */
 .chevron-icon {
   width: 14px;
   height: 14px;
   stroke: #ffffff;
-  /* 🪄 ซ่อนลูกศรไว้ก่อน และตั้งให้ขยับขึ้นไปนิดนึงเตรียมเด้งลงมา */
-  opacity: 0; 
-  transform: translateY(-5px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px) rotate(0deg);
+  transition: opacity 0.3s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 🪄 เมื่อกดปุ่ม (คลาส .open จะถูกเพิ่มด้วย JS) ลูกศรจะ Fade-in และเลื่อนลงมา */
 .lang-icon-btn.open .chevron-icon {
   opacity: 1;
-  transform: translateY(0);
+  /* เลื่อนลงมาและหมุน 180 องศาเพื่อชี้ขึ้น */
+  transform: translateY(0) rotate(180deg); 
 }
 
+/* 🪄 3. Menu Spring Expand (เมนูกางออกแบบขยายสเกล) */
 .lang-dropdown-menu {
   position: absolute;
   top: 100%;
   right: 0;
-  margin-top: 8px;
+  margin-top: 12px;
   list-style: none;
-  /* 🪄 พื้นหลังโปร่งใสแบบกระจกฝ้า (Glassmorphism) */
-  background: rgba(0, 0, 0, 0.25); 
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 15, 15, 0.4); /* กระจกมืดนิดๆ ให้ตัวหนังสือเด่น */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 0.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 8px 0;
-  min-width: 60px;
+  border-radius: 12px; /* ขอบมนสวยๆ */
+  padding: 6px 0;
+  min-width: 75px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   
-  /* 🪄 อนิเมชันซ่อน/แสดง Dropdown */
+  /* ตั้งค่าการขยายตัวให้พุ่งออกมาจากมุมขวาบนของปุ่ม */
+  transform-origin: top right;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
+  transform: scale(0.8) translateY(-15px);
+  transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .lang-dropdown-menu.open {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: scale(1) translateY(0); /* เด้งเข้าสู่ขนาดจริง */
 }
 
+/* 🪄 4. Staggered Item Slide-in (ข้อความ TH / EN สไลด์ตามกันมา) */
 .lang-dropdown-menu li {
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 500;
   color: #ffffff;
   text-align: center;
   cursor: pointer;
   letter-spacing: 1px;
-  transition: background 0.2s ease, color 0.2s ease;
+  
+  /* ซ่อนไว้ด้านขวาเตรียมสไลด์เข้า */
+  opacity: 0;
+  transform: translateX(10px);
+  transition: background 0.3s ease, color 0.3s ease, opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.lang-dropdown-menu.open li {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+.lang-dropdown-menu.open li:nth-child(1) { transition-delay: 0.05s; }
+.lang-dropdown-menu.open li:nth-child(2) { transition-delay: 0.1s; }
+
 .lang-dropdown-menu li:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.2);
 }

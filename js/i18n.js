@@ -9,7 +9,7 @@ const TRANSLATIONS = {
     'info.delivery.ems': 'EMS: 130 บาท',
     'info.delivery.grab': 'Grab / LINE MAN / Bolt / Lalamove',
     'info.delivery.grab.sub': '(ค่าส่งตามระยะทาง)',
-    'info.pricing.title': 'ราคา & ขนาด',
+    'info.pricing.title': 'ราคาและขนาด',
     'info.pricing.desc': 'ราคาที่แสดงในแคตตาล็อกเป็น <strong>ขนาด L (ช่อใหญ่)</strong><br>สามารถปรับขนาดได้ S / M / L',
     'info.custom': '* ราคาอาจแตกต่างตามขนาดและชนิดดอกไม้<br>(สามารถ Custom ได้)',
     'collection.title': 'OUR COLLECTION',
