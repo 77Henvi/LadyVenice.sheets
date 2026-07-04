@@ -249,12 +249,40 @@ body {
 }
 
 /* ===== PUBLIC HEADER (Fade In) ===== */
+/* ================= PUBLIC HEADER LAYOUT ================= */
 .public-header {
+  display: flex;
+  flex-direction: column;  /* ให้ Logo กับ Subtitle ซ้อนกันบน-ล่าง */
+  align-items: center;     /* จัดให้อยู่กึ่งกลางหน้าจอ */
+  justify-content: center;
+  padding: 24px 20px;      /* เพิ่มพื้นที่ขอบบน-ล่าง */
+  position: relative;      /* เพื่อให้ปุ่มสลับภาษาเกาะมุมขวาได้ */
+  background-color: var(--bg-color);
   opacity: 0;
   transition: opacity 1s var(--ease-fade);
+  z-index: 100;
 }
+
 .public-header.-enter {
   opacity: 1;
+}
+
+/* ตกแต่งโลโก้ LadyVenice */
+.public-header .logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+/* ตกแต่งคำว่า COLLECTION */
+.public-header .header-subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 4px;
 }
 
 /* ===== SCROLL REVEAL SYSTEM ===== */
