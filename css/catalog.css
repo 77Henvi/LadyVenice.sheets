@@ -378,7 +378,7 @@ body {
   font-size: 2rem; 
   color: #9c8375; 
   margin: 0 0 4px 0;
-  font-family: 'Great Vibes', cursive;
+  font-family: 'Cormorant Garamond', serif;
   font-weight: 400; 
 }
 
@@ -646,21 +646,30 @@ body {
   width: 100%;
 }
 
-.info-icon {
-  color: #dbd5af; 
-  margin-bottom: 16px;
+/* ================= CUSTOM BADGE ================= */
+.info-badge {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
 }
 
-.info-icon svg {
-  width: 28px;
-  height: 28px;
-  stroke-width: 1.5;
+.info-badge img {
+  width: 65px; /* ปรับขนาดความเล็ก-ใหญ่ของ Badge ตรงนี้ได้เลยครับ */
+  height: auto;
+  object-fit: contain;
+  /* เพิ่มเงาบางๆ ให้ตราประทับดูมีมิตินูนขึ้นมาจากกระดาษ */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.08)); 
+  transition: transform 0.3s ease;
+}
+
+.info-badge img:hover {
+  transform: scale(1.05); /* เอฟเฟกต์ลูกเล่น เวลานำเมาส์ไปชี้จะขยายขึ้นนิดนึง */
 }
 
 .info-title {
   font-family: 'Pinyon Script', cursive;
   font-size: 1.5rem;
-  color: #720b0b; /* สีน้ำตาลเข้มละมุน */
+  color: #720b0b; 
   margin-bottom: 12px;
   font-weight: 600;
   letter-spacing: 1px;
@@ -753,7 +762,7 @@ body {
   font-family: 'Playfair Display', serif;
   font-style: italic;
   font-size: 1.4rem;
-  color: #4a3f35; /* สีน้ำตาลเข้มละมุน เข้ากับ Text ด้านบน */
+  color: #8d1717; /* สีน้ำตาลเข้มละมุน เข้ากับ Text ด้านบน */
   letter-spacing: 1px;
 }
 
