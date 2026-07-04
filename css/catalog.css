@@ -898,7 +898,7 @@ body {
   z-index: 2; 
 }
 
-/* 3. ผีเสื้ออยู่ชั้นล่างสุด (ด้านหลัง) ของ Section นี้ */
+
 .butterfly-container {
   position: absolute;
   inset: 0;
@@ -907,7 +907,6 @@ body {
   overflow: hidden;
 }
 
-/* 🔴 จัดระเบียบตำแหน่งให้กระจายทั่วจอมือถือ + ใช้ขนาดตัวที่ใหญ่ขึ้นตามที่กำหนด */
 @media (max-width: 767px) {
   .butterfly.b1 { top: 10%; left: 5%;   width: 112px !important; }
   .butterfly.b2 { top: 25%; left: 75%;  width: 98px !important; }
