@@ -113,7 +113,7 @@ async function loadCatalog() {
 }
 
 
-// ================= RENDER FLIPBOOK (ใช้ Turn.js) =================
+// ================= RENDER FLIPBOOK  =================
 function renderFlipbook(items, container) {
   // จัดหน้าให้เป็นเลขคู่
   if (items.length % 2 !== 0) {
@@ -161,59 +161,54 @@ function renderFlipbook(items, container) {
   container.innerHTML = pagesHtml;
 
   const isMobile = window.innerWidth < 768;
-  
-  // 🔴 เริ่มการทำงานของ Turn.js (ปลั๊กอินลอกกระดาษ 3D)
- // 🔴 เริ่มการทำงานของ Turn.js พร้อมระบบรีดประสิทธิภาพ
-  $(container).turn({
-    width: isMobile ? window.innerWidth - 40 : 800, 
+
+  // 🔴 ตั้งค่า PageFlip ใหม่ให้มีเงาและดูละมุนขึ้น
+  const pageFlip = new St.PageFlip(container, {
+    width: isMobile ? window.innerWidth - 40 : 400,
     height: isMobile ? (window.innerWidth - 40) * 1.25 : 500,
-    display: isMobile ? 'single' : 'double', 
-    gradients: true,    
-    elevation: 50,      
-    // ปรับเวลาให้ไวขึ้นนิดนึงบนมือถือ เพื่อลดภาระเครื่องและดูติดนิ้วขึ้น
-    duration: isMobile ? 800 : 1200, 
-    acceleration: true, // 🪄 หัวใจสำคัญ: บังคับเปิด Hardware Acceleration ช่วยลดความ Lag
-    autoCenter: true,
-    when: {
-      turned: function(event, page, view) {
-        const indicator = document.querySelector('.flipbook-page-indicator');
-        if (indicator) {
-          const total = $(this).turn('pages');
-          indicator.textContent = `${page} / ${total}`;
-        }
-      }
+    useMouseEvents: true,
+    swipeDistance: 15,
+    clickEventForward: true,
+    showCover: true,
+    mobileScrollSupport: false,
+    
+    // 🪄 เปิดระบบความพริ้วและแสงเงา
+    drawShadow: false,          // สร้างเงาเสมือนจริงให้กระดาษ
+    maxShadowOpacity: 0.5,     // ความเข้มของเงา (0.5 กำลังพอดี ไม่มืดเกินไป)
+    showPageCorners: true,     // เผยมุมกระดาษเวลานำเมาส์ไปชี้
+    flippingTime: 1200         // ดึงจังหวะพลิกให้ช้าลงเพื่อความพรีเมียม
+  });
+
+  pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+  // ปุ่มบน Desktop (ใช้มุม bottom เพื่อให้ดูลอกกระดาษ)
+  document.getElementById('btn-prev')?.addEventListener('click', () => pageFlip.flipPrev('bottom'));
+  document.getElementById('btn-next')?.addEventListener('click', () => pageFlip.flipNext('bottom'));
+
+  // ผูกคำสั่งให้ Swipe Zones (ตอนเอานิ้วแตะขอบจอมือถือ)
+  document.getElementById('swipe-left')?.addEventListener('click', () => pageFlip.flipPrev('bottom'));
+  document.getElementById('swipe-right')?.addEventListener('click', () => pageFlip.flipNext('bottom'));
+
+  // ปุ่ม Nav บนมือถือ (ด้านล่าง)
+  document.querySelector('.flipbook-prev')?.addEventListener('click', () => pageFlip.flipPrev('bottom'));
+  document.querySelector('.flipbook-next')?.addEventListener('click', () => pageFlip.flipNext('bottom'));
+
+  // อัปเดตเลขหน้า
+  const indicator = document.querySelector('.flipbook-page-indicator');
+  
+  setTimeout(() => {
+    if (indicator) indicator.textContent = `1 / ${pageFlip.getPageCount()}`;
+  }, 100);
+
+  pageFlip.on('flip', (e) => {
+    if (indicator) {
+      const current = e.data + 1;
+      const total = pageFlip.getPageCount();
+      indicator.textContent = `${current} / ${total}`;
     }
   });
 
-  // 🪄 ป้องกันบัคหน้าจอพังเวลามือถือย่อ/ขยาย (เช่น เวลาพิมพ์ URL หรือเลื่อนจอ)
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      const newIsMobile = window.innerWidth < 768;
-      $(container).turn('size', 
-        newIsMobile ? window.innerWidth - 40 : 800, 
-        newIsMobile ? (window.innerWidth - 40) * 1.25 : 500
-      );
-      $(container).turn('display', newIsMobile ? 'single' : 'double');
-    }, 200);
-  });
-  
-  // ผูกคำสั่งให้ปุ่มต่างๆ ควบคุมหน้ากระดาษ (Desktop & Mobile)
-  document.getElementById('btn-prev')?.addEventListener('click', () => $(container).turn('previous'));
-  document.getElementById('btn-next')?.addEventListener('click', () => $(container).turn('next'));
-  document.getElementById('swipe-left')?.addEventListener('click', () => $(container).turn('previous'));
-  document.getElementById('swipe-right')?.addEventListener('click', () => $(container).turn('next'));
-  document.querySelector('.flipbook-prev')?.addEventListener('click', () => $(container).turn('previous'));
-  document.querySelector('.flipbook-next')?.addEventListener('click', () => $(container).turn('next'));
-
-  // ตั้งค่าเลขหน้าตอนโหลดเสร็จ
-  const indicator = document.querySelector('.flipbook-page-indicator');
-  setTimeout(() => {
-    if (indicator) indicator.textContent = `1 / ${$(container).turn('pages')}`;
-  }, 100);
-
-  // Scroll Animation Stagger (ให้หน้าค่อยๆ Fade-in เข้ามาเหมือนเดิม)
+  // Scroll Animation Stagger (ให้หน้าค่อยๆ Fade-in)
   const cards = document.querySelectorAll('.product-card');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {

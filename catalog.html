@@ -164,7 +164,7 @@
       </button>
     </div>
 
-  </section>
+  </div> <!-- 🔴 Bug 1: แก้ tag ปิด เปลี่ยนจาก </section> เป็น </div> -->
 
   <!-- ================= FOOTER ================= -->
   <footer class="public-footer">
@@ -195,14 +195,13 @@
   <!-- ================= SCRIPTS ================= -->
  
   <script src="/js/i18n.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
   <script type="module" src="/js/catalog-public.js"></script>
 
   <script>
-    // ฟังก์ชัน Smooth Scroll จากปุ่มลูกศร
+    // 🔴 Bug 5: แก้เป้าหมายการ Scroll ให้ชี้ไปที่คลาสที่มีอยู่จริง
     window.scrollToCollection = function() {
-      document.getElementById('collectionSection').scrollIntoView({ behavior: 'smooth' });
+      document.querySelector('.flipbook-section').scrollIntoView({ behavior: 'smooth' });
     };
 
     window.forceCloseModal = function() {
@@ -213,49 +212,46 @@
     };
   </script>
 
-    <script>
-        // Splash Screen Logic (ของเดิม)
-        (function() {
-            const introScreen = document.getElementById('introScreen');
-            if (!introScreen) return;
+  <script>
+    // 🔴 Bug 3: แก้ไข Splash Screen Logic แบบไม่มีการเช็คซ้ำซ้อน
+    (function() {
+      const introScreen = document.getElementById('introScreen');
+      if (!introScreen) return;
 
-            if (sessionStorage.getItem('introPlayed')) {
-                introScreen.style.transition = 'none';
-                introScreen.style.opacity = '0';
-                introScreen.style.pointerEvents = 'none';
-                setTimeout(() => { introScreen.style.display = 'none'; }, 0);
-                return;
-            }
+      if (sessionStorage.getItem('introPlayed')) {
+        introScreen.style.transition = 'none';
+        introScreen.style.opacity = '0';
+        introScreen.style.pointerEvents = 'none';
+        setTimeout(() => { introScreen.style.display = 'none'; }, 0);
+        return;
+      }
 
-            if (!sessionStorage.getItem('introPlayed')) {
-              introScreen.style.display = 'block';
-              sessionStorage.setItem('introPlayed', '1');
-            }
-            sessionStorage.setItem('introPlayed', '1');
+      introScreen.style.display = 'block';
+      sessionStorage.setItem('introPlayed', '1'); // ← เก็บข้อมูลแค่บรรทัดเดียว
 
-            const introLeft    = document.getElementById('introLeft');
-            const introVenice   = document.getElementById('introVenice');
-            const introCatalog  = document.getElementById('introCatalog');
-            const introFloral = document.querySelector('.intro-bg-floral');
+      const introLeft   = document.getElementById('introLeft');
+      const introVenice = document.getElementById('introVenice');
+      const introCatalog = document.getElementById('introCatalog');
+      const introFloral = document.querySelector('.intro-bg-floral');
 
-            setTimeout(() => introFloral.classList.add('-entered'), 200);
-            setTimeout(() => introLeft.classList.add('-entered'), 500);
-            setTimeout(() => introVenice.classList.add('-entered'), 1700);
-            setTimeout(() => introCatalog.classList.add('-entered'), 2700);
+      setTimeout(() => introFloral.classList.add('-entered'), 200);
+      setTimeout(() => introLeft.classList.add('-entered'), 500);
+      setTimeout(() => introVenice.classList.add('-entered'), 1700);
+      setTimeout(() => introCatalog.classList.add('-entered'), 2700);
 
-            setTimeout(() => {
-                introScreen.classList.add('-fadeOut');
-                setTimeout(() => { introScreen.style.display = 'none'; }, 1000);
-            }, 3800);
-            
-        })();
-    </script>
-    <script>
-      // เรียกใช้ไอคอน Lucide
-      lucide.createIcons();
-    </script>
+      setTimeout(() => {
+        introScreen.classList.add('-fadeOut');
+        setTimeout(() => { introScreen.style.display = 'none'; }, 1000);
+      }, 3800);
+    })();
+  </script>
+  
+  <script>
+    // เรียกใช้ไอคอน Lucide
+    lucide.createIcons();
+  </script>
 
-    <script>
+  <script>
     // 1. ฟังก์ชันเปิด/ปิด Dropdown และลูกศร
     window.toggleLangMenu = function(event) {
       event.stopPropagation(); // ป้องกันการคลิกทะลุ

@@ -815,7 +815,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 10; /* 🪄 เปลี่ยนจาก 0 เป็น 10 */
+  z-index: 10; 
   overflow: hidden;
 }
 
@@ -1079,18 +1079,3 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* ================= TURN.JS MOBILE OPTIMIZATION ================= */
-#catalog-container {
-  /* ป้องกันไม่ให้เบราว์เซอร์แย่งการปัดซ้าย-ขวาไปเป็นคำสั่งย้อนกลับ/ไปข้างหน้า */
-  touch-action: pan-y; 
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-#catalog-container .page {
-  /* 🪄 บังคับให้มือถือใช้การ์ดจอ (GPU) คำนวณหน้ากระดาษ จะลื่นขึ้นมาก */
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  will-change: transform;
-}
