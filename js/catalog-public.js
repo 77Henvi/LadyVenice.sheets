@@ -113,7 +113,7 @@ async function loadCatalog() {
 }
 
 
-// ================= RENDER FLIPBOOK =================
+// ================= RENDER FLIPBOOK (ใช้ Turn.js) =================
 function renderFlipbook(items, container) {
   // จัดหน้าให้เป็นเลขคู่
   if (items.length % 2 !== 0) {
@@ -137,14 +137,12 @@ function renderFlipbook(items, container) {
       ? `<p class="product-desc dynamic-desc">${getItemDesc(item)}</p>` 
       : '';
       
-  
     const tagsHtml = (item.flowers && item.flowers.length) 
       ? `<div class="flower-list-italic dynamic-flowers">
           ${getFlowerString(item)}
          </div>`
       : '';
       
-   
     return `
       <div class="page product-card" data-index="${index}">
         <div class="product-image-wrap">
@@ -163,49 +161,44 @@ function renderFlipbook(items, container) {
   container.innerHTML = pagesHtml;
 
   const isMobile = window.innerWidth < 768;
-
-  const pageFlip = new St.PageFlip(container, {
-    width: isMobile ? window.innerWidth - 40 : 400,
-    height: isMobile ? (window.innerWidth - 40) * 1.25 : 500,
-    useMouseEvents: true,
-    swipeDistance: 15,
-    clickEventForward: true,
-    showCover: true,
-    mobileScrollSupport: false,
-    maxShadowOpacity: 0,
-    drawShadow: false 
-  });
-
-  pageFlip.loadFromHTML(document.querySelectorAll('.page'));
-
-  // ปุ่มบน Desktop
-  document.getElementById('btn-prev')?.addEventListener('click', () => pageFlip.flipPrev());
-  document.getElementById('btn-next')?.addEventListener('click', () => pageFlip.flipNext());
-
-  // ผูกคำสั่งให้ Swipe Zones
-  document.getElementById('swipe-left')?.addEventListener('click', () => pageFlip.flipPrev());
-  document.getElementById('swipe-right')?.addEventListener('click', () => pageFlip.flipNext());
-
-  // Mobile Bottom Nav & Page Indicator Logic
-  const indicator = document.querySelector('.flipbook-page-indicator');
   
-  setTimeout(() => {
-    if (indicator) indicator.textContent = `1 / ${pageFlip.getPageCount()}`;
-  }, 100);
-
-  pageFlip.on('flip', (e) => {
-    if (indicator) {
-      const current = e.data + 1;
-      const total = pageFlip.getPageCount();
-      indicator.textContent = `${current} / ${total}`;
+  // 🔴 เริ่มการทำงานของ Turn.js (ปลั๊กอินลอกกระดาษ 3D)
+  $(container).turn({
+    // ถ้าคอม กว้างรวม 800 (หน้าละ 400) / ถ้ามือถือจะใช้ความกว้างหน้าจอ
+    width: isMobile ? window.innerWidth - 40 : 800, 
+    height: isMobile ? (window.innerWidth - 40) * 1.25 : 500,
+    display: isMobile ? 'single' : 'double', // มือถือหน้าเดียว คอมสองหน้า
+    gradients: true,    // 🪄 หัวใจสำคัญ: เปิดเอฟเฟกต์แสงเงา 3D และความโค้ง
+    elevation: 50,      // ความลอยของกระดาษตอนพลิก (ยิ่งเยอะยิ่งดูมีมิติ)
+    duration: 1200,     // จังหวะพลิกกระดาษ 1.2 วินาที (พริ้วๆ สมจริง)
+    autoCenter: true,
+    when: {
+      turned: function(event, page, view) {
+        // อัปเดตเลขหน้า
+        const indicator = document.querySelector('.flipbook-page-indicator');
+        if (indicator) {
+          const total = $(this).turn('pages');
+          indicator.textContent = `${page} / ${total}`;
+        }
+      }
     }
   });
 
-  // ปุ่ม Nav บนมือถือ
-  document.querySelector('.flipbook-prev')?.addEventListener('click', () => pageFlip.flipPrev());
-  document.querySelector('.flipbook-next')?.addEventListener('click', () => pageFlip.flipNext());
+  // ผูกคำสั่งให้ปุ่มต่างๆ ควบคุมหน้ากระดาษ (Desktop & Mobile)
+  document.getElementById('btn-prev')?.addEventListener('click', () => $(container).turn('previous'));
+  document.getElementById('btn-next')?.addEventListener('click', () => $(container).turn('next'));
+  document.getElementById('swipe-left')?.addEventListener('click', () => $(container).turn('previous'));
+  document.getElementById('swipe-right')?.addEventListener('click', () => $(container).turn('next'));
+  document.querySelector('.flipbook-prev')?.addEventListener('click', () => $(container).turn('previous'));
+  document.querySelector('.flipbook-next')?.addEventListener('click', () => $(container).turn('next'));
 
-  // Scroll Animation Stagger (Flipbook cards)
+  // ตั้งค่าเลขหน้าตอนโหลดเสร็จ
+  const indicator = document.querySelector('.flipbook-page-indicator');
+  setTimeout(() => {
+    if (indicator) indicator.textContent = `1 / ${$(container).turn('pages')}`;
+  }, 100);
+
+  // Scroll Animation Stagger (ให้หน้าค่อยๆ Fade-in เข้ามาเหมือนเดิม)
   const cards = document.querySelectorAll('.product-card');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
