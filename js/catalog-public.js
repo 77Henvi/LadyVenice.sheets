@@ -17,6 +17,56 @@ function getItemDesc(item) {
   return item.desc;
 }
 
+// ================= I18N HELPERS (ระบบ 2 ภาษา) =================
+
+const FLOWER_TRANSLATIONS = {
+  "ลิลลี่": "Lily",
+  "ลิลลี่วินเทจ": "Vintage Lily",
+  "Lily of the valley": "Lily of the Valley",
+  "กุหลาบโลลิต้า": "Lolita Rose",
+  "กุหลาบกำมะหยี่": "Velvet Rose",
+  "กุหลาบปารีส": "Paris Rose",
+  "กุหลาบขอบเผา (vintage Rose)": "Vintage Rose",
+  "กุหลาบเรนัน": "Ranunculus",
+  "กุหลาบ": "Rose",
+  "Snow flake hibiscus rose": "Snowflake Hibiscus",
+  "ฟาแลน": "Phalaenopsis",
+  "ฟาแลนผีเสื้อ": "Butterfly Phalaenopsis",
+  "ฟาแลนวินเทจ": "Vintage Phalaenopsis",
+  "ผีเสื้อคอสมอส": "Cosmos",
+  "คอสมอส": "Cosmos",
+  "สไปเดอร์ มัม": "Spider Mum",
+  "คาเนชั่น": "Carnation",
+  "ดาเรีย สเปรย์": "Spray Dahlia",
+  "ดาเรีย": "Dahlia",
+  "ก้านยูคาแอปเปิ้ล": "Apple Eucalyptus",
+  "เดลฟีเนี่ยม": "Delphinium",
+  "เยอบีร่า": "Gerbera",
+  "ดอกหน้าวัว": "Anthurium",
+  "พีโอนี่": "Peony",
+  "พีโอนี่แฟนซี": "Fancy Peony",
+  "ทิวลิป": "Tulip",
+  "ดอกผักโขม": "Amaranthus",
+  "ไฮเดรนเยีย": "Hydrangea",
+  "ไฮเดรนเยียวินเทจ": "Vintage Hydrangea",
+  "สน": "Pine",
+  "เบญจมาศ": "Chrysanthemum",
+  "ปอม": "Pom Pom"
+};
+
+// 🔴 2. ฟังก์ชันเช็กภาษาแล้วส่งข้อความดอกไม้กลับไป
+function getFlowerString(item) {
+  if (!item.flowers || !item.flowers.length) return '';
+  
+  if (window.currentLang === 'en') {
+    // ถ้าเป็น EN ให้เอาชื่อไทยไปเทียบใน Dictionary ถ้าไม่มีให้ใช้ชื่อเดิม
+    return item.flowers.map(f => FLOWER_TRANSLATIONS[f] || f).join(', ');
+  }
+  
+  // ถ้าเป็น TH ส่งกลับเป็น String ภาษาไทยตามปกติ
+  return item.flowers.join(', ');
+}
+
 // ================= LOAD DATA (ดึงข้อมูล) =================
 async function loadCatalog() {
   const container = document.getElementById('catalog-container'); 
@@ -87,13 +137,14 @@ function renderFlipbook(items, container) {
       ? `<p class="product-desc dynamic-desc">${getItemDesc(item)}</p>` 
       : '';
       
+  
     const tagsHtml = (item.flowers && item.flowers.length) 
-      ? `<div class="flower-list-italic">
-          ${item.flowers.join(', ')}
+      ? `<div class="flower-list-italic dynamic-flowers">
+          ${getFlowerString(item)}
          </div>`
       : '';
       
-    // 🔴 แปะ data-index ไว้ที่ card เพื่อให้อัปเดตได้ตอนกดสลับภาษา
+   
     return `
       <div class="page product-card" data-index="${index}">
         <div class="product-image-wrap">
@@ -182,9 +233,11 @@ window.updateCatalogLanguage = function() {
     if (item) {
       const nameEl = card.querySelector('.dynamic-name');
       const descEl = card.querySelector('.dynamic-desc');
+      const flowersEl = card.querySelector('.dynamic-flowers'); 
       
       if (nameEl) nameEl.textContent = getItemName(item);
       if (descEl) descEl.textContent = getItemDesc(item);
+      if (flowersEl) flowersEl.textContent = getFlowerString(item); 
     }
   });
 };

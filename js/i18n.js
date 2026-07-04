@@ -5,7 +5,7 @@ const TRANSLATIONS = {
     'header.subtitle': 'COLLECTION',
     'hero.subtitle': 'MADE FOR YOU',
     'hero.scroll': 'เลื่อนดู',
-    'info.delivery.title': 'การจัดส่ง',
+    'info.delivery.title': 'รายละเอียดการจัดส่ง',
     'info.delivery.ems': 'EMS: 130 บาท',
     'info.delivery.grab': 'Grab / LINE MAN / Bolt / Lalamove',
     'info.delivery.grab.sub': '(ค่าส่งตามระยะทาง)',
