@@ -163,18 +163,19 @@ function renderFlipbook(items, container) {
   const isMobile = window.innerWidth < 768;
   
   // 🔴 เริ่มการทำงานของ Turn.js (ปลั๊กอินลอกกระดาษ 3D)
+ // 🔴 เริ่มการทำงานของ Turn.js พร้อมระบบรีดประสิทธิภาพ
   $(container).turn({
-    // ถ้าคอม กว้างรวม 800 (หน้าละ 400) / ถ้ามือถือจะใช้ความกว้างหน้าจอ
     width: isMobile ? window.innerWidth - 40 : 800, 
     height: isMobile ? (window.innerWidth - 40) * 1.25 : 500,
-    display: isMobile ? 'single' : 'double', // มือถือหน้าเดียว คอมสองหน้า
-    gradients: true,    // 🪄 หัวใจสำคัญ: เปิดเอฟเฟกต์แสงเงา 3D และความโค้ง
-    elevation: 50,      // ความลอยของกระดาษตอนพลิก (ยิ่งเยอะยิ่งดูมีมิติ)
-    duration: 1200,     // จังหวะพลิกกระดาษ 1.2 วินาที (พริ้วๆ สมจริง)
+    display: isMobile ? 'single' : 'double', 
+    gradients: true,    
+    elevation: 50,      
+    // ปรับเวลาให้ไวขึ้นนิดนึงบนมือถือ เพื่อลดภาระเครื่องและดูติดนิ้วขึ้น
+    duration: isMobile ? 800 : 1200, 
+    acceleration: true, // 🪄 หัวใจสำคัญ: บังคับเปิด Hardware Acceleration ช่วยลดความ Lag
     autoCenter: true,
     when: {
       turned: function(event, page, view) {
-        // อัปเดตเลขหน้า
         const indicator = document.querySelector('.flipbook-page-indicator');
         if (indicator) {
           const total = $(this).turn('pages');
@@ -184,6 +185,20 @@ function renderFlipbook(items, container) {
     }
   });
 
+  // 🪄 ป้องกันบัคหน้าจอพังเวลามือถือย่อ/ขยาย (เช่น เวลาพิมพ์ URL หรือเลื่อนจอ)
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const newIsMobile = window.innerWidth < 768;
+      $(container).turn('size', 
+        newIsMobile ? window.innerWidth - 40 : 800, 
+        newIsMobile ? (window.innerWidth - 40) * 1.25 : 500
+      );
+      $(container).turn('display', newIsMobile ? 'single' : 'double');
+    }, 200);
+  });
+  
   // ผูกคำสั่งให้ปุ่มต่างๆ ควบคุมหน้ากระดาษ (Desktop & Mobile)
   document.getElementById('btn-prev')?.addEventListener('click', () => $(container).turn('previous'));
   document.getElementById('btn-next')?.addEventListener('click', () => $(container).turn('next'));
