@@ -137,13 +137,18 @@ function renderCatalog() {
 window.openCatalogModal = function() {
   document.getElementById('catalog-edit-id').value = '';
   document.getElementById('catalog-modal-title').textContent = 'เพิ่มสินค้า Catalog';
+  
+  // Clear ข้อมูลเดิมออกทั้งหมด
   document.getElementById('catalog-name').value = '';
+  document.getElementById('catalog-name-en').value = ''; // 🔴 เคลียร์ค่า EN
   document.getElementById('catalog-price').value = '';
   document.getElementById('catalog-desc').value = '';
+  document.getElementById('catalog-desc-en').value = ''; // 🔴 เคลียร์ค่า EN
+  
   document.getElementById('catalog-image').value = '';
   document.getElementById('catalog-image-preview').style.display = 'none';
   
-  resetFlowerCheckboxes(); // 🔴 ล้างค่าดอกไม้เมื่อเพิ่มใหม่
+  resetFlowerCheckboxes();
   
   const btn = document.getElementById('btn-save-catalog');
   btn.textContent = 'บันทึก';
@@ -157,9 +162,14 @@ window.editCatalog = function(id) {
 
   document.getElementById('catalog-edit-id').value = id;
   document.getElementById('catalog-modal-title').textContent = 'แก้ไขสินค้า Catalog';
+  
+  // ดึงข้อมูลเดิมมาแสดงใน Modal
   document.getElementById('catalog-name').value = c.name;
+  document.getElementById('catalog-name-en').value = c.name_en || ''; // 🔴 ดึงค่า EN
   document.getElementById('catalog-price').value = c.price;
   document.getElementById('catalog-desc').value = c.desc || '';
+  document.getElementById('catalog-desc-en').value = c.desc_en || ''; // 🔴 ดึงค่า EN
+  
   document.getElementById('catalog-image').value = '';
   
   const preview = document.getElementById('catalog-image-preview');
@@ -170,7 +180,7 @@ window.editCatalog = function(id) {
     preview.style.display = 'none';
   }
 
-  loadFlowerCheckboxes(c.flowers); // 🔴 โหลดรายชื่อดอกไม้เดิมที่มีอยู่
+  loadFlowerCheckboxes(c.flowers);
 
   const btn = document.getElementById('btn-save-catalog');
   btn.textContent = 'บันทึก';
@@ -180,9 +190,13 @@ window.editCatalog = function(id) {
 
 // ===== 3. บันทึกข้อมูล (UPLOAD รูปเข้า SUPABASE + SAVE) =====
 window.saveCatalog = async function() {
+  // ดึงค่าจาก Input ทั้งหมด
   const name = document.getElementById('catalog-name').value.trim();
+  const name_en = document.getElementById('catalog-name-en').value.trim(); // 🔴 รับค่า EN
   const price = document.getElementById('catalog-price').value.trim();
   const desc = document.getElementById('catalog-desc').value.trim();
+  const desc_en = document.getElementById('catalog-desc-en').value.trim(); // 🔴 รับค่า EN
+  
   const fileInput = document.getElementById('catalog-image');
   const file = fileInput.files[0];
   const id = document.getElementById('catalog-edit-id').value;
@@ -212,29 +226,38 @@ window.saveCatalog = async function() {
       imageUrl = data.publicUrl;
     }
     
-    const selectedFlowers = getSelectedFlowers(); // 🔴 ดึงค่าดอกไม้ที่เลือกไว้
+    const selectedFlowers = getSelectedFlowers();
 
     if (id) {
-      // โหมดแก้ไข
-      const updateData = { name, price, desc, flowers: selectedFlowers }; 
+      // โหมดแก้ไข: เพิ่ม name_en, desc_en เข้าไปใน updateData
+      const updateData = { 
+        name, 
+        name_en, 
+        price, 
+        desc, 
+        desc_en, 
+        flowers: selectedFlowers 
+      }; 
       if (imageUrl) updateData.image = imageUrl;
       
       await supabase.from('catalog').update(updateData).eq('id', id);
     } else {
-      // โหมดเพิ่มใหม่
+      // โหมดเพิ่มใหม่: เพิ่ม name_en, desc_en เข้าไปตอน insert
       const maxOrder = catalogData.length > 0 ? Math.max(...catalogData.map(c => c.order || 0)) : 0;
       await supabase.from('catalog').insert([{ 
         name, 
+        name_en,
         price, 
         desc, 
+        desc_en,
         "order": maxOrder + 1, 
         image: imageUrl || 'EMPTY',
-        flowers: selectedFlowers // 🔴 บันทึกรายชื่อดอกไม้
+        flowers: selectedFlowers
       }]);
     }
     
     closeModal('modal-catalog');
-    loadCatalog(); // โหลดข้อมูลใหม่มาโชว์
+    loadCatalog(); 
   } catch (error) {
     console.error("Error saving catalog: ", error);
     alert('เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่');
@@ -243,6 +266,8 @@ window.saveCatalog = async function() {
     btn.disabled = false;
   }
 };
+
+
 
 // ===== 4. ลบข้อมูล =====
 window.deleteCatalog = async function(id) {

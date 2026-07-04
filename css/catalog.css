@@ -918,3 +918,59 @@ body {
   .butterfly.b8 { top: 45%; left: 50%;  width: 95px !important; }
   .butterfly.b9 { top: 75%; left: 5%;   width: 112px !important; }
 }
+
+/* ================= LANGUAGE TOGGLE ================= */
+.public-header {
+  position: relative; 
+}
+
+.lang-toggle {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 0.5px solid var(--border-color, #EBEBEB);
+  border-radius: 20px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: var(--text-muted, #767676);
+  transition: all 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  z-index: 100;
+}
+
+.lang-toggle:hover {
+  background: var(--text-main, #000000);
+  color: white;
+  border-color: var(--text-main, #000000);
+}
+
+.lang-toggle:hover .megaphone-icon {
+  stroke: white;
+}
+
+.megaphone-icon {
+  width: 14px;
+  height: 14px;
+  stroke: var(--text-muted, #767676);
+  transition: stroke 0.25s ease;
+}
+
+.lang-toggle.-active {
+  background: #380707; /* ใช้สีเลือดหมูของแบรนด์ให้เข้าธีม */
+  color: white;
+  border-color: #380707;
+}
+
+.lang-toggle.-active .megaphone-icon {
+  stroke: white;
+}

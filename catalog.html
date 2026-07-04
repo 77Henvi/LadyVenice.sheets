@@ -29,6 +29,22 @@
         </div>
     </div>
 
+  <!-- ================= HEADER (เพิ่มปุ่มสลับภาษา) ================= -->
+  <header class="public-header">
+    <div class="logo">Lady<span>Venice</span></div>
+    <div class="header-subtitle" data-i18n="header.subtitle">COLLECTION</div>
+    
+    <!-- Language toggle มุมขวาบน -->
+    <button class="lang-toggle" id="langToggle" onclick="toggleLang()" aria-label="Switch language">
+      <svg class="megaphone-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9v6h4l5 5V4L7 9H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M16.5 7.5C17.9 8.9 18.8 10.8 18.8 13s-.9 4.1-2.3 5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M19.5 4.5C22 6.9 23.5 10.3 23.5 14s-1.5 7.1-4 9.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="lang-label" id="langLabel">EN</span>
+    </button>
+  </header>
+
   <!-- ================= SECTION 1: HERO BANNER ================= -->
   <section class="hero-section" id="heroSection">
     <div class="hero-bg">
@@ -37,7 +53,8 @@
     </div>
     <div class="hero-content" id="heroContent">
       <h1 class="hero-title">Signature bouquets</h1>
-      <p class="hero-subtitle">Made For you</p>
+      <!-- 🔴 ผูก data-i18n -->
+      <p class="hero-subtitle" data-i18n="hero.subtitle">Made For you</p>
     </div>
     <div class="scroll-indicator" id="scrollIndicator">
       <i data-lucide="chevron-down"></i>
@@ -51,10 +68,12 @@
       <!-- Delivery Info -->
       <div class="info-block">
         <div class="info-content">
-          <h3 class="info-title">Delivery Information</h3>
+          <!-- 🔴 ผูก data-i18n -->
+          <h3 class="info-title" data-i18n="info.delivery.title">Delivery Information</h3>
           <p class="info-desc">
-            <strong>EMS:</strong> 130 บาท<br>
-            <strong>Messenger:</strong> Grab / LINE MAN / Bolt / Lalamove (ค่าส่งตามระยะทาง)
+            <strong data-i18n="info.delivery.ems">EMS: 130 บาท</strong><br>
+            <strong data-i18n="info.delivery.grab">Messenger: Grab / LINE MAN / Bolt / Lalamove</strong><br>
+            <span data-i18n="info.delivery.grab.sub">(ค่าส่งตามระยะทาง)</span>
           </p>
         </div>
       </div>
@@ -65,11 +84,11 @@
       <!-- Pricing Info -->
       <div class="info-block">
         <div class="info-content">
-          <h3 class="info-title">Pricing & Customization</h3>
+          <!-- 🔴 ผูก data-i18n -->
+          <h3 class="info-title" data-i18n="info.pricing.title">Pricing & Customization</h3>
           <p class="info-desc">
-            ราคาที่แสดงในแคตตาล็อกเป็น <strong>ขนาด L (ช่อใหญ่)</strong><br>
-            สามารถปรับขนาดได้ S / M / L<br>
-            <span class="info-note">* ราคาอาจแตกต่างตามขนาดและชนิดดอกไม้ <br>(สามารถ Custom ได้)<br></span>
+            <span data-i18n="info.pricing.desc">ราคาที่แสดงในแคตตาล็อกเป็น <strong>ขนาด L (ช่อใหญ่)</strong><br>สามารถปรับขนาดได้ S / M / L</span><br>
+            <span class="info-note" data-i18n="info.custom">* ราคาอาจแตกต่างตามขนาดและชนิดดอกไม้ <br>(สามารถ Custom ได้)</span>
           </p>
         </div>
       </div>
@@ -98,7 +117,8 @@
           <div class="butterfly b9"><img src="images/white-butterflies.png" alt="butterfly"></div>
       </div>
 
-    <div class="collection-header scroll-reveal" data-delay="1">
+    <!-- 🔴 ผูก data-i18n -->
+    <div class="collection-header scroll-reveal" data-delay="1" data-i18n="collection.title">
       OUR COLLECTION
     </div>
     
@@ -106,7 +126,7 @@
       <!-- ปุ่ม Custom Nav (Desktop) -->
       <button class="flip-btn prev-btn" id="btn-prev"><i data-lucide="arrow-left"></i></button>
       
-      <!-- 🔴 Swipe Zones สำหรับ Mobile (ซ้าย) -->
+      <!-- Swipe Zones สำหรับ Mobile (ซ้าย) -->
       <div class="swipe-zone swipe-zone-left" id="swipe-left"></div>
 
       <!-- คอนเทนเนอร์สมุด -->
@@ -114,14 +134,14 @@
         <div class="loading-text">Loading Lookbook...</div>
       </div>
 
-      <!-- 🔴 Swipe Zones สำหรับ Mobile (ขวา) -->
+      <!-- Swipe Zones สำหรับ Mobile (ขวา) -->
       <div class="swipe-zone swipe-zone-right" id="swipe-right"></div>
 
       <!-- ปุ่ม Custom Nav (Desktop) -->
       <button class="flip-btn next-btn" id="btn-next"><i data-lucide="arrow-right"></i></button>
     </div>
 
-    <!-- 🔴 Mobile Nav Bar (แสดงเฉพาะมือถือ) -->
+    <!-- Mobile Nav Bar (แสดงเฉพาะมือถือ) -->
     <div class="flipbook-nav-mobile">
       <button class="flipbook-nav-btn flipbook-prev" aria-label="หน้าก่อนหน้า">
         <i data-lucide="chevron-left"></i>
@@ -136,13 +156,14 @@
 
   <!-- ================= FOOTER ================= -->
   <footer class="public-footer">
-    <p>© 2026 LadyVenice. All rights reserved.</p>
+    <!-- 🔴 ผูก data-i18n -->
+    <p data-i18n="footer.rights">© 2026 LadyVenice. All rights reserved.</p>
   </footer>
 
   <!-- ================= MODAL ================= -->
   <div class="public-modal-overlay" id="public-product-modal" onclick="closeProductModal(event)">
     <div class="public-modal-content" id="public-modal-box">
-      <button class="btn-close-modal" onclick="forceCloseModal()">
+      <button class="btn-close-modal" onclick="forceCloseModal()" aria-label="Close" data-i18n="modal.close">
         <i data-lucide="x"></i>
       </button>
       
@@ -160,6 +181,8 @@
   </div>
 
   <!-- ================= SCRIPTS ================= -->
+  <!-- 🔴 1. แทรกไฟล์ i18n.js ไว้ก่อนไฟล์สคริปต์หลัก -->
+  <script src="/js/i18n.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
   <script type="module" src="/js/catalog-public.js"></script>
 

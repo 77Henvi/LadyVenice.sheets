@@ -225,5 +225,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+// เก็บข้อมูลต้นฉบับไว้ใช้ตอนสลับภาษา
+window.globalCatalogData = [];
+
+function getItemName(item) {
+  if (window.currentLang === 'en' && item.name_en && item.name_en.trim()) {
+    return item.name_en;
+  }
+  return item.name; // Fallback TH
+}
+
+function getItemDesc(item) {
+  if (window.currentLang === 'en' && item.desc_en && item.desc_en.trim()) {
+    return item.desc_en;
+  }
+  return item.desc; // Fallback TH
+}
+
+// ในฟังก์ชัน loadCatalog() ตอนโหลดข้อมูลเสร็จ ให้เก็บค่าเข้า global ด้วย
+async function loadCatalog() {
+  // ... (โค้ดดึงข้อมูลเดิม)
+  const { data, error } = await supabase.from('catalog').select('*').order('order', { ascending: true }); 
+  
+  if (data) {
+    window.globalCatalogData = data; // 🔴 เพิ่มบรรทัดนี้
+  }
+  // ...
+}
+
+// 🔴 อัปเดตตอน Render HTML ของ Flipbook
+const pagesHtml = items.map((item, index) => {
+  // ... จัดการรูปภาพเหมือนเดิม
+  
+  // ใช้ data-index แปะไว้ เพื่อให้อัปเดตภาษาได้ง่าย
+  return `
+    <div class="page product-card" data-index="${index}">
+      <div class="product-image-wrap">
+        <img src="${imgSrc}" alt="">
+      </div>
+      <div class="product-info">
+        <h3 class="product-name dynamic-name">${getItemName(item)}</h3>
+        <p class="product-price">${item.price}</p>
+        ${tagsHtml}
+        ${item.desc && item.desc !== 'EMPTY' ? `<p class="product-desc dynamic-desc">${getItemDesc(item)}</p>` : ''}
+      </div>
+    </div>
+  `;
+}).join('');
+
+// 🔴 ฟังก์ชันที่ถูกเรียกจาก i18n.js เวลาสลับภาษา
+window.updateCatalogLanguage = function() {
+  const cards = document.querySelectorAll('.product-card[data-index]');
+  
+  cards.forEach(card => {
+    const idx = card.getAttribute('data-index');
+    const item = window.globalCatalogData[idx];
+    
+    if (item) {
+      const nameEl = card.querySelector('.dynamic-name');
+      const descEl = card.querySelector('.dynamic-desc');
+      
+      if (nameEl) nameEl.textContent = getItemName(item);
+      if (descEl) descEl.textContent = getItemDesc(item);
+    }
+  });
+
+  // อัปเดตข้อมูล Modal ด้วยถ้าเปิดค้างอยู่
+  // (ถ้ามีโค้ดจัดการ Modal ให้ใส่เช็คอัปเดตข้อความตรงนี้ด้วยครับ)
+};
+
 // เริ่มโหลด Catalog
 loadCatalog();
