@@ -879,10 +879,9 @@ body {
 .butterfly img {
   width: 100%;
   height: auto;
-  
   animation: wingFlap 0.6s ease-in-out infinite;
   transform-origin: center;
-
+  opacity: 100%; 
 }
 
 .collection-header,
