@@ -1,5 +1,23 @@
 import { supabase } from "./supabase-config.js";
 
+// ================= I18N HELPERS (ระบบ 2 ภาษา) =================
+window.globalCatalogData = [];
+
+function getItemName(item) {
+  if (window.currentLang === 'en' && item.name_en && item.name_en.trim()) {
+    return item.name_en;
+  }
+  return item.name; // Fallback กลับมาใช้ภาษาไทยถ้าไม่มี EN
+}
+
+function getItemDesc(item) {
+  if (window.currentLang === 'en' && item.desc_en && item.desc_en.trim()) {
+    return item.desc_en;
+  }
+  return item.desc;
+}
+
+// ================= LOAD DATA (ดึงข้อมูล) =================
 async function loadCatalog() {
   const container = document.getElementById('catalog-container'); 
   if (!container) return;
@@ -15,9 +33,12 @@ async function loadCatalog() {
   }
 
   if (!data || data.length === 0) {
-    container.innerHTML = '<div class="empty-state" style="text-align:center; padding:40px;">ยังไม่มีสินค้าใน Catalog</div>';
+    container.innerHTML = '<div class="empty-state" data-i18n="flipbook.empty" style="text-align:center; padding:40px;">ยังไม่มีสินค้าใน Catalog</div>';
     return;
   }
+
+  // 🔴 เก็บข้อมูลไว้ใช้ตอนกดสลับภาษา
+  window.globalCatalogData = data; 
 
   const validImages = data
     .map(item => item.image)
@@ -41,24 +62,29 @@ async function loadCatalog() {
   renderFlipbook(data, container);
 }
 
+
+// ================= RENDER FLIPBOOK =================
 function renderFlipbook(items, container) {
+  // จัดหน้าให้เป็นเลขคู่
   if (items.length % 2 !== 0) {
     items.push({ 
-      name: 'Coming Soon', 
+      name: 'Coming Soon',
+      name_en: 'Coming Soon', 
       price: '', 
       desc: 'รอพบกับคอลเล็กชันใหม่เร็วๆ นี้', 
+      desc_en: 'Stay tuned for our new collection.',
       image: 'https://placehold.co/400x500/fcfbf9/8a9e8c?font=playfair-display&text=Coming+Soon', 
       isPlaceholder: true 
     });
   }
 
-  const pagesHtml = items.map(item => {
+  const pagesHtml = items.map((item, index) => {
     const imgSrc = (item.image && item.image !== 'EMPTY') 
       ? item.image 
       : 'https://placehold.co/400x500/fcfbf9/c9897a?font=playfair-display&text=LadyVenice'; 
       
     const descHtml = (item.desc && item.desc !== 'EMPTY') 
-      ? `<p class="product-desc">${item.desc}</p>` 
+      ? `<p class="product-desc dynamic-desc">${getItemDesc(item)}</p>` 
       : '';
       
     const tagsHtml = (item.flowers && item.flowers.length) 
@@ -67,13 +93,14 @@ function renderFlipbook(items, container) {
          </div>`
       : '';
       
+    // 🔴 แปะ data-index ไว้ที่ card เพื่อให้อัปเดตได้ตอนกดสลับภาษา
     return `
-      <div class="page product-card">
+      <div class="page product-card" data-index="${index}">
         <div class="product-image-wrap">
-          <img src="${imgSrc}" alt="${item.name}">
+          <img src="${imgSrc}" alt="">
         </div>
         <div class="product-info">
-          <h3 class="product-name">${item.name}</h3>
+          <h3 class="product-name dynamic-name">${getItemName(item)}</h3>
           <p class="product-price">${item.price}</p>
           ${tagsHtml}
           ${descHtml}
@@ -144,6 +171,25 @@ function renderFlipbook(items, container) {
 }
 
 
+// ================= ฟังก์ชันถูกเรียกจาก i18n.js เมื่อกดสลับภาษา =================
+window.updateCatalogLanguage = function() {
+  const cards = document.querySelectorAll('.product-card[data-index]');
+  
+  cards.forEach(card => {
+    const idx = card.getAttribute('data-index');
+    const item = window.globalCatalogData[idx];
+    
+    if (item) {
+      const nameEl = card.querySelector('.dynamic-name');
+      const descEl = card.querySelector('.dynamic-desc');
+      
+      if (nameEl) nameEl.textContent = getItemName(item);
+      if (descEl) descEl.textContent = getItemDesc(item);
+    }
+  });
+};
+
+
 // ================= MAIN ANIMATIONS & INTERACTIONS =================
 document.addEventListener("DOMContentLoaded", () => {
   
@@ -162,7 +208,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 100);
   } else if (introScreen) {
     introScreen.addEventListener('transitionend', (e) => {
-      // รอจนกว่า opacity ของ splash จะจางหายไปจนจบ
       if (e.propertyName === 'opacity') {
         if (publicHeader) publicHeader.classList.add('-enter');
         if (heroContent) heroContent.classList.add('-entered');
@@ -225,74 +270,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-// เก็บข้อมูลต้นฉบับไว้ใช้ตอนสลับภาษา
-window.globalCatalogData = [];
-
-function getItemName(item) {
-  if (window.currentLang === 'en' && item.name_en && item.name_en.trim()) {
-    return item.name_en;
-  }
-  return item.name; // Fallback TH
-}
-
-function getItemDesc(item) {
-  if (window.currentLang === 'en' && item.desc_en && item.desc_en.trim()) {
-    return item.desc_en;
-  }
-  return item.desc; // Fallback TH
-}
-
-// ในฟังก์ชัน loadCatalog() ตอนโหลดข้อมูลเสร็จ ให้เก็บค่าเข้า global ด้วย
-async function loadCatalog() {
-  // ... (โค้ดดึงข้อมูลเดิม)
-  const { data, error } = await supabase.from('catalog').select('*').order('order', { ascending: true }); 
-  
-  if (data) {
-    window.globalCatalogData = data; // 🔴 เพิ่มบรรทัดนี้
-  }
-  // ...
-}
-
-// 🔴 อัปเดตตอน Render HTML ของ Flipbook
-const pagesHtml = items.map((item, index) => {
-  // ... จัดการรูปภาพเหมือนเดิม
-  
-  // ใช้ data-index แปะไว้ เพื่อให้อัปเดตภาษาได้ง่าย
-  return `
-    <div class="page product-card" data-index="${index}">
-      <div class="product-image-wrap">
-        <img src="${imgSrc}" alt="">
-      </div>
-      <div class="product-info">
-        <h3 class="product-name dynamic-name">${getItemName(item)}</h3>
-        <p class="product-price">${item.price}</p>
-        ${tagsHtml}
-        ${item.desc && item.desc !== 'EMPTY' ? `<p class="product-desc dynamic-desc">${getItemDesc(item)}</p>` : ''}
-      </div>
-    </div>
-  `;
-}).join('');
-
-// 🔴 ฟังก์ชันที่ถูกเรียกจาก i18n.js เวลาสลับภาษา
-window.updateCatalogLanguage = function() {
-  const cards = document.querySelectorAll('.product-card[data-index]');
-  
-  cards.forEach(card => {
-    const idx = card.getAttribute('data-index');
-    const item = window.globalCatalogData[idx];
-    
-    if (item) {
-      const nameEl = card.querySelector('.dynamic-name');
-      const descEl = card.querySelector('.dynamic-desc');
-      
-      if (nameEl) nameEl.textContent = getItemName(item);
-      if (descEl) descEl.textContent = getItemDesc(item);
-    }
-  });
-
-  // อัปเดตข้อมูล Modal ด้วยถ้าเปิดค้างอยู่
-  // (ถ้ามีโค้ดจัดการ Modal ให้ใส่เช็คอัปเดตข้อความตรงนี้ด้วยครับ)
-};
-
-// เริ่มโหลด Catalog
+// เริ่มโหลด Catalog ทันทีที่อ่านไฟล์
 loadCatalog();
