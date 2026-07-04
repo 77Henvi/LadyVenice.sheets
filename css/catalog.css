@@ -823,7 +823,7 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: 10; /* 🪄 เปลี่ยนจาก 0 เป็น 10 */
   overflow: hidden;
 }
 
@@ -905,4 +905,17 @@ body {
   pointer-events: none;
   z-index: 0; 
   overflow: hidden;
+}
+
+/* 🔴 จัดระเบียบตำแหน่งให้กระจายทั่วจอมือถือ + ใช้ขนาดตัวที่ใหญ่ขึ้นตามที่กำหนด */
+@media (max-width: 767px) {
+  .butterfly.b1 { top: 10%; left: 5%;   width: 112px !important; }
+  .butterfly.b2 { top: 25%; left: 75%;  width: 98px !important; }
+  .butterfly.b3 { top: 40%; left: 10%;  width: 100px !important; }
+  .butterfly.b4 { top: 55%; left: 80%;  width: 107px !important; }
+  .butterfly.b5 { top: 70%; left: 15%;  width: 99px !important; }
+  .butterfly.b6 { top: 85%; left: 65%;  width: 120px !important; }
+  .butterfly.b7 { top: 15%; left: 80%;  width: 123px !important; }
+  .butterfly.b8 { top: 45%; left: 50%;  width: 95px !important; }
+  .butterfly.b9 { top: 75%; left: 5%;   width: 112px !important; }
 }
