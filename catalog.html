@@ -35,17 +35,17 @@
         <div class="logo">Lady<span>Venice</span></div>
         <div class="header-subtitle" data-i18n="header.subtitle">COLLECTION</div>
         
-        <!-- Language toggle มุมขวาบน -->
+        <!-- 🔴 เปลี่ยนปุ่มสลับภาษาเป็นแบบ Icon รูปโลก + Dropdown -->
           <div class="lang-dropdown-container">
-            <button class="lang-icon-btn" id="langIconBtn" aria-label="Change language">
+            <button class="lang-icon-btn" id="langIconBtn" onclick="toggleLangMenu(event)" aria-label="Change language">
               <!-- ไอคอนลูกโลก -->
-              <svg class="globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
                 <circle cx="12" cy="12" r="10"></circle>
                 <line x1="2" y1="12" x2="22" y2="12"></line>
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
               </svg>
-              <!-- ไอคอนลูกศรลง (ซ่อนไว้ก่อน) -->
-              <svg class="chevron-icon" id="langChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <!-- ไอคอนลูกศรลง -->
+              <svg class="chevron-icon" id="langChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
                 <polyline points="6 9 12 15 18 9"></polyline>
               </svg>
             </button>
@@ -192,7 +192,7 @@
   </div>
 
   <!-- ================= SCRIPTS ================= -->
-  <!-- 🔴 1. แทรกไฟล์ i18n.js ไว้ก่อนไฟล์สคริปต์หลัก -->
+ 
   <script src="/js/i18n.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
   <script type="module" src="/js/catalog-public.js"></script>
@@ -252,5 +252,43 @@
       // เรียกใช้ไอคอน Lucide
       lucide.createIcons();
     </script>
+
+    <script>
+    // 1. ฟังก์ชันเปิด/ปิด Dropdown และลูกศร
+    window.toggleLangMenu = function(event) {
+      event.stopPropagation(); // ป้องกันการคลิกทะลุ
+      const langBtn = document.getElementById('langIconBtn');
+      const langMenu = document.getElementById('langMenu');
+      
+      if (langBtn && langMenu) {
+        langBtn.classList.toggle('open');
+        langMenu.classList.toggle('open');
+      }
+    };
+
+    // 2. ถ้ากดพื้นที่ว่างๆ ที่อื่นในจอ ให้ปิด Dropdown แบบเนียนๆ
+    document.addEventListener('click', function(event) {
+      const langBtn = document.getElementById('langIconBtn');
+      const langMenu = document.getElementById('langMenu');
+      
+      if (langBtn && langMenu && !langBtn.contains(event.target) && !langMenu.contains(event.target)) {
+        langBtn.classList.remove('open');
+        langMenu.classList.remove('open');
+      }
+    });
+
+    // 3. ฟังก์ชันถูกเรียกเมื่อกดเลือก TH หรือ EN
+    window.selectLang = function(lang) {
+      if (typeof window.setLang === 'function') {
+        window.setLang(lang); // สั่งเปลี่ยนภาษาในเว็บ
+      }
+      
+      // เมื่อเลือกเสร็จแล้ว สั่งปิด Dropdown และให้ลูกศร Fade out หายไป
+      const langBtn = document.getElementById('langIconBtn');
+      const langMenu = document.getElementById('langMenu');
+      if (langBtn) langBtn.classList.remove('open');
+      if (langMenu) langMenu.classList.remove('open');
+    };
+  </script>
 </body>
 </html>
