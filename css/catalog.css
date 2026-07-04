@@ -812,3 +812,100 @@ body {
     font-size: 1.1rem;
   }
 }
+
+/* ===== BUTTERFLY ANIMATION ===== */
+.flipbook-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.butterfly-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.butterfly {
+  position: absolute;
+  width: 40px;
+  opacity: 0;
+}
+
+/* Wing flap animation */
+@keyframes wingFlap {
+  0%, 100% { transform: scaleX(1); }
+  50%       { transform: scaleX(0.25); }
+}
+
+/* Float path — drift ขึ้นลงแบบ sine wave */
+@keyframes floatPath1 {
+  0%   { transform: translate(0, 0) rotate(-10deg); opacity: 0; }
+  5%   { opacity: 0.6; }
+  50%  { transform: translate(60px, -80px) rotate(5deg); opacity: 0.5; }
+  95%  { opacity: 0.4; }
+  100% { transform: translate(120px, 20px) rotate(-5deg); opacity: 0; }
+}
+
+@keyframes floatPath2 {
+  0%   { transform: translate(0, 0) rotate(8deg); opacity: 0; }
+  5%   { opacity: 0.5; }
+  50%  { transform: translate(-70px, -100px) rotate(-5deg); opacity: 0.45; }
+  95%  { opacity: 0.35; }
+  100% { transform: translate(-130px, -30px) rotate(10deg); opacity: 0; }
+}
+
+@keyframes floatPath3 {
+  0%   { transform: translate(0, 10px) rotate(-5deg); opacity: 0; }
+  5%   { opacity: 0.55; }
+  50%  { transform: translate(40px, -120px) rotate(8deg); opacity: 0.5; }
+  95%  { opacity: 0.3; }
+  100% { transform: translate(80px, -60px) rotate(-3deg); opacity: 0; }
+}
+
+/* Assign position + animation ต่างกัน 9 ตัว */
+.b1 { top: 70%; left: 10%; width: 55px; animation: floatPath1 9s ease-in-out infinite; animation-delay: 0s; }
+.b2 { top: 40%; left: 75%; width: 65px; animation: floatPath2 11s ease-in-out infinite; animation-delay: 1.5s; }
+.b3 { top: 80%; left: 50%; width: 60px; animation: floatPath3 8s ease-in-out infinite; animation-delay: 3s; }
+.b4 { top: 20%; left: 20%; width: 49px; animation: floatPath1 12s ease-in-out infinite; animation-delay: 4.5s; }
+.b5 { top: 60%; left: 85%; width: 50px; animation: floatPath2 10s ease-in-out infinite; animation-delay: 2s; }
+.b6 { top: 30%; left: 60%; width: 52px; animation: floatPath3 13s ease-in-out infinite; animation-delay: 6s; }
+.b7 { top: 85%; left: 30%; width: 67px; animation: floatPath1 9.5s ease-in-out infinite; animation-delay: 1s; }
+.b8 { top: 50%; left: 5%;  width: 48px; animation: floatPath2 11.5s ease-in-out infinite; animation-delay: 7s; }
+.b9 { top: 15%; left: 90%; width: 55px; animation: floatPath3 10.5s ease-in-out infinite; animation-delay: 3.5s; }
+
+/* Wing flap ทับบน float — ใช้ SVG animation แทนเพื่อไม่ conflict กับ transform ของ container */
+.butterfly svg {
+  animation: wingFlap 0.6s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.butterfly svg path {
+  stroke: #5c4d40 !important; 
+  stroke-width: 1.5px !important; 
+  opacity: 0.5 !important; 
+}
+
+.collection-header,
+.flipbook-wrapper,
+.flipbook-nav-mobile {
+  position: relative;
+  z-index: 1; 
+}
+
+/* 2. ดันตัวหนังสือแคตตาล็อกให้ลอยเด่นสุด ผีเสื้อจะได้ไม่บินตัดหน้า */
+#catalog-container {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 2; 
+}
+
+/* 3. ผีเสื้ออยู่ชั้นล่างสุด (ด้านหลัง) ของ Section นี้ */
+.butterfly-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0; 
+  overflow: hidden;
+}
