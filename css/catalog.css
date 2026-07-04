@@ -616,7 +616,7 @@ body {
 
 /* ================= INFO SECTION (DELIVERY & PRICING) ================= */
 .info-section {
-  background-color: #fffbf4; /* สีพื้นหลังสว่างคลีนๆ */
+  background-color: #ffffff; /* สีพื้นหลังสว่างคลีนๆ */
   padding: 80px 20px;
   scroll-snap-align: start;
   border-bottom: 0.5px solid #dcd7ce;
@@ -647,7 +647,7 @@ body {
 }
 
 .info-icon {
-  color: #c9897a; 
+  color: #dbd5af; 
   margin-bottom: 16px;
 }
 
