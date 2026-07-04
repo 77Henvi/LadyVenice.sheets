@@ -10,6 +10,7 @@
   --border-color: #EBEBEB;
   --ease-in-out-simple: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-fade: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out-quart: cubic-bezier(.77, 0, .175, 1);
 }
 
 * {
@@ -173,6 +174,12 @@ body {
   position: absolute;
   inset: 0;
   z-index: -2;
+  scale: 1.015; /* เพิ่มสำหรับแอนิเมชัน */
+  transition: scale 3s ease; /* เพิ่มสำหรับแอนิเมชัน */
+}
+
+.hero-bg.-mounted {
+  scale: 1; /* เพิ่มสำหรับแอนิเมชัน */
 }
 
 .hero-bg img {
@@ -240,6 +247,31 @@ body {
   0%, 100% { transform: translate(-50%, 0); }
   50% { transform: translate(-50%, 10px); }
 }
+
+/* ===== PUBLIC HEADER (Fade In) ===== */
+.public-header {
+  opacity: 0;
+  transition: opacity 1s var(--ease-fade);
+}
+.public-header.-enter {
+  opacity: 1;
+}
+
+/* ===== SCROLL REVEAL SYSTEM ===== */
+.scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+  transition: opacity 1s var(--ease-fade), transform 1.3s cubic-bezier(.645, .045, .355, 1);
+}
+
+.scroll-reveal.-entered {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.scroll-reveal[data-delay="1"] { transition-delay: 0.1s; }
+.scroll-reveal[data-delay="2"] { transition-delay: 0.2s; }
+.scroll-reveal[data-delay="3"] { transition-delay: 0.3s; }
 
 /* ===== 4. FLIPBOOK SECTION (v3.0) ===== */
 .flipbook-section {
@@ -412,7 +444,7 @@ body {
   z-index: 100;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.7s var(--ease-fade);
 }
 
 .public-modal-overlay.open {
@@ -425,8 +457,10 @@ body {
   width: 100%;
   max-width: 480px;
   padding: 0;
-  transform: translateY(20px);
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateY(30px);
+  transition: transform 0.7s var(--ease-in-out-quart),
+              opacity 0.5s var(--ease-fade);
+  opacity: 0;
   max-height: 100vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0,0,0,0.05);
@@ -434,6 +468,7 @@ body {
 
 .public-modal-overlay.open .public-modal-content {
   transform: translateY(0);
+  opacity: 1;
 }
 
 .btn-close-modal {
@@ -621,7 +656,7 @@ body {
   scroll-snap-align: start;
   border-bottom: 0.5px solid #dcd7ce;
   
-  /* 🔴 เตรียมพื้นที่ให้รูปลายน้ำดอกไม้ */
+  /* เตรียมพื้นที่ให้รูปลายน้ำดอกไม้ */
   position: relative;
   overflow: hidden;
 }
@@ -638,14 +673,6 @@ body {
   z-index: 1;
 }
 
-.info-block {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
 /* ================= CUSTOM BADGE ================= */
 .info-badge {
   margin-bottom: 12px;
@@ -654,16 +681,23 @@ body {
 }
 
 .info-badge img {
-  width: 65px; /* ปรับขนาดความเล็ก-ใหญ่ของ Badge ตรงนี้ได้เลยครับ */
+  width: 65px; 
   height: auto;
   object-fit: contain;
-  /* เพิ่มเงาบางๆ ให้ตราประทับดูมีมิตินูนขึ้นมาจากกระดาษ */
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.08)); 
   transition: transform 0.3s ease;
 }
 
 .info-badge img:hover {
-  transform: scale(1.05); /* เอฟเฟกต์ลูกเล่น เวลานำเมาส์ไปชี้จะขยายขึ้นนิดนึง */
+  transform: scale(1.05); 
+}
+
+.info-block {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .info-title {

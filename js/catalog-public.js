@@ -41,8 +41,6 @@ async function loadCatalog() {
   renderFlipbook(data, container);
 }
 
-// ... (โค้ด loadCatalog บนสุดเหมือนเดิม) ...
-
 function renderFlipbook(items, container) {
   if (items.length % 2 !== 0) {
     items.push({ 
@@ -68,6 +66,7 @@ function renderFlipbook(items, container) {
           ${item.flowers.join(', ')}
          </div>`
       : '';
+      
     return `
       <div class="page product-card">
         <div class="product-image-wrap">
@@ -87,7 +86,6 @@ function renderFlipbook(items, container) {
 
   const isMobile = window.innerWidth < 768;
 
-  // 🔴 2. อัปเดต swipeDistance เป็น 15
   const pageFlip = new St.PageFlip(container, {
     width: isMobile ? window.innerWidth - 40 : 400,
     height: isMobile ? (window.innerWidth - 40) * 1.25 : 500,
@@ -106,19 +104,17 @@ function renderFlipbook(items, container) {
   document.getElementById('btn-prev')?.addEventListener('click', () => pageFlip.flipPrev());
   document.getElementById('btn-next')?.addEventListener('click', () => pageFlip.flipNext());
 
-  // 🔴 3. ผูกคำสั่งให้ Swipe Zones
+  // ผูกคำสั่งให้ Swipe Zones
   document.getElementById('swipe-left')?.addEventListener('click', () => pageFlip.flipPrev());
   document.getElementById('swipe-right')?.addEventListener('click', () => pageFlip.flipNext());
 
-  // 🔴 4. Mobile Bottom Nav & Page Indicator Logic
+  // Mobile Bottom Nav & Page Indicator Logic
   const indicator = document.querySelector('.flipbook-page-indicator');
   
-  // อัปเดตเลขหน้าตอนเริ่มต้น (ต้องรอให้ load จบก่อน 1 จังหวะ)
   setTimeout(() => {
     if (indicator) indicator.textContent = `1 / ${pageFlip.getPageCount()}`;
   }, 100);
 
-  // อัปเดตเลขหน้าตอนกำลังพลิก
   pageFlip.on('flip', (e) => {
     if (indicator) {
       const current = e.data + 1;
@@ -131,7 +127,7 @@ function renderFlipbook(items, container) {
   document.querySelector('.flipbook-prev')?.addEventListener('click', () => pageFlip.flipPrev());
   document.querySelector('.flipbook-next')?.addEventListener('click', () => pageFlip.flipNext());
 
-  // Scroll Animation Stagger
+  // Scroll Animation Stagger (Flipbook cards)
   const cards = document.querySelectorAll('.product-card');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -148,59 +144,85 @@ function renderFlipbook(items, container) {
 }
 
 
-// ================= PHASE 2: HERO, PARALLAX & SNAP LOGIC (v3.0) =================
-document.addEventListener('DOMContentLoaded', () => {
-  const heroContent = document.querySelector('.hero-content');
-  const introScreen = document.getElementById('introScreen');
+// ================= MAIN ANIMATIONS & INTERACTIONS =================
+document.addEventListener("DOMContentLoaded", () => {
   
-  // 1. Event-driven Fade-in
+  // 1. Post-Splash Animations
+  const introScreen = document.querySelector('.intro-screen');
+  const heroBg = document.querySelector('.hero-bg');
+  const publicHeader = document.querySelector('.public-header');
+  const heroContent = document.querySelector('.hero-content');
+
+  // ตรวจสอบว่าเคยดู Intro ไปแล้วหรือยัง
   if (sessionStorage.getItem('introPlayed')) {
-    setTimeout(() => heroContent.classList.add('-entered'), 100);
+    setTimeout(() => {
+      if (heroContent) heroContent.classList.add('-entered');
+      if (publicHeader) publicHeader.classList.add('-enter');
+      if (heroBg) heroBg.classList.add('-mounted');
+    }, 100);
   } else if (introScreen) {
     introScreen.addEventListener('transitionend', (e) => {
+      // รอจนกว่า opacity ของ splash จะจางหายไปจนจบ
       if (e.propertyName === 'opacity') {
-        heroContent.classList.add('-entered');
+        if (publicHeader) publicHeader.classList.add('-enter');
+        if (heroContent) heroContent.classList.add('-entered');
+        if (heroBg) heroBg.classList.add('-mounted');
       }
     }, { once: true });
   }
 
-  // 2. Parallax (Desktop Only)
-  const isDesktop = window.matchMedia('(min-width: 768px)').matches;
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const heroBg = document.querySelector('.hero-bg img');
-  let ticking = false;
-
-  if (isDesktop && !prefersReduced && heroBg) {
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const scrollY = window.scrollY;
-          heroBg.style.transform = `scale(1.1) translateY(${scrollY * 0.35}px)`;
-          ticking = false;
-        });
-        ticking = true;
+  // 2. Intersection Observer (Scroll Reveal)
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('-entered');
+        revealObserver.unobserve(entry.target); 
       }
     });
-  }
+  }, { threshold: 0.15 });
 
-  // 3. Scroll Indicator (Fade Out & Smooth Scroll)
-  const scrollIndicator = document.getElementById('scrollIndicator');
+  document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
+
+  // 3. Parallax Hero Effect & Scroll Indicator
+  const scrollIndicator = document.querySelector('.scroll-indicator');
   const flipbookSection = document.querySelector('.flipbook-section');
+  const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ticking = false;
 
-  if (scrollIndicator) {
-    // Fade out
-    window.addEventListener('scroll', () => {
-      scrollIndicator.style.opacity = Math.max(0, 1 - window.scrollY / 80);
-      scrollIndicator.style.pointerEvents = window.scrollY > 40 ? 'none' : 'auto';
-    });
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        
+        // Parallax สำหรับ Desktop
+        if (isDesktop && !prefersReduced && heroBg) {
+          const heroHeight = window.innerHeight;
+          const progress = Math.min(scrollY / heroHeight, 1);
+          
+          heroBg.style.transform = `scale(1.1) translateY(${scrollY * 0.35}px)`;
+          heroBg.style.opacity = 1 - progress * 0.4; 
+        }
 
-    // Click to scroll
-    if (flipbookSection) {
-      scrollIndicator.addEventListener('click', () => {
-        flipbookSection.scrollIntoView({ behavior: 'smooth' });
+        // การจัดการลูกศรชี้ลง (Fade out & Disable click)
+        if (scrollIndicator) {
+          scrollIndicator.style.opacity = Math.max(0, 1 - scrollY / 80);
+          scrollIndicator.style.pointerEvents = scrollY > 40 ? 'none' : 'auto';
+        }
+        
+        ticking = false;
       });
+      ticking = true;
     }
+  });
+
+  // 4. Click to scroll (ลูกศรชี้ลง)
+  if (scrollIndicator && flipbookSection) {
+    scrollIndicator.addEventListener('click', () => {
+      flipbookSection.scrollIntoView({ behavior: 'smooth' });
+    });
   }
+
 });
 
 // เริ่มโหลด Catalog
