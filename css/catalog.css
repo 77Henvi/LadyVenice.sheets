@@ -626,31 +626,6 @@ body {
   overflow: hidden;
 }
 
-/* 🔴 เสกลายน้ำดอกไม้ไว้ด้านซ้าย */
-.info-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  
-  /* อย่าลืมเช็ก Path รูปให้ถูกต้องนะครับ */
-  background-image: url('../images/flower-info.png'); 
-  background-repeat: no-repeat;
-  background-position: -5% center;
-  background-size: 45% auto;
-
-  
-  
-  /* ปรับความจาง และย้อมสีให้เป็นโทนเทาๆ กลืนกับพื้นหลังสว่าง */
-  opacity: 0.35; 
-  
-  
-  pointer-events: none;
-  z-index: 0;
-}
-
 .info-container {
   max-width: 800px;
   margin: 0 auto;
@@ -659,7 +634,6 @@ body {
   align-items: center;
   gap: 40px;
   
-  /* 🔴 ยกเนื้อหาทั้งหมดให้อยู่เหนือลายน้ำ */
   position: relative;
   z-index: 1;
 }
@@ -673,7 +647,7 @@ body {
 }
 
 .info-icon {
-  color: #c9897a; /* สี Dusty Rose */
+  color: #c9897a; 
   margin-bottom: 16px;
 }
 
@@ -684,7 +658,7 @@ body {
 }
 
 .info-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Pinyon Script', cursive;
   font-size: 1.5rem;
   color: #720b0b; /* สีน้ำตาลเข้มละมุน */
   margin-bottom: 12px;
