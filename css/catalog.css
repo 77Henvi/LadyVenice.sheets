@@ -35,6 +35,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (max-width: 767px) {
+  html {
+    scroll-snap-type: none; /* ปิด snap บนมือถือ */
+  }
+}
+
 /* ===== 2. YSL SPLASH SCREEN (Refined) ===== */
 .intro-screen {
   background: #380707;
@@ -260,9 +266,9 @@ body {
   transform: translate3d(0, 0, 0);
 }
 
-.scroll-reveal[data-delay="1"] { transition-delay: 0.1s; }
-.scroll-reveal[data-delay="2"] { transition-delay: 0.2s; }
-.scroll-reveal[data-delay="3"] { transition-delay: 0.3s; }
+.scroll-reveal[data-delay="1"] { transition-delay: 0.2s; }
+.scroll-reveal[data-delay="2"] { transition-delay: 0.4s; }
+.scroll-reveal[data-delay="3"] { transition-delay: 0.6s; }
 
 /* ===== 4. FLIPBOOK SECTION (v3.0) ===== */
 .flipbook-section {
@@ -305,6 +311,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-grow: 1;
 }
 
 #catalog-container {

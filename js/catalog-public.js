@@ -165,7 +165,7 @@ function renderFlipbook(items, container) {
   // 🔴 ตั้งค่า PageFlip ใหม่ให้มีเงาและดูละมุนขึ้น
   const pageFlip = new St.PageFlip(container, {
     width: isMobile ? window.innerWidth - 40 : 400,
-    height: isMobile ? (window.innerWidth - 40) * 1.25 : 500,
+    height: isMobile ? 480 : 500,
     useMouseEvents: true,
     swipeDistance: 15,
     clickEventForward: true,
@@ -180,6 +180,12 @@ function renderFlipbook(items, container) {
   });
 
   pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+  window.addEventListener('resize', () => {
+    const isMobileNow = window.innerWidth < 768;
+    // สั่งให้ PageFlip ปรับขนาดใหม่ตามความกว้างที่เปลี่ยนไป
+    pageFlip.updateFromHtml(document.querySelectorAll('.page'));
+  });
 
   // ปุ่มบน Desktop (ใช้มุม bottom เพื่อให้ดูลอกกระดาษ)
   document.getElementById('btn-prev')?.addEventListener('click', () => pageFlip.flipPrev('bottom'));
