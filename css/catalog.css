@@ -951,50 +951,95 @@ body {
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
-/* ================= LANGUAGE TOGGLE (สำหรับพื้นหลังสีมืด) ================= */
-.lang-toggle {
+/* ================= LANGUAGE GLOBE & DROPDOWN ================= */
+.lang-dropdown-container {
   position: absolute;
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 101;
+}
+
+.lang-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.15); /* ปุ่มโปร่งแสง */
-  backdrop-filter: blur(4px); /* สไตล์กระจกฝ้า */
-  border: 0.5px solid rgba(255, 255, 255, 0.4);
-  border-radius: 20px;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1px;
-  color: #ffffff; /* ข้อความปุ่มสีขาว */
-  transition: all 0.25s ease;
+  padding: 8px;
+  color: #ffffff;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  outline: none;
 }
 
-.lang-toggle:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: #ffffff;
+.globe-icon {
+  width: 20px;
+  height: 20px;
+  stroke: #ffffff;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0.8;
 }
 
-.megaphone-icon {
+.lang-icon-btn:hover .globe-icon {
+  opacity: 1;
+}
+
+.chevron-icon {
   width: 14px;
   height: 14px;
-  stroke: #ffffff; /* ไอคอนสีขาว */
-  transition: stroke 0.25s ease;
+  stroke: #ffffff;
+  /* 🪄 ซ่อนลูกศรไว้ก่อน และตั้งให้ขยับขึ้นไปนิดนึงเตรียมเด้งลงมา */
+  opacity: 0; 
+  transform: translateY(-5px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Active state (เมื่อสลับเป็นภาษาอังกฤษ) */
-.lang-toggle.-active {
-  background: #ffffff;
-  color: #000000; /* ข้อความปุ่มสีดำ */
-  border-color: #ffffff;
+/* 🪄 เมื่อกดปุ่ม (คลาส .open จะถูกเพิ่มด้วย JS) ลูกศรจะ Fade-in และเลื่อนลงมา */
+.lang-icon-btn.open .chevron-icon {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.lang-toggle.-active .megaphone-icon {
-  stroke: #000000; /* ไอคอนสีดำ */
+.lang-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  list-style: none;
+  /* 🪄 พื้นหลังโปร่งใสแบบกระจกฝ้า (Glassmorphism) */
+  background: rgba(0, 0, 0, 0.25); 
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 0;
+  min-width: 60px;
+  
+  /* 🪄 อนิเมชันซ่อน/แสดง Dropdown */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.lang-dropdown-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.lang-dropdown-menu li {
+  padding: 8px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: #ffffff;
+  text-align: center;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.lang-dropdown-menu li:hover {
+  background: rgba(255, 255, 255, 0.15);
 }

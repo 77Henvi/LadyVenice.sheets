@@ -36,14 +36,26 @@
         <div class="header-subtitle" data-i18n="header.subtitle">COLLECTION</div>
         
         <!-- Language toggle มุมขวาบน -->
-        <button class="lang-toggle" id="langToggle" onclick="toggleLang()" aria-label="Switch language">
-          <svg class="megaphone-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 9v6h4l5 5V4L7 9H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-            <path d="M16.5 7.5C17.9 8.9 18.8 10.8 18.8 13s-.9 4.1-2.3 5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M19.5 4.5C22 6.9 23.5 10.3 23.5 14s-1.5 7.1-4 9.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-          <span class="lang-label" id="langLabel">EN</span>
-        </button>
+          <div class="lang-dropdown-container">
+            <button class="lang-icon-btn" id="langIconBtn" aria-label="Change language">
+              <!-- ไอคอนลูกโลก -->
+              <svg class="globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
+              <!-- ไอคอนลูกศรลง (ซ่อนไว้ก่อน) -->
+              <svg class="chevron-icon" id="langChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <ul class="lang-dropdown-menu" id="langMenu">
+              <li onclick="selectLang('th')">TH</li>
+              <li onclick="selectLang('en')">EN</li>
+            </ul>
+          </div>
       </header>
       
     <div class="hero-bg">
