@@ -496,10 +496,14 @@ body {
   background: #F7F7F7;
 }
 
+
 .modal-image-wrap img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto; 
+  max-height: 85vh; 
+  object-fit: contain; 
+  display: block;
+  background: #f7f7f7; 
 }
 
 .modal-details {
