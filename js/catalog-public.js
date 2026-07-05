@@ -46,12 +46,12 @@ const FLOWER_TRANSLATIONS = {
   "คอสมอส": "Cosmos",
   "สไปเดอร์ มัม": "Spider Mum",
   "คาเนชั่น": "Carnation",
-  "คาร์เนชั่น": "Carnation", // เพิ่มเผื่อพิมพ์แบบมี 'ร์'
+  "คาร์เนชั่น": "Carnation", 
   "ดาเรีย สเปรย์": "Spray Dahlia",
   "ดาเรีย": "Dahlia",
   "ก้านยูคาแอปเปิ้ล": "Apple Eucalyptus",
-  "เดลฟีเนียม": "Delphinium", // เพิ่มแบบไม่มีไม้เอก (ตามในรูป)
-  "เดลฟีเนี่ยม": "Delphinium", // เพิ่มแบบมีไม้เอก
+  "เดลฟีเนียม": "Delphinium", 
+  "เดลฟีเนี่ยม": "Delphinium", 
   "เยอบีร่า": "Gerbera",
   "ดอกหน้าวัว": "Anthurium",
   "พีโอนี่": "Peony",
@@ -68,18 +68,15 @@ const FLOWER_TRANSLATIONS = {
 function getFlowerString(item) {
   if (!item.flowers) return '';
   
-  // ดักความปลอดภัย เผื่อข้อมูลโยนมาเป็น String แทนที่จะเป็น Array
   let flowerArray = Array.isArray(item.flowers) ? item.flowers : item.flowers.split(',');
   if (!flowerArray.length) return '';
 
-  // ถ้าลูกค้ากดเลือกเป็นภาษาไทยล้วน ถึงจะโชว์ภาษาไทย
   if (window.currentLang === 'th') {
     return flowerArray.map(f => f.trim()).join(', ');
   }
   
-  // นอกนั้น (Dual หรือ EN) ให้บังคับแปลเป็นอังกฤษล้วน
   return flowerArray.map(f => {
-    const cleanName = f.trim(); // สำคัญมาก! ใช้กำจัดเว้นวรรคหน้า-หลังที่ติดมาจากฐานข้อมูล
+    const cleanName = f.trim(); 
     return FLOWER_TRANSLATIONS[cleanName] || cleanName;
   }).join(', ');
 }
@@ -130,15 +127,12 @@ async function loadCatalog() {
 
 // ================= RENDER FLIPBOOK  =================
 function renderFlipbook(items, container) {
-  // 🔴 1. สร้าง Array ใหม่ แทรกหน้าปกเข้าไปเป็นลำดับแรกสุด
   const flipbookItems = [{ isCover: true, realIndex: -1 }];
   
-  // 🔴 2. ดึงข้อมูลดอกไม้ทั้งหมดมาต่อท้ายหน้าปก
   items.forEach((item, i) => {
     flipbookItems.push({ ...item, realIndex: i });
   });
 
-  // เช็กให้หน้าทั้งหมดเป็นเลขคู่ เผื่อหน้าว่างด้านหลัง
   if (flipbookItems.length % 2 !== 0) {
     flipbookItems.push({ 
       name: 'Coming Soon',
@@ -153,7 +147,6 @@ function renderFlipbook(items, container) {
   }
 
   const pagesHtml = flipbookItems.map((item) => {
-    // 🔴 3. ถ้าเป็นไอเท็มปก ให้ Render HTML ของหน้าปกโดยเฉพาะ
     if (item.isCover) {
       return `
         <div class="page cover-page" data-index="cover">
@@ -164,7 +157,6 @@ function renderFlipbook(items, container) {
       `;
     }
 
-    // --- ส่วนนี้คือหน้าปกติดอกไม้ (เหมือนเดิม) ---
     const imgSrc = (item.image && item.image !== 'EMPTY') 
       ? item.image 
       : 'https://placehold.co/400x500/fcfbf9/c9897a?font=playfair-display&text=LadyVenice'; 
@@ -182,7 +174,7 @@ function renderFlipbook(items, container) {
     return `
       <div class="page product-card" data-index="${item.realIndex}">
         <div class="product-image-wrap">
-          <img src="${imgSrc}" alt="">
+          <img src="${imgSrc}" alt="" class="zoomable-img" style="cursor: pointer;">
         </div>
         <div class="product-info">
           <h3 class="product-name dynamic-name">${getItemName(item)}</h3>
@@ -195,6 +187,22 @@ function renderFlipbook(items, container) {
   }).join('');
 
   container.innerHTML = pagesHtml;
+
+  // 🟢 ผูก Event ให้รูปคลิกแล้วเด้งป๊อปอัป
+  setTimeout(() => {
+    const zoomableImages = container.querySelectorAll('.zoomable-img');
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+
+    zoomableImages.forEach(img => {
+      img.addEventListener('click', function() {
+        if (modal && modalImage) {
+          modalImage.src = this.src; 
+          modal.classList.add('open');
+        }
+      });
+    });
+  }, 100);
 
   const isMobile = window.innerWidth < 768;
 
@@ -244,7 +252,6 @@ function renderFlipbook(items, container) {
     }
   });
 
-  // เปลี่ยนจาก .product-card เป็น .page เพื่อให้หน้าปกมีแอนิเมชันตอนเปิดมาด้วย
   const cards = document.querySelectorAll('.page');
   cards.forEach((card, index) => {
     card.style.transitionDelay = `${(index % 10) * 60}ms`; 
@@ -261,7 +268,6 @@ window.updateCatalogLanguage = function() {
   cards.forEach(card => {
     const idx = card.getAttribute('data-index');
     
-    // 🔴 ข้ามการแปลถ้าเป็นหน้าปก หรือหน้า Coming soon
     if (!idx || idx === 'cover' || idx === '-1') return; 
     
     const item = window.globalCatalogData[idx];
@@ -349,3 +355,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 loadCatalog();
+
+// 🟢 ================= IMAGE MODAL (ป๊อปอัปดูรูปเต็ม) ================= 🟢
+function createModal() {
+  if (document.getElementById('imageModal')) return; // กันสร้างซ้ำ
+  const modalHtml = `
+    <div class="public-modal-overlay" id="imageModal">
+      <div class="public-modal-content">
+        <button class="btn-close-modal" id="closeModalBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="modal-image-wrap">
+          <img src="" alt="Full Image" id="modalImage">
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  const modal = document.getElementById('imageModal');
+  const closeBtn = document.getElementById('closeModalBtn');
+
+  closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('open');
+  });
+}
+createModal();
