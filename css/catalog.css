@@ -490,24 +490,24 @@ body {
   backdrop-filter: blur(4px);
 }
 
-/* กรอบรูปใน Modal ไม่ต้องบังคับอัตราส่วน 4:5 อีกต่อไป ปล่อยให้มันยืดตามรูปจริง */
 .modal-image-wrap {
-  width: 100%;
-  background: transparent; /* เอาพื้นหลังขาวออกให้ดูหรูขึ้น */
-  border-radius: 8px; /* ขอบมนนิดนึง */
-  overflow: hidden;
-  display: flex; /* ช่วยจัดให้อยู่ตรงกลางเสมอ */
-  justify-content: center;
-  align-items: center;
+  width: 100% !important;
+  aspect-ratio: auto !important; /* 🔴 พระเอกคือบรรทัดนี้ ยกเลิกสัดส่วนเก่า */
+  background: transparent !important; 
+  border-radius: 8px !important; 
+  overflow: hidden !important;
+  display: flex !important; 
+  justify-content: center !important;
+  align-items: center !important;
 }
 
-/* รักษาสัดส่วนรูปเดิม 100% ไม่โดนครอปทิ้ง (ใช้ได้ทั้งคอมและมือถือ) */
+/* บังคับไม่ให้ตัดรูปเด็ดขาด */
 .modal-image-wrap img {
-  width: 100%;
-  height: auto;
-  max-height: 85vh; /* บังคับไม่ให้รูปสูงทะลุจอ (โดยเฉพาะรูปแนวตั้ง) */
-  object-fit: contain; /* บอกบราวเซอร์ว่า "ย่อขยายได้ แต่ห้ามตัดรูปกรูทิ้งเด็ดขาด!" */
-  display: block;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 85vh !important; 
+  object-fit: contain !important; /* 🔴 บังคับโชว์รูปเต็มใบ */
+  display: block !important;
 }
 
 .modal-details {
