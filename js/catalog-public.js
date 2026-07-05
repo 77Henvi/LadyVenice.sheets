@@ -214,34 +214,26 @@ function renderFlipbook(items, container) {
     if (indicator) indicator.textContent = `1 / ${pageFlip.getPageCount()}`;
   }, 100);
 
+  // อัปเดตเลขหน้าตอนพลิก (Carousel ทำงานเหมือนเดิม)
   pageFlip.on('flip', (e) => {
     if (indicator) {
       const current = e.data + 1;
       const total = pageFlip.getPageCount();
       indicator.textContent = `${current} / ${total}`;
     }
-    // 🔴 หน่วงเวลาให้ animation เล่น "หลังจาก" หน้าพลิกเสร็จสมบูรณ์แล้วจริงๆ
-    // ไม่งั้น fade-in จะเกิดขึ้นระหว่างหน้ากำลังหมุนพลิกอยู่ (มองไม่เห็น) เหมือนที่เจอปัญหาอยู่
-    setTimeout(() => {
-      revealPage(e.data);
-      revealPage(e.data + 1); // เผื่อโหมด spread 2 หน้า
-    }, 1250); // รอให้เกิน flippingTime (1200ms) เล็กน้อย
   });
 
-  // 🔴 เอา IntersectionObserver ออก เพราะ flipbook ซ่อนหน้าด้วย transform ไม่ใช่การเลื่อนจอ
-  // ทำให้ทุกหน้าได้ class 'visible' พร้อมกันตั้งแต่โหลด (silently) เห็น animation จริงแค่หน้าแรกที่โชว์อยู่ตรงนั้น
-  // แก้ใหม่: ผูก animation กับ event ตอนพลิกหน้าจริง ให้ทุกหน้า replay แบบเดียวกับหน้าแรกทุกครั้งที่พลิกมาถึง
-  function revealPage(index) {
-    const card = container.querySelector(`.product-card[data-index="${index}"]`);
-    if (!card) return;
-    card.classList.remove('visible');
-    void card.offsetWidth; // force reflow เพื่อ reset transition ก่อนเล่นใหม่
-    requestAnimationFrame(() => card.classList.add('visible'));
-  }
-
-  // โชว์หน้าแรกทันทีตอนโหลด (พฤติกรรมเดิมของหน้าแรก)
-  revealPage(0);
-  revealPage(1); // เผื่อโหมด spread 2 หน้า
+  // 🟢 แก้บั๊กแอนิเมชันตรงนี้: เซ็ตให้ทุกหน้าพร้อมแสดงผลเนื้อหาทันทีตั้งแต่โหลดเว็บเสร็จ
+  // เวลาพลิกไปหน้า 2, 3 เนื้อหาจะติดไปกับกระดาษสวยๆ แบบหน้าแรกเลย ไม่เกิดแอนิเมชันเพี้ยน
+  const cards = document.querySelectorAll('.product-card');
+  cards.forEach((card, index) => {
+    // ใส่ delay ไล่ระดับให้หน้าแรกตอนโหลดเว็บดูมีมิติ
+    card.style.transitionDelay = `${(index % 10) * 60}ms`; 
+    
+    setTimeout(() => {
+      card.classList.add('visible');
+    }, 150);
+  });
 }
 
 // ================= ฟังก์ชันถูกเรียกจาก i18n.js เมื่อกดสลับภาษา =================
