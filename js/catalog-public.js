@@ -209,7 +209,7 @@ function renderFlipbook(items, container) {
     useMouseEvents: true,
     swipeDistance: 15,
     clickEventForward: true,
-    showCover: true, // ตั้งเป็น true เพื่อให้ทำตัวเหมือนปกหนังสือ
+    showCover: false,
     mobileScrollSupport: false,
     drawShadow: false,          
     maxShadowOpacity: 0.5,     
