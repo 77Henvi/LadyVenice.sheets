@@ -1141,3 +1141,58 @@ body {
 .lang-dropdown-menu li:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* =========================================================
+   COVER PAGE STYLE (หน้าปกแคตตาล็อกสีแดงเลือดหมู)
+   ========================================================= */
+.cover-page {
+  background-color: #6C1518; /* สีแดงเลือดหมูสุดหรู */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.6); /* เงาดำขอบปกให้ดูเหมือนหนัง/กำมะหยี่ */
+  overflow: hidden;
+}
+
+/* สร้างร่องพับสันปกหนังสือตรงขอบซ้าย */
+.cover-page::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(to right, rgba(0,0,0,0.4), rgba(255,255,255,0.1), rgba(0,0,0,0.4));
+  z-index: 2;
+}
+
+.cover-inner-border {
+  border: 1.5px solid #D4AF37; /* กรอบสีทอง */
+  width: 85%;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.1);
+}
+
+.cover-title {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 3.8rem;
+  color: #D4AF37; /* ตัวหนังสือสีทอง */
+  font-weight: 400;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  margin: 0;
+  line-height: 1;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .cover-title {
+    font-size: 4.8rem;
+  }
+}

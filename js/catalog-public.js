@@ -130,19 +130,41 @@ async function loadCatalog() {
 
 // ================= RENDER FLIPBOOK  =================
 function renderFlipbook(items, container) {
-  if (items.length % 2 !== 0) {
-    items.push({ 
+  // 🔴 1. สร้าง Array ใหม่ แทรกหน้าปกเข้าไปเป็นลำดับแรกสุด
+  const flipbookItems = [{ isCover: true, realIndex: -1 }];
+  
+  // 🔴 2. ดึงข้อมูลดอกไม้ทั้งหมดมาต่อท้ายหน้าปก
+  items.forEach((item, i) => {
+    flipbookItems.push({ ...item, realIndex: i });
+  });
+
+  // เช็กให้หน้าทั้งหมดเป็นเลขคู่ เผื่อหน้าว่างด้านหลัง
+  if (flipbookItems.length % 2 !== 0) {
+    flipbookItems.push({ 
       name: 'Coming Soon',
       name_en: 'Coming Soon', 
       price: '', 
       desc: 'รอพบกับคอลเล็กชันใหม่เร็วๆ นี้', 
       desc_en: 'Stay tuned for our new collection.',
       image: 'https://placehold.co/400x500/fcfbf9/8a9e8c?font=playfair-display&text=Coming+Soon', 
-      isPlaceholder: true 
+      isPlaceholder: true,
+      realIndex: -1
     });
   }
 
-  const pagesHtml = items.map((item, index) => {
+  const pagesHtml = flipbookItems.map((item) => {
+    // 🔴 3. ถ้าเป็นไอเท็มปก ให้ Render HTML ของหน้าปกโดยเฉพาะ
+    if (item.isCover) {
+      return `
+        <div class="page cover-page" data-index="cover">
+          <div class="cover-inner-border">
+            <h1 class="cover-title">Lady Venice</h1>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- ส่วนนี้คือหน้าปกติดอกไม้ (เหมือนเดิม) ---
     const imgSrc = (item.image && item.image !== 'EMPTY') 
       ? item.image 
       : 'https://placehold.co/400x500/fcfbf9/c9897a?font=playfair-display&text=LadyVenice'; 
@@ -158,7 +180,7 @@ function renderFlipbook(items, container) {
       : '';
       
     return `
-      <div class="page product-card" data-index="${index}">
+      <div class="page product-card" data-index="${item.realIndex}">
         <div class="product-image-wrap">
           <img src="${imgSrc}" alt="">
         </div>
@@ -187,7 +209,7 @@ function renderFlipbook(items, container) {
     useMouseEvents: true,
     swipeDistance: 15,
     clickEventForward: true,
-    showCover: true,
+    showCover: true, // ตั้งเป็น true เพื่อให้ทำตัวเหมือนปกหนังสือ
     mobileScrollSupport: false,
     drawShadow: false,          
     maxShadowOpacity: 0.5,     
@@ -221,6 +243,15 @@ function renderFlipbook(items, container) {
       indicator.textContent = `${current} / ${total}`;
     }
   });
+
+  // เปลี่ยนจาก .product-card เป็น .page เพื่อให้หน้าปกมีแอนิเมชันตอนเปิดมาด้วย
+  const cards = document.querySelectorAll('.page');
+  cards.forEach((card, index) => {
+    card.style.transitionDelay = `${(index % 10) * 60}ms`; 
+    setTimeout(() => {
+      card.classList.add('visible');
+    }, 150);
+  });
 }
 
 // ================= ฟังก์ชันถูกเรียกจาก i18n.js เมื่อกดสลับภาษา =================
@@ -229,6 +260,10 @@ window.updateCatalogLanguage = function() {
   
   cards.forEach(card => {
     const idx = card.getAttribute('data-index');
+    
+    // 🔴 ข้ามการแปลถ้าเป็นหน้าปก หรือหน้า Coming soon
+    if (!idx || idx === 'cover' || idx === '-1') return; 
+    
     const item = window.globalCatalogData[idx];
     
     if (item) {
