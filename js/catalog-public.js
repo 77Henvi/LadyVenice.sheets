@@ -209,7 +209,7 @@ function renderFlipbook(items, container) {
     useMouseEvents: true,
     swipeDistance: 15,
     clickEventForward: true,
-    showCover: false,
+    showCover: true, 
     mobileScrollSupport: false,
     drawShadow: false,          
     maxShadowOpacity: 0.5,     
