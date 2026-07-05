@@ -163,9 +163,14 @@ function renderFlipbook(items, container) {
   const isMobile = window.innerWidth < 768;
 
   // 🔴 ตั้งค่า PageFlip ใหม่ให้มีเงาและดูละมุนขึ้น
+  const pageWidth  = isMobile ? window.innerWidth - 40 : 400;
+  const pageHeight = isMobile
+    ? Math.min(pageWidth * 1.25, window.innerHeight * 0.65)
+    : 500;
+
   const pageFlip = new St.PageFlip(container, {
-    width: isMobile ? window.innerWidth - 40 : 400,
-    height: isMobile ? 480 : 500,
+  width: pageWidth,
+  height: pageHeight,
     useMouseEvents: true,
     swipeDistance: 15,
     clickEventForward: true,
