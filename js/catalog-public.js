@@ -214,25 +214,12 @@ function renderFlipbook(items, container) {
     if (indicator) indicator.textContent = `1 / ${pageFlip.getPageCount()}`;
   }, 100);
 
-  // อัปเดตเลขหน้าตอนพลิก (Carousel ทำงานเหมือนเดิม)
   pageFlip.on('flip', (e) => {
     if (indicator) {
       const current = e.data + 1;
       const total = pageFlip.getPageCount();
       indicator.textContent = `${current} / ${total}`;
     }
-  });
-
-  // 🟢 แก้บั๊กแอนิเมชันตรงนี้: เซ็ตให้ทุกหน้าพร้อมแสดงผลเนื้อหาทันทีตั้งแต่โหลดเว็บเสร็จ
-  // เวลาพลิกไปหน้า 2, 3 เนื้อหาจะติดไปกับกระดาษสวยๆ แบบหน้าแรกเลย ไม่เกิดแอนิเมชันเพี้ยน
-  const cards = document.querySelectorAll('.product-card');
-  cards.forEach((card, index) => {
-    // ใส่ delay ไล่ระดับให้หน้าแรกตอนโหลดเว็บดูมีมิติ
-    card.style.transitionDelay = `${(index % 10) * 60}ms`; 
-    
-    setTimeout(() => {
-      card.classList.add('visible');
-    }, 150);
   });
 }
 

@@ -433,6 +433,61 @@ body {
   overflow: hidden;
 }
 
+/* ===== 5.1 หน้าปก (หน้าแรกของ Flipbook) — ให้ดูเป็นปกหนังสือตั้งใจ ไม่ต้องพึ่ง animation ===== */
+.product-card[data-index="0"] {
+  position: relative;
+  background: linear-gradient(180deg, #fffdfb 0%, #fcfbf9 100%);
+  border: 1px solid rgba(201, 137, 122, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(201, 137, 122, 0.08), inset 0 0 20px rgba(0,0,0,0.03);
+}
+
+/* กรอบลายเส้นบางๆซ้อนด้านในให้ดูหรูขึ้นแบบปกหนังสือ */
+.product-card[data-index="0"]::before {
+  content: '';
+  position: absolute;
+  top: 10px; left: 10px; right: 10px; bottom: 10px;
+  border: 1px solid rgba(201, 137, 122, 0.25);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ป้ายชื่อร้านสไตล์ script ซ้อนบนมุมรูปภาพ ให้ฟีลปกนิตยสาร */
+.product-card[data-index="0"] .product-image-wrap {
+  position: relative;
+}
+
+.product-card[data-index="0"] .product-image-wrap::after {
+  content: 'LadyVenice';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Pinyon Script', cursive;
+  font-size: 1.6rem;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.35);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ชื่อคอลเลกชันบนหน้าปก ใช้ script font ให้ดูเหมือนหน้าไตเติลของหนังสือ */
+.product-card[data-index="0"] .product-name {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 2.6rem;
+  color: #c9897a;
+}
+
+/* Caption เล็กๆบอกว่าเป็นคอลเลกชันปีนี้ ให้ฟีลปกหนังสือมากขึ้น */
+.product-card[data-index="0"] .product-info::before {
+  content: 'OUR COLLECTION';
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: #8a9e8c;
+  margin-bottom: 6px;
+}
+
 /* ===== 6. LUXURY MODAL ===== */
 .public-modal-overlay {
   position: fixed;
@@ -1086,4 +1141,3 @@ body {
 .lang-dropdown-menu li:hover {
   background: rgba(255, 255, 255, 0.2);
 }
-
