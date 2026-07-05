@@ -220,22 +220,28 @@ function renderFlipbook(items, container) {
       const total = pageFlip.getPageCount();
       indicator.textContent = `${current} / ${total}`;
     }
+    // 🔴 หน่วงเวลาให้ animation เล่น "หลังจาก" หน้าพลิกเสร็จสมบูรณ์แล้วจริงๆ
+    // ไม่งั้น fade-in จะเกิดขึ้นระหว่างหน้ากำลังหมุนพลิกอยู่ (มองไม่เห็น) เหมือนที่เจอปัญหาอยู่
+    setTimeout(() => {
+      revealPage(e.data);
+      revealPage(e.data + 1); // เผื่อโหมด spread 2 หน้า
+    }, 1250); // รอให้เกิน flippingTime (1200ms) เล็กน้อย
   });
 
-  const cards = document.querySelectorAll('.product-card');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1 });
+  // 🔴 เอา IntersectionObserver ออก เพราะ flipbook ซ่อนหน้าด้วย transform ไม่ใช่การเลื่อนจอ
+  // ทำให้ทุกหน้าได้ class 'visible' พร้อมกันตั้งแต่โหลด (silently) เห็น animation จริงแค่หน้าแรกที่โชว์อยู่ตรงนั้น
+  // แก้ใหม่: ผูก animation กับ event ตอนพลิกหน้าจริง ให้ทุกหน้า replay แบบเดียวกับหน้าแรกทุกครั้งที่พลิกมาถึง
+  function revealPage(index) {
+    const card = container.querySelector(`.product-card[data-index="${index}"]`);
+    if (!card) return;
+    card.classList.remove('visible');
+    void card.offsetWidth; // force reflow เพื่อ reset transition ก่อนเล่นใหม่
+    requestAnimationFrame(() => card.classList.add('visible'));
+  }
 
-  // 🔴 บังคับให้ทุกหน้า animation เหมือนกับหน้าแรกเป๊ะ (ไม่มี stagger delay ไล่ตาม index อีกต่อไป)
-  cards.forEach((card) => {
-    card.style.transitionDelay = '0ms';
-    observer.observe(card);
-  });
+  // โชว์หน้าแรกทันทีตอนโหลด (พฤติกรรมเดิมของหน้าแรก)
+  revealPage(0);
+  revealPage(1); // เผื่อโหมด spread 2 หน้า
 }
 
 // ================= ฟังก์ชันถูกเรียกจาก i18n.js เมื่อกดสลับภาษา =================
