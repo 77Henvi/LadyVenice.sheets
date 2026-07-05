@@ -3,21 +3,30 @@ import { supabase } from "./supabase-config.js";
 // ================= I18N HELPERS (ระบบ 2 ภาษา) =================
 window.globalCatalogData = [];
 
+// 🔴 1. Fallback เผื่อกรณี i18n.js โหลดไม่ทัน/ไม่ถูกโหลด: ให้ยังมี preset เป็น 'dual' อยู่ดี
+// (ปกติ window.currentLang จะถูกกำหนดโดย i18n.js ไปแล้วก่อนไฟล์นี้รันเสมอ)
+if (!window.currentLang) {
+  const savedLang = localStorage.getItem('lang');
+  window.currentLang = savedLang || 'dual';
+}
+
+// 🔴 2. ฟังก์ชันดึงชื่อ (ห้ามลบฟังก์ชันนี้เด็ดขาด)
 function getItemName(item) {
-  if (window.currentLang === 'en' && item.name_en && item.name_en.trim()) {
-    return item.name_en;
+  // 🔴 ถ้าเลือกภาษาไทยล้วน ให้โชว์ไทยล้วน นอกนั้น (dual = preset ต้อนรับ, หรือ en) ให้บังคับเป็น EN ล้วน
+  if (window.currentLang === 'th') {
+    return item.name;
   }
-  return item.name; // Fallback กลับมาใช้ภาษาไทยถ้าไม่มี EN
+  return (item.name_en && item.name_en.trim()) ? item.name_en : (item.name || '');
 }
 
+// 🔴 3. ฟังก์ชันดึงรายละเอียด
 function getItemDesc(item) {
-  if (window.currentLang === 'en' && item.desc_en && item.desc_en.trim()) {
-    return item.desc_en;
+  // 🔴 ถ้าเลือกภาษาไทยล้วน ให้โชว์ไทยล้วน นอกนั้น (dual = preset ต้อนรับ, หรือ en) ให้บังคับเป็น EN ล้วน
+  if (window.currentLang === 'th') {
+    return item.desc;
   }
-  return item.desc;
+  return (item.desc_en && item.desc_en.trim()) ? item.desc_en : (item.desc || '');
 }
-
-// ================= I18N HELPERS (ระบบ 2 ภาษา) =================
 
 const FLOWER_TRANSLATIONS = {
   "ลิลลี่": "Lily",
@@ -37,10 +46,12 @@ const FLOWER_TRANSLATIONS = {
   "คอสมอส": "Cosmos",
   "สไปเดอร์ มัม": "Spider Mum",
   "คาเนชั่น": "Carnation",
+  "คาร์เนชั่น": "Carnation", // เพิ่มเผื่อพิมพ์แบบมี 'ร์'
   "ดาเรีย สเปรย์": "Spray Dahlia",
   "ดาเรีย": "Dahlia",
   "ก้านยูคาแอปเปิ้ล": "Apple Eucalyptus",
-  "เดลฟีเนี่ยม": "Delphinium",
+  "เดลฟีเนียม": "Delphinium", // เพิ่มแบบไม่มีไม้เอก (ตามในรูป)
+  "เดลฟีเนี่ยม": "Delphinium", // เพิ่มแบบมีไม้เอก
   "เยอบีร่า": "Gerbera",
   "ดอกหน้าวัว": "Anthurium",
   "พีโอนี่": "Peony",
@@ -54,17 +65,23 @@ const FLOWER_TRANSLATIONS = {
   "ปอม": "Pom Pom"
 };
 
-// 🔴 2. ฟังก์ชันเช็กภาษาแล้วส่งข้อความดอกไม้กลับไป
 function getFlowerString(item) {
-  if (!item.flowers || !item.flowers.length) return '';
+  if (!item.flowers) return '';
   
-  if (window.currentLang === 'en') {
-    // ถ้าเป็น EN ให้เอาชื่อไทยไปเทียบใน Dictionary ถ้าไม่มีให้ใช้ชื่อเดิม
-    return item.flowers.map(f => FLOWER_TRANSLATIONS[f] || f).join(', ');
+  // ดักความปลอดภัย เผื่อข้อมูลโยนมาเป็น String แทนที่จะเป็น Array
+  let flowerArray = Array.isArray(item.flowers) ? item.flowers : item.flowers.split(',');
+  if (!flowerArray.length) return '';
+
+  // ถ้าลูกค้ากดเลือกเป็นภาษาไทยล้วน ถึงจะโชว์ภาษาไทย
+  if (window.currentLang === 'th') {
+    return flowerArray.map(f => f.trim()).join(', ');
   }
   
-  // ถ้าเป็น TH ส่งกลับเป็น String ภาษาไทยตามปกติ
-  return item.flowers.join(', ');
+  // นอกนั้น (Dual หรือ EN) ให้บังคับแปลเป็นอังกฤษล้วน
+  return flowerArray.map(f => {
+    const cleanName = f.trim(); // สำคัญมาก! ใช้กำจัดเว้นวรรคหน้า-หลังที่ติดมาจากฐานข้อมูล
+    return FLOWER_TRANSLATIONS[cleanName] || cleanName;
+  }).join(', ');
 }
 
 // ================= LOAD DATA (ดึงข้อมูล) =================
@@ -83,11 +100,10 @@ async function loadCatalog() {
   }
 
   if (!data || data.length === 0) {
-    container.innerHTML = '<div class="empty-state" data-i18n="flipbook.empty" style="text-align:center; padding:40px;">ยังไม่มีสินค้าใน Catalog</div>';
+    container.innerHTML = '<div class="empty-state" style="text-align:center; padding:40px;">ยังไม่มีสินค้าใน Catalog</div>';
     return;
   }
 
-  // 🔴 เก็บข้อมูลไว้ใช้ตอนกดสลับภาษา
   window.globalCatalogData = data; 
 
   const validImages = data
@@ -112,10 +128,8 @@ async function loadCatalog() {
   renderFlipbook(data, container);
 }
 
-
 // ================= RENDER FLIPBOOK  =================
 function renderFlipbook(items, container) {
-  // จัดหน้าให้เป็นเลขคู่
   if (items.length % 2 !== 0) {
     items.push({ 
       name: 'Coming Soon',
@@ -162,49 +176,38 @@ function renderFlipbook(items, container) {
 
   const isMobile = window.innerWidth < 768;
 
-  // 🔴 ตั้งค่า PageFlip ใหม่ให้มีเงาและดูละมุนขึ้น
   const pageWidth  = isMobile ? window.innerWidth - 40 : 400;
   const pageHeight = isMobile
     ? Math.min(pageWidth * 1.25, window.innerHeight * 0.65)
     : 500;
 
   const pageFlip = new St.PageFlip(container, {
-  width: pageWidth,
-  height: pageHeight,
+    width: pageWidth,
+    height: pageHeight,
     useMouseEvents: true,
     swipeDistance: 15,
     clickEventForward: true,
     showCover: true,
     mobileScrollSupport: false,
-    
-    // 🪄 เปิดระบบความพริ้วและแสงเงา
-    drawShadow: false,          // สร้างเงาเสมือนจริงให้กระดาษ
-    maxShadowOpacity: 0.5,     // ความเข้มของเงา (0.5 กำลังพอดี ไม่มืดเกินไป)
-    showPageCorners: true,     // เผยมุมกระดาษเวลานำเมาส์ไปชี้
-    flippingTime: 1200         // ดึงจังหวะพลิกให้ช้าลงเพื่อความพรีเมียม
+    drawShadow: false,          
+    maxShadowOpacity: 0.5,     
+    showPageCorners: true,     
+    flippingTime: 1200         
   });
 
   pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
   window.addEventListener('resize', () => {
-    const isMobileNow = window.innerWidth < 768;
-    // สั่งให้ PageFlip ปรับขนาดใหม่ตามความกว้างที่เปลี่ยนไป
     pageFlip.updateFromHtml(document.querySelectorAll('.page'));
   });
 
-  // ปุ่มบน Desktop (ใช้มุม bottom เพื่อให้ดูลอกกระดาษ)
   document.getElementById('btn-prev')?.addEventListener('click', () => pageFlip.flipPrev('bottom'));
   document.getElementById('btn-next')?.addEventListener('click', () => pageFlip.flipNext('bottom'));
-
-  // ผูกคำสั่งให้ Swipe Zones (ตอนเอานิ้วแตะขอบจอมือถือ)
   document.getElementById('swipe-left')?.addEventListener('click', () => pageFlip.flipPrev('bottom'));
   document.getElementById('swipe-right')?.addEventListener('click', () => pageFlip.flipNext('bottom'));
-
-  // ปุ่ม Nav บนมือถือ (ด้านล่าง)
   document.querySelector('.flipbook-prev')?.addEventListener('click', () => pageFlip.flipPrev('bottom'));
   document.querySelector('.flipbook-next')?.addEventListener('click', () => pageFlip.flipNext('bottom'));
 
-  // อัปเดตเลขหน้า
   const indicator = document.querySelector('.flipbook-page-indicator');
   
   setTimeout(() => {
@@ -219,7 +222,6 @@ function renderFlipbook(items, container) {
     }
   });
 
-  // Scroll Animation Stagger (ให้หน้าค่อยๆ Fade-in)
   const cards = document.querySelectorAll('.product-card');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -229,12 +231,12 @@ function renderFlipbook(items, container) {
     });
   }, { threshold: 0.1 });
 
-  cards.forEach((card, index) => {
-    card.style.transitionDelay = `${(index % 10) * 60}ms`;
+  // 🔴 บังคับให้ทุกหน้า animation เหมือนกับหน้าแรกเป๊ะ (ไม่มี stagger delay ไล่ตาม index อีกต่อไป)
+  cards.forEach((card) => {
+    card.style.transitionDelay = '0ms';
     observer.observe(card);
   });
 }
-
 
 // ================= ฟังก์ชันถูกเรียกจาก i18n.js เมื่อกดสลับภาษา =================
 window.updateCatalogLanguage = function() {
@@ -249,24 +251,20 @@ window.updateCatalogLanguage = function() {
       const descEl = card.querySelector('.dynamic-desc');
       const flowersEl = card.querySelector('.dynamic-flowers'); 
       
-      if (nameEl) nameEl.textContent = getItemName(item);
-      if (descEl) descEl.textContent = getItemDesc(item);
-      if (flowersEl) flowersEl.textContent = getFlowerString(item); 
+      if (nameEl) nameEl.innerHTML = getItemName(item);
+      if (descEl) descEl.innerHTML = getItemDesc(item);
+      if (flowersEl) flowersEl.innerHTML = getFlowerString(item); 
     }
   });
 };
 
-
 // ================= MAIN ANIMATIONS & INTERACTIONS =================
 document.addEventListener("DOMContentLoaded", () => {
-  
-  // 1. Post-Splash Animations
   const introScreen = document.querySelector('.intro-screen');
   const heroBg = document.querySelector('.hero-bg');
   const publicHeader = document.querySelector('.public-header');
   const heroContent = document.querySelector('.hero-content');
 
-  // ตรวจสอบว่าเคยดู Intro ไปแล้วหรือยัง
   if (sessionStorage.getItem('introPlayed')) {
     setTimeout(() => {
       if (heroContent) heroContent.classList.add('-entered');
@@ -283,7 +281,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { once: true });
   }
 
-  // 2. Intersection Observer (Scroll Reveal)
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -295,7 +292,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
 
-  // 3. Parallax Hero Effect & Scroll Indicator
   const scrollIndicator = document.querySelector('.scroll-indicator');
   const flipbookSection = document.querySelector('.flipbook-section');
   const isDesktop = window.matchMedia('(min-width: 768px)').matches;
@@ -307,16 +303,13 @@ document.addEventListener("DOMContentLoaded", () => {
       requestAnimationFrame(() => {
         const scrollY = window.scrollY;
         
-        // Parallax สำหรับ Desktop
         if (isDesktop && !prefersReduced && heroBg) {
           const heroHeight = window.innerHeight;
           const progress = Math.min(scrollY / heroHeight, 1);
-          
           heroBg.style.transform = `scale(1.1) translateY(${scrollY * 0.35}px)`;
           heroBg.style.opacity = 1 - progress * 0.4; 
         }
 
-        // การจัดการลูกศรชี้ลง (Fade out & Disable click)
         if (scrollIndicator) {
           scrollIndicator.style.opacity = Math.max(0, 1 - scrollY / 80);
           scrollIndicator.style.pointerEvents = scrollY > 40 ? 'none' : 'auto';
@@ -328,14 +321,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 4. Click to scroll (ลูกศรชี้ลง)
   if (scrollIndicator && flipbookSection) {
     scrollIndicator.addEventListener('click', () => {
       flipbookSection.scrollIntoView({ behavior: 'smooth' });
     });
   }
-
 });
 
-// เริ่มโหลด Catalog ทันทีที่อ่านไฟล์
 loadCatalog();

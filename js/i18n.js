@@ -43,15 +43,28 @@ const TRANSLATIONS = {
   }
 };
 
-window.currentLang = 'th'; // Default
+// 🔴 Preset ต้อนรับลูกค้า: ถ้ายังไม่เคยเลือกภาษาไว้ (ไม่มีค่าใน localStorage) ให้เริ่มต้นเป็น 'dual'
+// ถ้าลูกค้าเคยกดเลือก TH หรือ EN ไว้ก่อนหน้า ให้จำค่านั้นไว้ใช้ต่อ
+const savedLang = localStorage.getItem('lang');
+window.currentLang = savedLang || 'dual';
+
+// 🔴 ฟังก์ชันช่วยดึงข้อความตามภาษา
+// โหมด 'dual' (preset ต้อนรับ) ให้แสดงเป็นภาษาไทยล้วน — ปุ่มโลกกด EN ค่อยสลับเป็นอังกฤษ
+function getI18nText(lang, key) {
+  if (lang === 'dual') {
+    return TRANSLATIONS.th[key] || TRANSLATIONS.en[key] || '';
+  }
+  return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || TRANSLATIONS.th[key] || '';
+}
 
 window.setLang = function(lang) {
   window.currentLang = lang;
+  localStorage.setItem('lang', lang); // 🔴 จำค่าที่ลูกค้าเลือกไว้ใช้ครั้งถัดไป
 
-  // 1. Update text based on data-i18n attribute
+  // 1. Update text based on data-i18n attribute (รองรับ th / en / dual)
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    const text = TRANSLATIONS[lang][key];
+    const text = getI18nText(lang, key);
     if (text) {
       el.innerHTML = text; // ใช้ innerHTML เพื่อรองรับ <strong>, <br> ตามดีไซน์
     }
@@ -78,5 +91,6 @@ window.toggleLang = function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.setLang('th');
+  // 🔴 ใช้ค่าที่จำไว้ (ถ้าลูกค้าเคยเลือก TH/EN มาก่อน) ไม่งั้น default เป็น 'dual' ตาม preset ต้อนรับ
+  window.setLang(window.currentLang);
 });
