@@ -188,17 +188,43 @@ function renderFlipbook(items, container) {
 
   container.innerHTML = pagesHtml;
 
-  // 🟢 ผูก Event ให้รูปคลิกแล้วเด้งป๊อปอัป
+  // 🟢 ผูก Event ให้รูปคลิกแล้วเด้งป๊อปอัป (อัปเดตแก้บั๊ก Desktop ทะลุ / Mobile กดไม่ติด)
   setTimeout(() => {
     const zoomableImages = container.querySelectorAll('.zoomable-img');
     const modal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
 
     zoomableImages.forEach(img => {
-      img.addEventListener('click', function() {
+      // สร้างฟังก์ชันเปิดรูป
+      const openModal = (e) => {
+        e.stopPropagation(); // 🔴 พระเอกอยู่ตรงนี้! สั่งหยุดไม่ให้คลิกทะลุไปโดนคำสั่งพลิกหน้า
+        e.preventDefault();  // ป้องกันพฤติกรรมแปลกๆ บนมือถือ
+        
         if (modal && modalImage) {
-          modalImage.src = this.src; 
+          modalImage.src = img.src; 
           modal.classList.add('open');
+        }
+      };
+
+      // 1. รองรับการคลิกบน Desktop
+      img.addEventListener('click', openModal);
+
+      // 2. รองรับมือถือ (แยกระหว่าง "จิ้มดูรูป" กับ "ปัดเปลี่ยนหน้า")
+      let touchStartX = 0;
+      let touchStartY = 0;
+      
+      img.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, {passive: true});
+
+      img.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
+        
+        // ถ้าขยับนิ้วน้อยกว่า 10px แปลว่าลูกค้าตั้งใจ "จิ้มเพื่อซูมรูป" (ไม่ใช่การปัดหน้ากระดาษ)
+        if (Math.abs(touchEndX - touchStartX) < 10 && Math.abs(touchEndY - touchStartY) < 10) {
+          openModal(e);
         }
       });
     });
