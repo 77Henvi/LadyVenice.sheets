@@ -1143,56 +1143,80 @@ body {
 }
 
 /* =========================================================
-   COVER PAGE STYLE (หน้าปกแคตตาล็อกสีแดงเลือดหมู)
+   COVER PAGE STYLE (หน้าปกแคตตาล็อกสุดหรู สไตล์ Glam)
    ========================================================= */
-.cover-page {
-  background-color: #6C1518; /* สีแดงเลือดหมูสุดหรู */
-  display: flex;
+/* ต้องเคลียร์ padding/margin ของหน้ากระดาษ (.page) ที่ครอบปกอยู่ */
+.page.cover-page {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: radial-gradient(circle at center, #631016 0%, #350508 100%) !important;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   height: 100%;
   width: 100%;
-  position: relative;
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.6); /* เงาดำขอบปกให้ดูเหมือนหนัง/กำมะหยี่ */
+  position: absolute;
+  top: 0;
+  left: 0;
   overflow: hidden;
+  box-shadow: inset -10px 0 30px rgba(0,0,0,0.6); 
 }
 
-/* สร้างร่องพับสันปกหนังสือตรงขอบซ้าย */
-.cover-page::before {
+/* ร่องสันหนังสือด้านซ้าย (Spine hinge) */
+.page.cover-page::before {
   content: '';
   position: absolute;
-  left: 12px;
+  left: 10px;
   top: 0;
   bottom: 0;
   width: 6px;
-  background: linear-gradient(to right, rgba(0,0,0,0.4), rgba(255,255,255,0.1), rgba(0,0,0,0.4));
+  background: linear-gradient(to right, rgba(0,0,0,0.6), rgba(255,255,255,0.1), rgba(0,0,0,0.6));
   z-index: 2;
 }
 
+/* กรอบสีทองบางๆ 2 ชั้น */
 .cover-inner-border {
-  border: 1.5px solid #D4AF37; /* กรอบสีทอง */
-  width: 85%;
-  height: 90%;
+  border: 1px solid rgba(226, 194, 117, 0.4);
+  width: calc(100% - 30px); /* บังคับให้ห่างจากขอบเท่าๆ กัน */
+  height: calc(100% - 30px); /* บังคับให้ห่างจากขอบเท่าๆ กัน */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.1);
+  position: absolute; /* เปลี่ยนเป็น absolute เพื่อให้อยู่กึ่งกลางเป๊ะ */
+  top: 15px;
+  left: 15px;
+  box-sizing: border-box; /* สำคัญมาก ป้องกันกรอบล้น */
 }
 
+/* เส้นกรอบซ้อนด้านใน */
+.cover-inner-border::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+  border: 1px solid rgba(226, 194, 117, 0.15);
+  pointer-events: none;
+}
+
+/* ชื่อ Lady Venice */
 .cover-title {
   font-family: 'Pinyon Script', cursive;
-  font-size: 3.8rem;
-  color: #D4AF37; /* ตัวหนังสือสีทอง */
-  font-weight: 400;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  font-size: 2.5rem; 
+  color: #fdf2d6; 
+  font-weight: 100; 
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3); 
   margin: 0;
-  line-height: 1;
-  text-align: center;
+  white-space: nowrap; 
+  z-index: 10;
+  letter-spacing: 0px;
+  transform: translateY(-5px); /* ขยับชื่อขึ้นนิดนึงให้ดูบาลานซ์กับกรอบ */
 }
 
 @media (min-width: 768px) {
   .cover-title {
-    font-size: 4.8rem;
+    font-size: 3.5rem; 
   }
 }

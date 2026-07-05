@@ -158,7 +158,7 @@ function renderFlipbook(items, container) {
       return `
         <div class="page cover-page" data-index="cover">
           <div class="cover-inner-border">
-            <h1 class="cover-title">Lady Venice</h1>
+            <h1 class="cover-title">LadyVenice</h1>
           </div>
         </div>
       `;
