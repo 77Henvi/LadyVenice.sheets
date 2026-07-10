@@ -677,7 +677,7 @@ window.renderStats = function() {
     const orders   = yearOrders.filter(o => (o.date || '').startsWith(prefix));
     const expenses = yearFinance.filter(f => f.type === 'expense' && (f.date || '').startsWith(prefix));
     const income   = yearFinance.filter(f => f.type === 'income'  && (f.date || '').startsWith(prefix));
-    const revenue  = orders.reduce((s, o) => s + (o.price || 0), 0);
+    const revenue  = income.reduce((s, f) => s + (f.amount || 0), 0);
     const expense  = expenses.reduce((s, f) => s + (f.amount || 0), 0);
     return {
       label: MONTH_LABELS[i],
@@ -728,7 +728,7 @@ window.renderStats = function() {
       labels: MONTH_LABELS,
       datasets: [
         {
-          label: 'รายรับ (ออเดอร์)',
+          label: 'รายรับ',
           data: monthly.map(m => m.revenue),
           borderColor: rose,
           backgroundColor: roseFill,
@@ -820,7 +820,7 @@ window.renderStats = function() {
     <div class="item-card stats-month-row" onclick="showStatsModal(${JSON.stringify(m).replace(/"/g,'&quot;')})" style="cursor:pointer;">
       <div class="item-card-left">
         <div class="item-name">${m.full}</div>
-        <div class="item-sub">${m.count} ออเดอร์ · จ่าย ${fmtMoney(m.expense)}</div>
+        <div class="item-sub">รับ ${fmtMoney(m.revenue)} · จ่าย ${fmtMoney(m.expense)}</div>
       </div>
       <div style="text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end;">
         <span class="finance-amount income" style="font-size:13px;">${fmtMoney(m.revenue)}</span>
@@ -844,17 +844,23 @@ window.showStatsModal = function(month) {
   profitEl.style.color = profit >= 0 ? 'var(--sage)' : 'var(--dusty-rose-dark)';
 
   const ordersEl = document.getElementById('sm-orders-list');
-  if (!month.orders || !month.orders.length) {
-    ordersEl.innerHTML = '<div class="sm-empty">ไม่มีออเดอร์</div>';
+  
+  // เปลี่ยนหัวข้อจาก 'ออเดอร์' เป็น 'รายรับ'
+  if(ordersEl && ordersEl.previousElementSibling) {
+    ordersEl.previousElementSibling.innerHTML = '<i data-lucide="wallet" style="width:13px;height:13px;"></i> รายรับ';
+  }
+
+  if (!month.income || !month.income.length) {
+    ordersEl.innerHTML = '<div class="sm-empty">ไม่มีรายการรายรับ</div>';
   } else {
-    ordersEl.innerHTML = month.orders.map(o => `
+    ordersEl.innerHTML = month.income.map(f => `
       <div class="sm-row">
         <div class="sm-row-left">
-          <div class="sm-row-name">${o.customer}</div>
-          ${o.desc ? `<div class="sm-row-sub">${o.desc}</div>` : ''}
-          ${o.date ? `<div class="sm-row-date">${fmtDate(o.date)}</div>` : ''}
+          <div class="sm-row-name">${f.name}</div>
+          ${f.cat ? `<div class="sm-row-sub">${f.cat}</div>` : ''}
+          ${f.date ? `<div class="sm-row-date">${fmtDate(f.date)}</div>` : ''}
         </div>
-        <div class="sm-row-amount income">${fmtMoney(o.price)}</div>
+        <div class="sm-row-amount income">+${fmtMoney(f.amount)}</div>
       </div>`).join('');
   }
 
