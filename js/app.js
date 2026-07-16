@@ -675,6 +675,8 @@ window.renderStats = function() {
     const mo       = String(i + 1).padStart(2, '0');
     const prefix   = `${year}-${mo}`;
     const orders   = yearOrders.filter(o => (o.date || '').startsWith(prefix));
+    // 🔴 นับเฉพาะออเดอร์ที่สถานะ "เสร็จแล้ว" (finish) เท่านั้น
+    const doneCount = orders.filter(o => o.status === 'done').length;
     const expenses = yearFinance.filter(f => f.type === 'expense' && (f.date || '').startsWith(prefix));
     const income   = yearFinance.filter(f => f.type === 'income'  && (f.date || '').startsWith(prefix));
     const revenue  = income.reduce((s, f) => s + (f.amount || 0), 0);
@@ -683,6 +685,7 @@ window.renderStats = function() {
       label: MONTH_LABELS[i],
       full:  MONTH_FULL[i],
       count: orders.length,
+      doneCount, // 🔴 จำนวนช่อที่ finish ในเดือนนี้
       revenue,
       expense,
       profit: revenue - expense,
@@ -820,7 +823,7 @@ window.renderStats = function() {
     <div class="item-card stats-month-row" onclick="showStatsModal(${JSON.stringify(m).replace(/"/g,'&quot;')})" style="cursor:pointer;">
       <div class="item-card-left">
         <div class="item-name">${m.full}</div>
-        <div class="item-sub">รับ ${fmtMoney(m.revenue)} · จ่าย ${fmtMoney(m.expense)}</div>
+        <div class="item-sub">รับ ${fmtMoney(m.revenue)} · จ่าย ${fmtMoney(m.expense)} · ${m.doneCount} ช่อ</div>
       </div>
       <div style="text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end;">
         <span class="finance-amount income" style="font-size:13px;">${fmtMoney(m.revenue)}</span>
