@@ -1011,7 +1011,9 @@ body {
 
 .lang-icon-btn:hover .globe-icon {
   opacity: 1;
-  transform: rotate(45deg); /* เอาเมาส์วางจะหมุนนิดนึงเตรียมพร้อม */
+  /* 🔧 เอา transform ออกจาก hover เดี่ยวๆ เพราะ specificity ชนกับ .open
+     ทำให้ตอนปิด (เอา .open ออก) ถ้าเมาส์ยังชี้ค้างอยู่ที่ปุ่ม มันจะหล่นไปเข้า rule นี้
+     แล้วค้างที่ 45deg แทนที่จะกลับ 0deg — ตัดออกให้หมุนแค่ตอน .open อย่างเดียวพอ */
 }
 
 .lang-icon-btn.open .globe-icon {

@@ -242,8 +242,18 @@ function renderFlipbook(items, container) {
 
   pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
+  // 🔧 บั๊ก: resize ยิงซ้ำ (เช่น ตอนเปิด/ปิด dropdown ภาษาแล้ว viewport ขยับ) ทำให้
+  // updateFromHtml ถูกเรียกซ้อนและหน้าการ์ดถูกเพิ่มสะสมทีละใบ (22 -> 23 -> ...)
+  // แก้ด้วย debounce + เช็คจำนวนหน้าก่อนค่อย update จริง
+  let resizeTimer;
   window.addEventListener('resize', () => {
-    pageFlip.updateFromHtml(document.querySelectorAll('.page'));
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const pages = document.querySelectorAll('.page');
+      if (pages.length === pageFlip.getPageCount()) {
+        pageFlip.updateFromHtml(pages);
+      }
+    }, 200);
   });
 
   document.getElementById('btn-prev')?.addEventListener('click', () => pageFlip.flipPrev('bottom'));
