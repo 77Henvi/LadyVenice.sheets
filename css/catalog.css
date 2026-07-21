@@ -223,7 +223,6 @@ body {
   font-weight: 400;
   margin: 0 0 10px 0;
   color: #fdf6f0;
-  text-shadow: 0 4px 16px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.4);
 }
 
 .hero-subtitle {
@@ -233,7 +232,6 @@ body {
   margin: 0;
   color: #e8d9ce;
   text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 @media (min-width: 768px) {
