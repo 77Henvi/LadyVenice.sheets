@@ -200,7 +200,7 @@ body {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.38);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.55) 55%, rgba(0, 0, 0, 0.65) 100%);
   z-index: -1;
 }
 
@@ -222,7 +222,8 @@ body {
   font-size: 72px;
   font-weight: 400;
   margin: 0 0 10px 0;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  color: #fdf6f0;
+  text-shadow: 0 4px 16px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.4);
 }
 
 .hero-subtitle {
@@ -230,7 +231,9 @@ body {
   font-size: 11px;
   letter-spacing: 6px;
   margin: 0;
+  color: #e8d9ce;
   text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 @media (min-width: 768px) {
