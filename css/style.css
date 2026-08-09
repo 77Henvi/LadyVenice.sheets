@@ -795,6 +795,113 @@ body {
 .todo-time-input {
   padding: 10px 8px;
   font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--gray-mid);
+  cursor: pointer;
+  background: var(--white);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.todo-time-input:active {
+  border-color: var(--dusty-rose);
+}
+
+.todo-time-input.has-value {
+  color: var(--charcoal);
+  border-color: var(--dusty-rose);
+}
+
+.todo-time-input.has-value i {
+  color: var(--dusty-rose);
+}
+
+/* CUSTOM TIME PICKER */
+.time-picker-sheet {
+  max-height: 80vh;
+}
+
+.time-picker-display {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--dusty-rose-dark);
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-picker-columns {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 4px;
+  background: var(--gray-lighter);
+  border-radius: 16px;
+  padding: 8px;
+  height: 220px;
+}
+
+.time-picker-col {
+  flex: 1;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 90px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.time-picker-col::-webkit-scrollbar {
+  display: none;
+}
+
+.time-picker-col-sep {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--gray-mid);
+  width: 16px;
+}
+
+.time-picker-item {
+  scroll-snap-align: center;
+  flex-shrink: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--gray-mid);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, font-weight 0.15s;
+  touch-action: manipulation;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-picker-item:active {
+  background: var(--dusty-rose-light);
+}
+
+.time-picker-item.selected {
+  color: var(--dusty-rose-dark);
+  font-weight: 700;
+  font-size: 20px;
+  background: var(--dusty-rose-light);
+}
+
+.time-picker-quick {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
 }
 
 /* TODO ITEM */

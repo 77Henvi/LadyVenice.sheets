@@ -108,7 +108,11 @@
 
     <div class="todo-input-row">
       <input class="form-input" id="todo-text" placeholder="งานที่ต้องทำ...">
-      <input class="form-input todo-time-input" id="todo-time" type="time">
+      <button type="button" class="form-input todo-time-input" id="todo-time-btn" onclick="openTimePicker()">
+        <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
+        <span id="todo-time-label">เวลา</span>
+      </button>
+      <input type="hidden" id="todo-time" value="">
       <button class="btn-add" onclick="addTodo()">+</button>
     </div>
 
@@ -125,6 +129,31 @@
     </div>
     <div class="filter-chips" id="archive-date-chips" style="margin-bottom:16px;"></div>
     <div class="item-list" id="archive-list"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-timepicker">
+  <div class="modal-sheet time-picker-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div class="modal-title" style="margin-bottom:0;">เลือกเวลา</div>
+      <button class="btn-modal-close" onclick="closeTimePicker()"><i data-lucide="x"></i></button>
+    </div>
+
+    <div class="time-picker-display" id="time-picker-display">--:--</div>
+
+    <div class="time-picker-columns">
+      <div class="time-picker-col" id="time-picker-hours"></div>
+      <div class="time-picker-col-sep">:</div>
+      <div class="time-picker-col" id="time-picker-minutes"></div>
+    </div>
+
+    <div class="time-picker-quick">
+      <button type="button" class="chip" onclick="setTimePickerNow()">ตอนนี้</button>
+      <button type="button" class="chip" onclick="clearTimePicker()">ล้างเวลา</button>
+    </div>
+
+    <button type="button" class="btn-submit" style="width:100%;margin-top:16px;" onclick="confirmTimePicker()">เสร็จสิ้น</button>
   </div>
 </div>
 
