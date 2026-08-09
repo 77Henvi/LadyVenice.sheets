@@ -523,9 +523,10 @@ body {
 }
 
 .empty-icon {
-  font-size: 36px;
+  display: inline-block;
   margin-bottom: 10px;
-  opacity: 0.5;
+  color: var(--gray-mid);
+  opacity: 0.4;
 }
 
 .empty-text {
@@ -784,16 +785,22 @@ body {
   display: flex;
 }
 
-/* TODO INPUT ROW */
-.todo-input-row {
-  display: grid;
-  grid-template-columns: 1fr 90px 36px;
+/* TODO INPUT */
+.todo-input-group {
+  display: flex;
+  flex-direction: column;
   gap: 8px;
+}
+
+.todo-input-actions {
+  display: flex;
   align-items: center;
+  gap: 8px;
 }
 
 .todo-time-input {
-  padding: 10px 8px;
+  flex: 1;
+  padding: 10px 12px;
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -802,6 +809,9 @@ body {
   color: var(--gray-mid);
   cursor: pointer;
   background: var(--white);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
   transition: border-color 0.15s, color 0.15s;
 }
 
@@ -816,6 +826,28 @@ body {
 
 .todo-time-input.has-value i {
   color: var(--dusty-rose);
+}
+
+.btn-todo-add {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 0.5px solid var(--border);
+  background: var(--white);
+  color: var(--charcoal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+  touch-action: manipulation;
+}
+
+.btn-todo-add:active {
+  transform: scale(0.93);
+  background: var(--sage-light);
+  border-color: var(--sage);
 }
 
 /* CUSTOM TIME PICKER */

@@ -106,14 +106,18 @@
       </div>
     </div>
 
-    <div class="todo-input-row">
+    <div class="todo-input-group">
       <input class="form-input" id="todo-text" placeholder="งานที่ต้องทำ...">
-      <button type="button" class="form-input todo-time-input" id="todo-time-btn" onclick="openTimePicker()">
-        <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
-        <span id="todo-time-label">เวลา</span>
-      </button>
-      <input type="hidden" id="todo-time" value="">
-      <button class="btn-add" onclick="addTodo()">+</button>
+      <div class="todo-input-actions">
+        <button type="button" class="todo-time-input" id="todo-time-btn" onclick="openTimePicker()">
+          <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
+          <span id="todo-time-label">เวลา</span>
+        </button>
+        <input type="hidden" id="todo-time" value="">
+        <button type="button" class="btn-todo-add" onclick="addTodo()" aria-label="เพิ่มงาน">
+          <i data-lucide="plus" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
     </div>
 
     <div class="item-list" id="todo-list" style="margin-top:16px;"></div>

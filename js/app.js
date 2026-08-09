@@ -496,7 +496,7 @@ function renderDashboard() {
 
   const lowEl = document.getElementById('dash-lowstock-list');
   if (!lowItems.length) {
-    lowEl.innerHTML = emptyState('สต็อคครบทุกรายการ 🎉');
+    lowEl.innerHTML = emptyState('สต็อคครบทุกรายการ');
   } else {
     lowEl.innerHTML = lowItems.slice(0, 5).map(s => {
       const badgeClass = s.qty === 0 ? 'badge-out' : 'badge-low';
