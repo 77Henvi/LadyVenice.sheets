@@ -1,7 +1,7 @@
 // app.js
 // ===== IMPORTS =====
 import { supabase } from "./supabase-config.js";
-import { todayStr, thisMonthStr, fmtDate, fmtMoney, emptyState } from "./utils.js";
+import { todayStr, thisMonthStr, currentCycleStart, fmtDate, fmtMoney, emptyState } from "./utils.js";
 import "./auth.js"; 
 import "./catalog-admin.js";
 
@@ -565,16 +565,16 @@ window.deleteTodo = async (id) => {
 };
 
 function renderTodos() {
-  const today = todayStr();
+  const cycleStart = currentCycleStart();
   const list = data.todos
-    .filter(t => t.date === today)
-    .sort((a, b) => (a.time || '').localeCompare(b.time || '') || a.createdAt - b.createdAt);
+    .filter(t => t.date >= cycleStart)
+    .sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || '') || a.createdAt - b.createdAt);
 
   const el = document.getElementById('todo-list');
   if (!el) return;
 
   if (!list.length) {
-    el.innerHTML = emptyState('ยังไม่มีงานวันนี้ ');
+    el.innerHTML = emptyState('ยังไม่มีงานในรอบนี้');
     return;
   }
 
@@ -583,7 +583,7 @@ function renderTodos() {
       <div class="todo-checkbox ${t.done ? 'checked' : ''}" onclick="toggleTodo('${t.id}', ${t.done === true})"></div>
       <div class="todo-content">
         <div class="todo-text">${t.text}</div>
-        ${t.time ? `<div class="todo-time"> ${t.time}</div>` : ''}
+        ${t.date !== todayStr() ? `<div class="todo-time" style="opacity:.7;">${fmtDate(t.date)}${t.time ? ' · ' + t.time : ''}</div>` : (t.time ? `<div class="todo-time"> ${t.time}</div>` : '')}
       </div>
       <button class="btn-icon danger" onclick="deleteTodo('${t.id}')">🗑</button>
     </div>
@@ -597,8 +597,9 @@ window.openArchiveModal = function() {
 };
 
 function renderArchive() {
+  const cycleStart = currentCycleStart();
   const past = data.todos
-    .filter(t => t.date !== todayStr())
+    .filter(t => t.date < cycleStart)
     .sort((a, b) => b.date.localeCompare(a.date) || (a.time || '').localeCompare(b.time || ''));
 
   const el = document.getElementById('archive-list');
