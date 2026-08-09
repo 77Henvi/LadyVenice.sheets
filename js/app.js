@@ -1,1713 +1,1022 @@
-:root {
-  --cream: #faf8f5;
-  --white: #ffffff;
-  --dusty-rose: #c9897a;
-  --dusty-rose-light: #f0e4e1;
-  --dusty-rose-dark: #9d5c50;
-  --sage: #8a9e8c;
-  --sage-light: #e8eee8;
-  --charcoal: #2c2c2a;
-  --gray-mid: #7a7a78;
-  --gray-light: #e8e6e2;
-  --gray-lighter: #f3f1ee;
-  --border: rgba(44,44,42,0.1);
-  --shadow: 0 1px 3px rgba(44,44,42,0.06);
-  --shadow-md: 0 4px 16px rgba(44,44,42,0.08);
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
-  color: var(--charcoal);
-  min-height: 100dvh;
-  max-width: 430px;
-  margin: 0 auto;
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* HEADER */
-.app-header {
-  background: var(--white);
-  padding: 20px 24px 16px;
-  border-bottom: 0.5px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.app-header h1 {
-  font-family: 'DM Sans', serif;
-  font-weight: 300;
-  font-size: 22px;
-  letter-spacing: 0.04em;
-  color: var(--charcoal);
-}
-
-.app-header h1 span {
-  color: var(--dusty-rose);
-  font-style: italic;
-}
-
-.header-date {
-  font-size: 11px;
-  color: var(--gray-mid);
-  margin-top: 2px;
-  font-weight: 300;
-  letter-spacing: 0.05em;
-}
-
-/* PAGE */
-.page {
-  display: none;
-  padding: 20px 20px 100px;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: none;
-}
-
-.page.active {
-  display: block;
-  animation: pageIn 0.25s ease forwards;
-}
-
-@keyframes pageIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* SUMMARY CARDS */
-.summary-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.summary-card {
-  background: var(--white);
-  border-radius: 14px;
-  padding: 14px 16px;
-  border: 0.5px solid var(--border);
-}
-
-.summary-card.accent {
-  background: var(--dusty-rose-light);
-  border-color: transparent;
-}
-
-.summary-label {
-  font-size: 10px;
-  color: var(--gray-mid);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
-.summary-card.accent .summary-label {
-  color: var(--dusty-rose-dark);
-  opacity: 0.7;
-}
-
-.summary-value {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--charcoal);
-  font-family: 'DM Sans', serif;
-}
-
-.summary-card.accent .summary-value {
-  color: var(--dusty-rose-dark);
-}
-
-/* SECTION TITLE */
-.section-title {
-  font-family: 'DM Sans', serif;
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--charcoal);
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 0.5px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* ADD BUTTON */
-.btn-add {
-  background: var(--dusty-rose);
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.2s, transform 0.12s;
-  touch-action: manipulation;
-}
-
-.btn-add:active {
-  background: var(--dusty-rose-dark);
-  transform: scale(0.93);
-}
-
-/* FORM MODAL */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(44,44,42,0);
-  z-index: 200;
-  align-items: flex-end;
-  transition: background 0.25s ease;
-}
-
-.modal-overlay.open {
-  background: rgba(44,44,42,0.4);
-}
-
-.modal-sheet {
-  background: var(--white);
-  border-radius: 20px 20px 0 0;
-  padding: 24px 24px 40px;
-  padding-bottom: max(40px, env(safe-area-inset-bottom));
-  width: 100%;
-  max-width: 430px;
-  margin: 0 auto;
-  max-height: 90dvh;
-  overflow-y: auto;
-  transform: translateY(100%);
-  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-.modal-overlay.open .modal-sheet {
-  transform: translateY(0);
-}
-
-.modal-handle {
-  width: 36px;
-  height: 4px;
-  background: var(--gray-light);
-  border-radius: 2px;
-  margin: 0 auto 20px;
-}
-
-.modal-title {
-  font-family: 'DM Sans', serif;
-  font-size: 20px;
-  font-weight: 400;
-  margin-bottom: 20px;
-  color: var(--charcoal);
-}
-
-.btn-modal-close {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 0.5px solid var(--border);
-  background: var(--gray-lighter);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s, transform 0.12s;
-}
-
-.btn-modal-close:active {
-  background: var(--gray-light);
-  transform: scale(0.9);
-}
-
-.btn-modal-close i {
-  width: 16px;
-  height: 16px;
-  stroke: var(--gray-mid);
-  stroke-width: 2;
-}
-
-/* FORM */
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-label {
-  font-size: 11px;
-  color: var(--gray-mid);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  display: block;
-  margin-bottom: 6px;
-}
-
-.form-input,
-.form-select,
-.form-textarea {
-  width: 100%;
-  padding: 10px 14px;
-  border: 0.5px solid var(--gray-light);
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 16px;
-  color: var(--charcoal);
-  background: var(--gray-lighter);
-  appearance: none;
-  outline: none;
-  transition: border 0.2s;
-}
-
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
-  border-color: var(--dusty-rose);
-  background: var(--white);
-}
-
-.form-textarea {
-  height: 80px;
-  resize: none;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.btn-submit {
-  width: 100%;
-  padding: 13px;
-  background: var(--dusty-rose);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: background 0.2s, transform 0.12s;
-  touch-action: manipulation;
-}
-
-.btn-submit:active {
-  background: var(--dusty-rose-dark);
-  transform: scale(0.97);
-}
-
-.btn-cancel {
-  width: 100%;
-  padding: 11px;
-  background: none;
-  color: var(--gray-mid);
-  border: 0.5px solid var(--gray-light);
-  border-radius: 12px;
-  font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
-  cursor: pointer;
-  margin-top: 8px;
-}
-
-/* ITEM CARDS */
-.item-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.item-card {
-  background: var(--white);
-  border-radius: 12px;
-  padding: 14px 16px;
-  border: 0.5px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: var(--shadow);
-  animation: cardIn 0.2s ease both;
-}
-
-@keyframes cardIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Stagger children in item-list */
-.item-list .item-card:nth-child(1) { animation-delay: 0ms; }
-.item-list .item-card:nth-child(2) { animation-delay: 40ms; }
-.item-list .item-card:nth-child(3) { animation-delay: 80ms; }
-.item-list .item-card:nth-child(4) { animation-delay: 120ms; }
-.item-list .item-card:nth-child(5) { animation-delay: 160ms; }
-
-.item-card-left {
-  flex: 1;
-}
-
-.item-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--charcoal);
-  margin-bottom: 3px;
-}
-
-.item-sub {
-  font-size: 12px;
-  color: var(--gray-mid);
-  font-weight: 300;
-}
-
-.item-badge {
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-weight: 500;
-}
-
-.badge-ok {
-  background: var(--sage-light);
-  color: var(--sage);
-}
-
-.badge-low {
-  background: #fef3ee;
-  color: #d87a50;
-}
-
-.badge-out {
-  background: #fdeaea;
-  color: #c04b4b;
-}
-
-.item-actions {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.btn-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  border: 0.5px solid var(--border);
-  background: var(--gray-lighter);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  transition: background 0.2s, transform 0.12s;
-  touch-action: manipulation;
-}
-
-.btn-icon:active {
-  background: var(--gray-light);
-  transform: scale(0.88);
-}
-
-.btn-icon.danger:active {
-  background: #fdeaea;
-  transform: scale(0.88);
-}
-
-/* FINANCE */
-.finance-amount {
-  font-family: 'DM Sans', serif;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.finance-amount.income {
-  color: var(--sage);
-}
-
-.finance-amount.expense {
-  color: var(--dusty-rose-dark);
-}
-
-/* ORDER */
-.order-status {
-  font-size: 10px;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-}
-
-.status-pending {
-  background: #fef9ed;
-  color: #b8860b;
-}
-
-.status-ready {
-  background: var(--sage-light);
-  color: var(--sage);
-}
-
-.status-done {
-  background: var(--gray-lighter);
-  color: var(--gray-mid);
-}
-
-.status-cancel {
-  background: #fdeaea;
-  color: #c04b4b;
-}
-
-.order-date {
-  font-size: 11px;
-  color: var(--gray-mid);
-  margin-top: 2px;
-}
-
-.order-price {
-  font-family: 'DM Sans', serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--charcoal);
-}
-
-/* FILTER CHIPS */
-.filter-chips {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 16px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding-bottom: 2px;
-}
-
-.filter-chips::-webkit-scrollbar {
-  display: none;
-}
-
-.chip {
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 400;
-  white-space: nowrap;
-  border: 0.5px solid var(--border);
-  background: var(--white);
-  color: var(--gray-mid);
-  cursor: pointer;
-  transition: all 0.15s, transform 0.1s;
-  touch-action: manipulation;
-}
-
-.chip:active {
-  transform: scale(0.93);
-}
-
-.chip.active {
-  background: var(--dusty-rose);
-  color: white;
-  border-color: var(--dusty-rose);
-  font-weight: 500;
-}
-
-/* EMPTY STATE */
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--gray-mid);
-}
-
-.empty-icon {
-  font-size: 36px;
-  margin-bottom: 10px;
-  opacity: 0.5;
-}
-
-.empty-text {
-  font-size: 13px;
-  font-weight: 300;
-}
-
-/* BOTTOM NAV */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  background: var(--white);
-  border-top: 0.5px solid var(--border);
-  display: flex;
-  z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.bottom-nav-item {
-  flex: 1;
-  padding: 10px 4px 12px;
-  text-align: center;
-  cursor: pointer;
-  border: none;
-  background: none;
-  color: var(--gray-mid);
-  font-size: 10px;
-  font-family: 'DM Sans', sans-serif;
-  letter-spacing: 0.04em;
-  transition: color 0.2s;
-}
-
-.bottom-nav-item.active {
-  color: var(--dusty-rose-dark);
-  font-weight: 500;
-}
-
-.bottom-nav-icon {
-  width: 22px;
-  height: 22px;
-  display: block;
-  margin: 0 auto 2px;
-  stroke: currentColor;
-  stroke-width: 1.75;
-}
-
-/* SEARCH */
-.search-bar {
-  display: flex;
-  align-items: center;
-  background: var(--white);
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 14px;
-  margin-bottom: 16px;
-  gap: 8px;
-}
-
-.search-bar input {
-  border: none;
-  background: none;
-  font-size: 13px;
-  font-family: 'DM Sans', sans-serif;
-  color: var(--charcoal);
-  width: 100%;
-  outline: none;
-}
-
-.search-bar input::placeholder {
-  color: var(--gray-mid);
-}
-
-.search-icon {
-  color: var(--gray-mid);
-  font-size: 14px;
-}
-
-/* TAG */
-.tag-type {
-  display: inline-block;
-  font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 20px;
-  margin-right: 4px;
-  font-weight: 500;
-  background: var(--dusty-rose-light);
-  color: var(--dusty-rose-dark);
-}
-
-.tag-type.supply {
-  background: var(--sage-light);
-  color: var(--sage);
-}
-
-/* DIVIDER */
-.divider {
-  height: 0.5px;
-  background: var(--border);
-  margin: 16px 0;
-}
-
-/* TOTAL */
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  margin-bottom: 6px;
-}
-
-.total-row.big .total-label {
-  font-weight: 500;
-}
-
-.total-row.big .total-val {
-  font-family: 'DM Sans', serif;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.total-label {
-  color: var(--gray-mid);
-}
-
-.profit {
-  color: var(--sage);
-}
-
-.loss {
-  color: var(--dusty-rose-dark);
-}
-
-@media (max-width: 380px) {
-  .form-row {
-    grid-template-columns: 1fr;
+// app.js
+// ===== IMPORTS =====
+import { supabase } from "./supabase-config.js";
+import { todayStr, thisMonthStr, currentCycleStart, fmtDate, fmtMoney, emptyState } from "./utils.js";
+import "./auth.js"; 
+import "./catalog-admin.js";
+
+// ===== DATA STATE =====
+let data = { stock: [], finance: [], orders: [], todos: [] };
+let appInited = false;
+
+// ===== AUTH HELPERS & UI TOGGLE =====
+function showApp() {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('main-app').style.display   = 'block';
+}
+
+function showLogin() {
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('main-app').style.display   = 'none';
+}
+
+// ตรวจสอบสถานะการล็อกอินด้วย Supabase
+supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session) {
+    showApp();
+    if (!appInited) { appInited = true; init(); }
+  } else {
+    showLogin();
+    appInited = false;
+    lucide.createIcons();
+  }
+});
+
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (session) {
+    showApp();
+    if (!appInited) { appInited = true; init(); }
+  } else {
+    showLogin();
+    appInited = false;
+    lucide.createIcons();
+  }
+});
+
+// ===== DATA LOAD =====
+async function loadData() {
+  try {
+    const [resStock, resFin, resOrders, resTodos] = await Promise.all([
+      supabase.from('stock').select('*'),
+      supabase.from('finance').select('*'),
+      supabase.from('orders').select('*'),
+      supabase.from('todos').select('*')
+    ]);
+
+    data.stock   = resStock.data || [];
+    data.finance = resFin.data || [];
+    data.orders  = resOrders.data || [];
+    data.todos   = resTodos.data || [];
+    
+    renderAll();
+  } catch (error) {
+    console.error("Error loading data:", error);
   }
 }
 
-/* MONTH SELECTOR */
-.month-selector-wrap {
-  margin-bottom: 16px;
-}
-
-.month-selector {
-  width: 100%;
-  padding: 9px 14px;
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--charcoal);
-  background: var(--white);
-  appearance: none;
-  outline: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a7a78' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  cursor: pointer;
-}
-
-/* PROFIT PREVIEW */
-.profit-preview {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--gray-lighter);
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-bottom: 14px;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.profit-preview.good {
-  background: #edf5ee;
-  border-color: rgba(138,158,140,0.35);
-}
-
-.profit-preview.warn {
-  background: #fef9ed;
-  border-color: rgba(184,134,11,0.3);
-}
-
-.profit-preview.bad {
-  background: #fdeaea;
-  border-color: rgba(192,75,75,0.25);
-}
-
-.profit-preview-label {
-  font-size: 11px;
-  color: var(--gray-mid);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.profit-preview-value {
-  font-family: 'DM Sans', serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--gray-mid);
-}
-
-.profit-preview.good .profit-preview-value {
-  color: var(--sage);
-}
-
-.profit-preview.warn .profit-preview-value {
-  color: #b8860b;
-}
-
-.profit-preview.bad .profit-preview-value {
-  color: #c04b4b;
-}
-
-/* TODO FAB */
-.todo-fab {
-  position: fixed;
-  bottom: calc(70px + env(safe-area-inset-bottom) + 16px);
-  right: 20px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--dusty-rose);
-  border: none;
-  cursor: pointer;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  box-shadow: 0 4px 16px rgba(201,137,122,0.45);
-  z-index: 99;
-  transition: transform 0.15s, background 0.2s;
-}
-
-.todo-fab:active {
-  transform: scale(0.92);
-  background: var(--dusty-rose-dark);
-}
-
-.todo-fab-label {
-  font-size: 9px;
-  color: white;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-}
-
-/* Show FAB only on home page */
-#page-home.active ~ .todo-fab,
-.todo-fab.visible {
-  display: flex;
-}
-
-/* TODO INPUT ROW */
-.todo-input-row {
-  display: grid;
-  grid-template-columns: 1fr 90px 36px;
-  gap: 8px;
-  align-items: center;
-}
-
-.todo-time-input {
-  padding: 10px 8px;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  color: var(--gray-mid);
-  cursor: pointer;
-  background: var(--white);
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.todo-time-input:active {
-  border-color: var(--dusty-rose);
-}
-
-.todo-time-input.has-value {
-  color: var(--charcoal);
-  border-color: var(--dusty-rose);
-}
-
-.todo-time-input.has-value i {
-  color: var(--dusty-rose);
-}
-
-/* CUSTOM TIME PICKER */
-.time-picker-sheet {
-  max-height: 80vh;
-}
-
-.time-picker-display {
-  text-align: center;
-  font-size: 36px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--dusty-rose-dark);
-  margin-bottom: 16px;
-  font-variant-numeric: tabular-nums;
-}
-
-.time-picker-columns {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  gap: 4px;
-  background: var(--gray-lighter);
-  border-radius: 16px;
-  padding: 8px;
-  height: 220px;
-}
-
-.time-picker-col {
-  flex: 1;
-  overflow-y: auto;
-  scroll-snap-type: y mandatory;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 90px 0;
-  -webkit-overflow-scrolling: touch;
-}
-
-.time-picker-col::-webkit-scrollbar {
-  display: none;
-}
-
-.time-picker-col-sep {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--gray-mid);
-  width: 16px;
-}
-
-.time-picker-item {
-  scroll-snap-align: center;
-  flex-shrink: 0;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--gray-mid);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, font-weight 0.15s;
-  touch-action: manipulation;
-  font-variant-numeric: tabular-nums;
-}
-
-.time-picker-item:active {
-  background: var(--dusty-rose-light);
-}
-
-.time-picker-item.selected {
-  color: var(--dusty-rose-dark);
-  font-weight: 700;
-  font-size: 20px;
-  background: var(--dusty-rose-light);
-}
-
-.time-picker-quick {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 16px;
-}
-
-/* TODO ITEM */
-.todo-item {
-  background: var(--white);
-  border-radius: 12px;
-  padding: 12px 16px;
-  border: 0.5px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: var(--shadow);
-  animation: cardIn 0.2s ease both;
-  transition: opacity 0.2s;
-}
-
-.todo-item.done {
-  opacity: 0.45;
-}
-
-.todo-checkbox {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 1.5px solid var(--dusty-rose);
-  background: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.15s, border-color 0.15s;
-  touch-action: manipulation;
-}
-
-.todo-checkbox.checked {
-  background: var(--dusty-rose);
-  border-color: var(--dusty-rose);
-}
-
-.todo-checkbox.checked::after {
-  content: '✓';
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.todo-content {
-  flex: 1;
-}
-
-.todo-text {
-  font-size: 14px;
-  color: var(--charcoal);
-  font-weight: 400;
-}
-
-.todo-item.done .todo-text {
-  text-decoration: line-through;
-  color: var(--gray-mid);
-}
-
-.todo-time {
-  font-size: 11px;
-  color: var(--gray-mid);
-  margin-top: 2px;
-  font-family: 'DM Sans', serif;
-}
-
-/* ARCHIVE BTN */
-.btn-archive {
-  font-size: 12px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 0.5px solid var(--border);
-  background: var(--gray-lighter);
-  color: var(--gray-mid);
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-}
-
-/* ARCHIVE DATE CHIP */
-.archive-day-group {
-  margin-bottom: 16px;
-}
-
-.archive-day-label {
-  font-size: 11px;
-  color: var(--gray-mid);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-
-.archive-item-text {
-  font-size: 13px;
-  color: var(--charcoal);
-}
-
-.archive-item-text.done {
-  text-decoration: line-through;
-  color: var(--gray-mid);
-}
-/* ===== LOGIN PAGE ===== */
-.login-page {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--cream);
-  z-index: 9999;
-  padding: 24px;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 380px;
-  background: var(--white);
-  border-radius: 20px;
-  padding: 36px 28px 32px;
-  box-shadow: var(--shadow-md), 0 0 0 1px var(--border);
-  animation: pageIn 0.3s ease forwards;
-}
-
-.login-logo {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.login-logo h1 {
-  font-family: 'DM Sans', serif;
-  font-weight: 300;
-  font-size: 26px;
-  letter-spacing: 0.04em;
-  color: var(--charcoal);
-}
-
-.login-logo h1 span {
-  color: var(--dusty-rose);
-  font-style: italic;
-}
-
-.login-sub {
-  font-size: 12px;
-  color: var(--gray-mid);
-  margin-top: 4px;
-  letter-spacing: 0.08em;
-  font-weight: 300;
-}
-
-.login-error {
-  background: #fff0ee;
-  border: 1px solid var(--dusty-rose-light);
-  color: var(--dusty-rose-dark);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 13px;
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-.login-pass-wrap {
-  position: relative;
-}
-
-.login-pass-wrap .form-input {
-  padding-right: 44px;
-}
-
-.login-eye {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--gray-mid);
-  display: flex;
-  align-items: center;
-  padding: 4px;
-}
-
-/* ===== HEADER WITH LOGOUT ===== */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.btn-logout {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--gray-mid);
-  padding: 8px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  transition: background 0.15s, color 0.15s;
-}
-
-.btn-logout:hover {
-  background: var(--dusty-rose-light);
-  color: var(--dusty-rose-dark);
-}
-
-/* ===== GITHUB LOGIN BUTTON ===== */
-.login-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 16px 0;
-  color: var(--gray-mid);
-  font-size: 12px;
-}
-
-.login-divider::before,
-.login-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.btn-github {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 13px;
-  background: #24292e;
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s, opacity 0.15s;
-  font-family: 'DM Sans', sans-serif;
-}
-
-.btn-github:hover {
-  background: #1a1f24;
-}
-
-.btn-github:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ===== STATS PAGE ===== */
-.stats-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 16px;
-}
-
-.stats-chart-card {
-  background: var(--white);
-  border-radius: 16px;
-  padding: 16px 12px 12px;
-  box-shadow: var(--shadow);
-  border: 0.5px solid var(--border);
-  margin-bottom: 16px;
-}
-
-.stats-chart-title {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--gray-mid);
-  margin-bottom: 12px;
-  letter-spacing: 0.03em;
-}
-
-.stats-chart-wrap {
-  position: relative;
-  height: 220px;
-  width: 100%;
-}
-
-/* Stats Tooltip / Detail Card */
-.stats-tooltip {
-  background: var(--white);
-  border: 0.5px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: var(--shadow-md);
-  margin: 8px 0 20px;
-  animation: pageIn 0.2s ease forwards;
-}
-
-.stats-tooltip-month {
-  font-family: 'Playfair Display', serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--charcoal);
-  margin-bottom: 4px;
-}
-
-.stats-tooltip-total {
-  font-size: 13px;
-  color: var(--dusty-rose-dark);
-  font-weight: 500;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 0.5px solid var(--border);
-}
-
-.stats-tooltip-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.tt-order-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.tt-order-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--charcoal);
-}
-
-.tt-order-desc {
-  font-size: 12px;
-  color: var(--gray-mid);
-  margin-top: 1px;
-}
-
-.tt-order-price {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--sage);
-  white-space: nowrap;
-}
-/* ===== STATS DETAIL MODAL ===== */
-.sm-kpi-row {
-  display: flex;
-  align-items: stretch;
-  background: var(--gray-lighter);
-  border-radius: 14px;
-  padding: 14px 0;
-  margin-bottom: 20px;
-}
-
-.sm-kpi {
-  flex: 1;
-  text-align: center;
-  padding: 0 8px;
-}
-
-.sm-kpi-label {
-  font-size: 11px;
-  color: var(--gray-mid);
-  margin-bottom: 4px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-}
-
-.sm-kpi-val {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--charcoal);
-}
-
-.sm-kpi-val.income  { color: var(--dusty-rose); }
-.sm-kpi-val.expense { color: var(--gray-mid); }
-
-.sm-kpi-divider {
-  width: 0.5px;
-  background: var(--border);
-  margin: 2px 0;
-}
-
-.sm-section-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--gray-mid);
-  margin-bottom: 10px;
-}
-
-.sm-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.sm-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 10px 12px;
-  background: var(--white);
-  border-radius: 10px;
-  border: 0.5px solid var(--border);
-}
-
-.sm-row-left { flex: 1; min-width: 0; }
-
-.sm-row-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--charcoal);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sm-row-sub {
-  font-size: 11px;
-  color: var(--gray-mid);
-  margin-top: 2px;
-}
-
-.sm-row-date {
-  font-size: 11px;
-  color: var(--gray-mid);
-  margin-top: 2px;
-}
-
-.sm-row-amount {
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.sm-row-amount.income  { color: var(--dusty-rose); }
-.sm-row-amount.expense { color: var(--gray-mid); }
-
-.sm-empty {
-  font-size: 13px;
-  color: var(--gray-mid);
-  padding: 8px 0;
-  text-align: center;
-}
-
-/* Stats month list row hover */
-.stats-month-row {
-  transition: background 0.15s;
-}
-.stats-month-row:hover {
-  background: var(--gray-lighter);
-}
-
-/* ============================================================
-   iPAD RESPONSIVE  768px – 1023px
-   Layout: slim sidebar (64px icon-only) + scrollable content
-   ============================================================ */
-
-@media (min-width: 768px) and (max-width: 1023px) {
-
-  body {
-    max-width: 100%;
-    background: var(--gray-lighter);
-    overflow-x: hidden;
+// ===== TAB =====
+window.switchTab = function(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  document.getElementById('nav-' + tab).classList.add('active');
+
+  const fab = document.getElementById('todo-fab');
+  if (fab) fab.style.display = tab === 'home' ? 'flex' : 'none';
+
+  if (tab === 'stats') renderStats();
+
+  const tt = document.getElementById('stats-tooltip');
+  if (tt) tt.style.display = 'none';
+};
+
+// ===== MODAL =====
+window.openModal = function(id) {
+  const el = document.getElementById(id);
+  if (!el) { console.error("Modal not found:", id); return; }
+  el.style.display = 'flex';
+  el.offsetHeight;
+  el.classList.add('open');
+};
+
+window.closeModal = function(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove('open');
+  el.addEventListener('transitionend', () => {
+    if (!el.classList.contains('open')) el.style.display = '';
+  }, { once: true });
+};
+
+// ===== STOCK PROFIT CALC =====
+window.calcStockProfit = function() {
+  const cost  = parseFloat(document.getElementById('stock-cost').value)  || 0;
+  const price = parseFloat(document.getElementById('stock-price').value) || 0;
+  const box   = document.getElementById('stock-profit-preview');
+  const val   = document.getElementById('stock-profit-pct');
+
+  if (!cost || !price) {
+    val.textContent = '—';
+    box.className = 'profit-preview';
+    return;
   }
 
-  #desktop-layout {
-    display: flex;
-    min-height: 100vh;
-  }
+  const pct = ((price - cost) / cost) * 100;
+  const diff = price - cost;
+  const sign = diff >= 0 ? '+' : '';
+  val.innerHTML = `${sign}${pct.toFixed(1)}% <span style="font-size:13px;font-weight:400;opacity:0.75;">(${sign}฿${Math.abs(diff).toLocaleString('th-TH')})</span>`;
 
-  /* SLIM ICON-ONLY SIDEBAR */
-  .bottom-nav {
-    position: fixed;
-    left: 0; top: 0; bottom: auto;
-    width: 68px;
-    max-width: none;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
-    background: var(--white);
-    border-top: none;
-    border-right: 1px solid var(--border);
-    padding: 80px 8px 16px;
-    transform: none;
-    overflow-y: auto;
-  }
+  box.className = 'profit-preview ' + (pct >= 30 ? 'good' : pct >= 0 ? 'warn' : 'bad');
+};
 
-  .bottom-nav-item {
-    flex: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 10px 4px;
-    border-radius: 10px;
-    font-size: 9px;
-    letter-spacing: 0.03em;
-    color: var(--gray-mid);
-    text-align: center;
-    width: 100%;
-  }
+// ===== STOCK MODAL =====
+window.openStockModal = function() {
+  document.getElementById('stock-edit-id').value = '';
+  document.getElementById('stock-modal-title').textContent = 'เพิ่มสต็อค';
+  document.getElementById('stock-name').value  = '';
+  document.getElementById('stock-type').value  = 'flower';
+  document.getElementById('stock-unit').value  = '';
+  document.getElementById('stock-qty').value   = '';
+  document.getElementById('stock-min').value   = '';
+  document.getElementById('stock-cost').value  = '';
+  document.getElementById('stock-price').value = '';
+  document.getElementById('stock-note').value  = '';
+  document.getElementById('stock-profit-pct').textContent = '—';
+  document.getElementById('stock-profit-preview').className = 'profit-preview';
+  openModal('modal-stock');
+};
 
-  .bottom-nav-item.active {
-    background: var(--dusty-rose-light);
-    color: var(--dusty-rose-dark);
-  }
+// ===== STOCK =====
+let stockFilter = 'all';
 
-  .bottom-nav-icon {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-    margin: 0;
-    display: block;
-  }
+window.setStockFilter = (f, el) => {
+  stockFilter = f;
+  document.querySelectorAll('#page-stock .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderStock();
+};
 
-  /* MAIN CONTENT */
-  .main-content {
-    margin-left: 68px;
-    width: calc(100% - 68px);
-    min-height: 100vh;
-  }
+function renderStock() {
+  const q = document.getElementById('stock-search')?.value.toLowerCase() || '';
 
-  /* HEADER */
-  .app-header {
-    position: sticky;
-    top: 0;
-    height: 64px;
-    padding: 0 28px;
-    background: var(--white);
-    border-bottom: 0.5px solid var(--border);
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  let list = data.stock.filter(s => {
+    const name  = (s.name || '').toLowerCase();
+    const match = name.includes(q);
+    if (stockFilter === 'flower') return match && s.type === 'flower';
+    if (stockFilter === 'supply') return match && s.type === 'supply';
+    if (stockFilter === 'low')    return match && s.qty <= (s.min || 0);
+    return match;
+  });
 
-  /* PAGE */
-  .page {
-    padding: 28px 28px 48px;
-    min-height: calc(100vh - 64px);
-  }
+  const el = document.getElementById('stock-list');
+  if (!list.length) { el.innerHTML = emptyState('ไม่มีรายการ'); return; }
 
-  /* 2-col summary on iPad */
-  .summary-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
+  el.innerHTML = list.map(s => {
+    let badgeClass, badgeText;
+    if (s.qty === 0)              { badgeClass = 'badge-out'; badgeText = 'หมด'; }
+    else if (s.qty <= (s.min||0)) { badgeClass = 'badge-low'; badgeText = 'ใกล้หมด'; }
+    else                          { badgeClass = 'badge-ok';  badgeText = 'มี'; }
 
-  /* summary card slightly bigger */
-  .summary-card {
-    padding: 18px 20px;
-  }
+    const typeClass = s.type === 'supply' ? 'supply' : '';
 
-  .summary-value {
-    font-size: 24px;
-  }
-
-  /* Modal centered on iPad, not bottom-sheet */
-  .modal-overlay {
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-sheet {
-    border-radius: 20px;
-    max-width: 520px;
-    max-height: 85dvh;
-    margin: 0 auto;
-    padding: 28px 32px 36px;
-  }
-
-  .modal-handle { display: none; }
-
-  /* Hide FAB — sidebar has To-do */
-  .todo-fab { display: none !important; }
-
-  /* Sidebar To-do visible */
-  .sidebar-divider {
-    display: block;
-    height: 0.5px;
-    background: var(--border);
-    margin: 4px 0;
-    margin-top: auto;
-  }
-  .sidebar-todo-btn { display: flex; }
+    return `
+    <div class="item-card">
+      <div class="item-card-left">
+        <div class="item-name">
+          <span class="tag-type ${typeClass}">${s.type === 'supply' ? 'อุปกรณ์' : 'ดอกไม้'}</span>
+          ${s.name}
+        </div>
+        <div class="item-sub">${s.qty} ${s.unit || ''} ${s.cost ? '· ทุน ' + fmtMoney(s.cost) : ''}${s.price ? ' · ขาย ' + fmtMoney(s.price) : ''}${s.cost && s.price ? ' · กำไร ' + fmtMoney(s.price - s.cost) : ''}</div>
+      </div>
+      <div class="item-actions">
+        <span class="item-badge ${badgeClass}">${badgeText}</span>
+        <button class="btn-icon" onclick="editStock('${s.id}')">✏️</button>
+        <button class="btn-icon danger" onclick="deleteItem('stock','${s.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-/* ================= FLOWER TAGS (ADMIN MODAL) ================= */
-.flower-search {
-  margin-bottom: 8px;
+window.editStock = id => {
+  const s = data.stock.find(x => x.id === id);
+  if (!s) return;
+
+  document.getElementById('stock-edit-id').value   = id;
+  document.getElementById('stock-modal-title').textContent = 'แก้ไขสต็อค';
+  document.getElementById('stock-name').value       = s.name  || '';
+  document.getElementById('stock-type').value       = s.type  || 'flower';
+  document.getElementById('stock-unit').value       = s.unit  || '';
+  document.getElementById('stock-qty').value        = s.qty   ?? '';
+  document.getElementById('stock-min').value        = s.min   ?? '';
+  document.getElementById('stock-cost').value       = s.cost  ?? '';
+  document.getElementById('stock-price').value      = s.price ?? '';
+  document.getElementById('stock-note').value       = s.note  || '';
+
+  openModal('modal-stock');
+  calcStockProfit();
+};
+
+window.saveStock = async () => {
+  const name = document.getElementById('stock-name').value.trim();
+  if (!name) return alert('กรุณากรอกชื่อสินค้า');
+
+  const obj = {
+    name,
+    type:  document.getElementById('stock-type').value,
+    unit:  document.getElementById('stock-unit').value.trim(),
+    qty:   parseFloat(document.getElementById('stock-qty').value)   || 0,
+    min:   parseFloat(document.getElementById('stock-min').value)   || 0,
+    cost:  parseFloat(document.getElementById('stock-cost').value)  || 0,
+    price: parseFloat(document.getElementById('stock-price').value) || 0,
+    note:  document.getElementById('stock-note').value.trim()
+  };
+
+  const id = document.getElementById('stock-edit-id').value;
+  if (id) {
+    await supabase.from('stock').update(obj).eq('id', id);
+  } else {
+    await supabase.from('stock').insert([obj]);
+  }
+  closeModal('modal-stock');
+  loadData();
+};
+
+// ===== FINANCE MODAL =====
+window.openFinanceModal = function() {
+  document.getElementById('fin-edit-id').value   = '';
+  document.getElementById('fin-type').value      = 'income';
+  document.getElementById('fin-name').value      = '';
+  document.getElementById('fin-amount').value    = '';
+  document.getElementById('fin-date').value      = todayStr();
+  document.getElementById('fin-cat').value       = 'ขายสินค้า';
+  document.getElementById('fin-note').value      = '';
+  openModal('modal-finance');
+};
+
+// ===== FINANCE =====
+let finFilter = 'all';
+let selectedFinMonth = thisMonthStr();
+
+function populateFinMonthSelect() {
+  const select = document.getElementById('fin-month-select');
+  if (!select) return;
+
+  const months = new Set(data.finance.map(f => (f.date || '').slice(0, 7)).filter(Boolean));
+  months.add(thisMonthStr());
+
+  const sorted = [...months].sort((a, b) => b.localeCompare(a));
+  const current = selectedFinMonth;
+
+  select.innerHTML = sorted.map(m => {
+    const [y, mo] = m.split('-');
+    const label = new Date(+y, +mo - 1, 1).toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
+    const isNow = m === thisMonthStr() ? ' (เดือนนี้)' : '';
+    return `<option value="${m}" ${m === current ? 'selected' : ''}>${label}${isNow}</option>`;
+  }).join('');
 }
 
-.flower-checkbox-list {
-  border: 0.5px solid var(--border-color, #EBEBEB);
-  border-radius: 10px;
-  background: #fcfbf9;
-  max-height: 180px;
-  overflow-y: auto;
-  padding: 4px 0;
-  margin-bottom: 10px;
+window.onFinMonthChange = function() {
+  selectedFinMonth = document.getElementById('fin-month-select').value;
+  renderFinance();
+};
+
+window.setFinFilter = (f, el) => {
+  finFilter = f;
+  document.querySelectorAll('#page-finance .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderFinance();
+};
+
+function renderFinance() {
+  populateFinMonthSelect();
+
+  const month = selectedFinMonth;
+  const isCurrentMonth = month === thisMonthStr();
+  const monthFin = data.finance.filter(f => (f.date || '').startsWith(month));
+
+  const income  = monthFin.filter(f => f.type === 'income').reduce((s,f) => s + f.amount, 0);
+  const expense = monthFin.filter(f => f.type === 'expense').reduce((s,f) => s + f.amount, 0);
+  const profit  = income - expense;
+
+  const suffix = isCurrentMonth ? 'เดือนนี้' : 'เดือนนั้น';
+  document.getElementById('fin-label-income').textContent  = `รายรับ${suffix}`;
+  document.getElementById('fin-label-expense').textContent = `รายจ่าย${suffix}`;
+  document.getElementById('fin-label-profit').textContent  = `กำไร/ขาดทุน${suffix}`;
+
+  document.getElementById('fin-month-income').textContent  = fmtMoney(income);
+  document.getElementById('fin-month-expense').textContent = fmtMoney(expense);
+
+  const profitEl = document.getElementById('fin-profit');
+  profitEl.textContent = (profit >= 0 ? '' : '-') + fmtMoney(Math.abs(profit));
+  profitEl.className   = 'total-val ' + (profit >= 0 ? 'profit' : 'loss');
+
+  let list = [...data.finance]
+    .filter(f => (f.date || '').startsWith(month))
+    .sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  if (finFilter === 'income')  list = list.filter(f => f.type === 'income');
+  if (finFilter === 'expense') list = list.filter(f => f.type === 'expense');
+
+  const el = document.getElementById('finance-list');
+  if (!list.length) { el.innerHTML = emptyState('ไม่มีรายการ'); return; }
+
+  el.innerHTML = list.map(f => `
+    <div class="item-card">
+      <div class="item-card-left">
+        <div class="item-name">${f.name}</div>
+        <div class="item-sub">${fmtDate(f.date)} ${f.cat ? '· ' + f.cat : ''}</div>
+      </div>
+      <div class="item-actions">
+        <span class="finance-amount ${f.type === 'income' ? 'income' : 'expense'}">
+          ${f.type === 'income' ? '+' : '-'}${fmtMoney(f.amount)}
+        </span>
+        <button class="btn-icon danger" onclick="deleteItem('finance','${f.id}')">🗑</button>
+      </div>
+    </div>`).join('');
 }
 
-.flower-checkbox-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  cursor: pointer;
-  transition: background 0.15s;
-  -webkit-tap-highlight-color: transparent;
+window.saveFinance = async () => {
+  const name   = document.getElementById('fin-name').value.trim();
+  const amount = parseFloat(document.getElementById('fin-amount').value);
+  if (!name || !amount) return alert('กรุณากรอกรายการและจำนวนเงิน');
+
+  await supabase.from('finance').insert([{
+    type:   document.getElementById('fin-type').value,
+    name,
+    amount,
+    date:   document.getElementById('fin-date').value || todayStr(),
+    cat:    document.getElementById('fin-cat').value,
+    note:   document.getElementById('fin-note').value.trim()
+  }]);
+  
+  closeModal('modal-finance');
+  loadData();
+};
+
+// ===== ORDER MODAL =====
+window.openOrderModal = function() {
+  document.getElementById('order-edit-id').value    = '';
+  document.getElementById('order-modal-title').textContent = 'เพิ่มออเดอร์';
+  document.getElementById('order-customer').value   = '';
+  document.getElementById('order-desc').value       = '';
+  document.getElementById('order-price').value      = '';
+  document.getElementById('order-date').value       = '';
+  document.getElementById('order-contact').value    = '';
+  document.getElementById('order-status').value     = 'pending';
+  document.getElementById('order-note').value       = '';
+  openModal('modal-order');
+};
+
+// ===== ORDERS =====
+let orderFilter = 'all';
+let selectedOrderMonth = 'all';
+
+function populateOrderMonthSelect() {
+  const select = document.getElementById('order-month-select');
+  if (!select) return;
+
+  const months = new Set(data.orders.map(o => (o.date || '').slice(0, 7)).filter(Boolean));
+  months.add(thisMonthStr());
+
+  const sorted = [...months].sort((a, b) => b.localeCompare(a));
+  const current = selectedOrderMonth;
+
+  const allOption = `<option value="all" ${current === 'all' ? 'selected' : ''}>📋 ออเดอร์ทั้งหมด</option>`;
+  const monthOptions = sorted.map(m => {
+    const [y, mo] = m.split('-');
+    const label = new Date(+y, +mo - 1, 1).toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
+    const isNow = m === thisMonthStr() ? ' (เดือนนี้)' : '';
+    return `<option value="${m}" ${m === current ? 'selected' : ''}>${label}${isNow}</option>`;
+  }).join('');
+
+  select.innerHTML = allOption + monthOptions;
 }
 
-.flower-checkbox-item:active {
-  background: rgba(0,0,0,0.04);
+window.onOrderMonthChange = function() {
+  selectedOrderMonth = document.getElementById('order-month-select').value;
+  renderOrders();
+};
+
+window.setOrderFilter = (f, el) => {
+  orderFilter = f;
+  document.querySelectorAll('#page-order .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderOrders();
+};
+
+const ORDER_STATUS_LABEL = {
+  pending: 'รอดำเนินการ',
+  ready:   'พร้อมส่ง',
+  done:    'เสร็จแล้ว',
+  cancel:  'ยกเลิก'
+};
+
+function renderOrders() {
+  populateOrderMonthSelect();
+
+  let list = [...data.orders].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
+  if (selectedOrderMonth !== 'all') {
+    list = list.filter(o => (o.date || '').startsWith(selectedOrderMonth));
+  }
+  if (orderFilter !== 'all') list = list.filter(o => o.status === orderFilter);
+
+  const el = document.getElementById('order-list');
+  if (!list.length) { el.innerHTML = emptyState('ไม่มีออเดอร์'); return; }
+
+  el.innerHTML = list.map(o => `
+    <div class="item-card">
+      <div class="item-card-left">
+        <div class="item-name">${o.customer} ${o.contact ? '<span class="item-sub">· ' + o.contact + '</span>' : ''}</div>
+        <div class="item-sub">${o.desc || ''}</div>
+        <div class="order-date">${o.date ? '📅 ' + fmtDate(o.date) : ''}</div>
+      </div>
+      <div class="item-actions" style="flex-direction:column;align-items:flex-end;gap:6px;">
+        <span class="order-status status-${o.status}">${ORDER_STATUS_LABEL[o.status] || o.status}</span>
+        <span class="order-price">${fmtMoney(o.price)}</span>
+        <div style="display:flex;gap:4px;">
+          <button class="btn-icon" onclick="editOrder('${o.id}')">✏️</button>
+          <button class="btn-icon danger" onclick="deleteItem('orders','${o.id}')">🗑</button>
+        </div>
+      </div>
+    </div>`).join('');
 }
 
-.flower-checkbox-item input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #c9897a; /* var(--dusty-rose) */
-  cursor: pointer;
-  flex-shrink: 0;
+window.editOrder = id => {
+  const o = data.orders.find(x => x.id === id);
+  if (!o) return;
+
+  document.getElementById('order-edit-id').value    = id;
+  document.getElementById('order-modal-title').textContent = 'แก้ไขออเดอร์';
+  document.getElementById('order-customer').value   = o.customer || '';
+  document.getElementById('order-desc').value       = o.desc     || '';
+  document.getElementById('order-price').value      = o.price    ?? '';
+  document.getElementById('order-date').value       = o.date     || '';
+  document.getElementById('order-contact').value    = o.contact  || '';
+  document.getElementById('order-status').value     = o.status   || 'pending';
+  document.getElementById('order-note').value       = o.note     || '';
+
+  openModal('modal-order');
+};
+
+window.saveOrder = async () => {
+  const customer = document.getElementById('order-customer').value.trim();
+  if (!customer) return alert('กรุณากรอกชื่อลูกค้า');
+
+  const obj = {
+    customer,
+    desc:    document.getElementById('order-desc').value.trim(),
+    price:   parseFloat(document.getElementById('order-price').value) || 0,
+    date:    document.getElementById('order-date').value    || todayStr(),
+    contact: document.getElementById('order-contact').value.trim(),
+    status:  document.getElementById('order-status').value,
+    note:    document.getElementById('order-note').value.trim()
+  };
+
+  const id = document.getElementById('order-edit-id').value;
+  if (id) {
+    await supabase.from('orders').update(obj).eq('id', id);
+  } else {
+    await supabase.from('orders').insert([obj]);
+  }
+  closeModal('modal-order');
+  loadData();
+};
+
+// ===== DELETE =====
+window.deleteItem = async (collectionName, id) => {
+  if (!confirm('ลบรายการนี้?')) return;
+  await supabase.from(collectionName).delete().eq('id', id);
+  loadData();
+};
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const today = todayStr();
+
+  const todayFin = data.finance.filter(f => f.date === today);
+  const income   = todayFin.filter(f => f.type === 'income').reduce((s,f) => s + f.amount, 0);
+  const expense  = todayFin.filter(f => f.type === 'expense').reduce((s,f) => s + f.amount, 0);
+
+  document.getElementById('dash-income').textContent  = fmtMoney(income);
+  document.getElementById('dash-expense').textContent = fmtMoney(expense);
+  document.getElementById('dash-pending').textContent = data.orders.filter(o => o.status === 'pending').length;
+
+  const lowItems = data.stock.filter(s => s.qty <= (s.min || 0));
+  document.getElementById('dash-lowstock').textContent = lowItems.length;
+
+  const lowEl = document.getElementById('dash-lowstock-list');
+  if (!lowItems.length) {
+    lowEl.innerHTML = emptyState('สต็อคครบทุกรายการ 🎉');
+  } else {
+    lowEl.innerHTML = lowItems.slice(0, 5).map(s => {
+      const badgeClass = s.qty === 0 ? 'badge-out' : 'badge-low';
+      const badgeText  = s.qty === 0 ? 'หมด' : 'ใกล้หมด';
+      return `
+      <div class="item-card">
+        <div class="item-card-left">
+          <div class="item-name">${s.name}</div>
+          <div class="item-sub">เหลือ ${s.qty} ${s.unit || ''}</div>
+        </div>
+        <span class="item-badge ${badgeClass}">${badgeText}</span>
+      </div>`;
+    }).join('');
+  }
+
+  const recentEl = document.getElementById('dash-recent-orders');
+  const recent   = [...data.orders]
+    .sort((a,b) => (b.date||'').localeCompare(a.date||''))
+    .slice(0, 5);
+
+  if (!recent.length) {
+    recentEl.innerHTML = emptyState('ยังไม่มีออเดอร์');
+  } else {
+    recentEl.innerHTML = recent.map(o => `
+      <div class="item-card">
+        <div class="item-card-left">
+          <div class="item-name">${o.customer}</div>
+          <div class="item-sub">${o.desc || ''}</div>
+          <div class="order-date">${o.date ? fmtDate(o.date) : ''}</div>
+        </div>
+        <div style="text-align:right;">
+          <span class="order-status status-${o.status}">${ORDER_STATUS_LABEL[o.status] || o.status}</span>
+          <div class="order-price" style="margin-top:4px;">${fmtMoney(o.price)}</div>
+        </div>
+      </div>`).join('');
+  }
 }
 
-.flower-checkbox-item label {
-  font-size: 14px;
-  font-family: 'DM Sans', sans-serif;
-  color: #2c2c2a;
-  cursor: pointer;
-  margin-bottom: 0;
+// ===== TODO =====
+window.addTodo = async () => {
+  const text = document.getElementById('todo-text').value.trim();
+  if (!text) return;
+  const time = document.getElementById('todo-time').value || '';
+
+  await supabase.from('todos').insert([{
+    text,
+    time,
+    done: false,
+    date: todayStr(),
+    createdAt: Date.now()
+  }]);
+
+  document.getElementById('todo-text').value = '';
+  setTimePickerValue('');
+  loadData();
+};
+
+// ===== CUSTOM TIME PICKER =====
+let timePickerHour = null;
+let timePickerMinute = null;
+
+function setTimePickerValue(hhmm) {
+  const hidden = document.getElementById('todo-time');
+  const btn = document.getElementById('todo-time-btn');
+  const label = document.getElementById('todo-time-label');
+  hidden.value = hhmm || '';
+  if (hhmm) {
+    label.textContent = hhmm;
+    btn.classList.add('has-value');
+  } else {
+    label.textContent = 'เวลา';
+    btn.classList.remove('has-value');
+  }
 }
 
-/* Tags preview */
-.flower-tags-preview {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-height: 28px;
+function buildTimePickerColumns() {
+  const hoursEl = document.getElementById('time-picker-hours');
+  const minutesEl = document.getElementById('time-picker-minutes');
+
+  hoursEl.innerHTML = Array.from({ length: 24 }, (_, h) =>
+    `<div class="time-picker-item" data-hour="${h}" onclick="pickTimeHour(${h})">${String(h).padStart(2, '0')}</div>`
+  ).join('');
+
+  // ทุก 5 นาที ทำให้เลือกง่ายขึ้น กด "อื่นๆ" ไม่ต้องไล่ทีละนาที
+  minutesEl.innerHTML = Array.from({ length: 12 }, (_, i) => i * 5).map(m =>
+    `<div class="time-picker-item" data-minute="${m}" onclick="pickTimeMinute(${m})">${String(m).padStart(2, '0')}</div>`
+  ).join('');
 }
 
-.flower-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  background: #f7eceb;
-  color: #a85d53;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  font-family: 'DM Sans', sans-serif;
+function refreshTimePickerHighlight() {
+  document.querySelectorAll('#time-picker-hours .time-picker-item').forEach(el => {
+    el.classList.toggle('selected', Number(el.dataset.hour) === timePickerHour);
+  });
+  document.querySelectorAll('#time-picker-minutes .time-picker-item').forEach(el => {
+    el.classList.toggle('selected', Number(el.dataset.minute) === timePickerMinute);
+  });
+  const display = document.getElementById('time-picker-display');
+  if (timePickerHour !== null && timePickerMinute !== null) {
+    display.textContent = `${String(timePickerHour).padStart(2, '0')}:${String(timePickerMinute).padStart(2, '0')}`;
+  } else {
+    display.textContent = '--:--';
+  }
 }
 
-.flower-tag-remove {
-  cursor: pointer;
-  font-size: 13px;
-  line-height: 1;
-  opacity: 0.6;
-  touch-action: manipulation;
+function scrollTimePickerIntoView() {
+  const h = document.querySelector(`#time-picker-hours .time-picker-item[data-hour="${timePickerHour}"]`);
+  const m = document.querySelector(`#time-picker-minutes .time-picker-item[data-minute="${timePickerMinute}"]`);
+  if (h) h.scrollIntoView({ block: 'center' });
+  if (m) m.scrollIntoView({ block: 'center' });
 }
 
-.flower-tag-remove:hover {
-  opacity: 1;
+window.pickTimeHour = (h) => {
+  timePickerHour = h;
+  refreshTimePickerHighlight();
+};
+
+window.pickTimeMinute = (m) => {
+  timePickerMinute = m;
+  refreshTimePickerHighlight();
+};
+
+window.setTimePickerNow = () => {
+  const now = new Date();
+  timePickerHour = now.getHours();
+  // ปัดนาทีให้ตรงกับช่วง step 5 นาทีที่ใกล้ที่สุด
+  timePickerMinute = Math.round(now.getMinutes() / 5) * 5 % 60;
+  refreshTimePickerHighlight();
+  scrollTimePickerIntoView();
+};
+
+window.clearTimePicker = () => {
+  timePickerHour = null;
+  timePickerMinute = null;
+  refreshTimePickerHighlight();
+};
+
+window.confirmTimePicker = () => {
+  if (timePickerHour !== null && timePickerMinute !== null) {
+    setTimePickerValue(`${String(timePickerHour).padStart(2, '0')}:${String(timePickerMinute).padStart(2, '0')}`);
+  } else {
+    setTimePickerValue('');
+  }
+  closeModal('modal-timepicker');
+};
+
+window.openTimePicker = () => {
+  buildTimePickerColumns();
+
+  const current = document.getElementById('todo-time').value;
+  if (current) {
+    const [h, m] = current.split(':').map(Number);
+    timePickerHour = h;
+    // เลื่อนไปหาช่วง 5 นาทีที่ใกล้เคียงที่สุดที่มีในลิสต์
+    timePickerMinute = Math.round(m / 5) * 5 % 60;
+  } else {
+    timePickerHour = null;
+    timePickerMinute = null;
+  }
+
+  refreshTimePickerHighlight();
+  openModal('modal-timepicker');
+  setTimeout(scrollTimePickerIntoView, 50);
+};
+
+window.closeTimePicker = () => {
+  closeModal('modal-timepicker');
+};
+
+window.toggleTodo = async (id, current) => {
+  await supabase.from('todos').update({ done: current !== true }).eq('id', id);
+  loadData();
+};
+
+window.deleteTodo = async (id) => {
+  await supabase.from('todos').delete().eq('id', id);
+  loadData();
+};
+
+function renderTodos() {
+  const cycleStart = currentCycleStart();
+  const list = data.todos
+    .filter(t => t.date >= cycleStart)
+    .sort((a, b) => (a.date || '').localeCompare(b.date || '') || (a.time || '').localeCompare(b.time || '') || a.createdAt - b.createdAt);
+
+  const el = document.getElementById('todo-list');
+  if (!el) return;
+
+  if (!list.length) {
+    el.innerHTML = emptyState('ยังไม่มีงานในรอบนี้');
+    return;
+  }
+
+  el.innerHTML = list.map(t => `
+    <div class="todo-item ${t.done ? 'done' : ''}">
+      <div class="todo-checkbox ${t.done ? 'checked' : ''}" onclick="toggleTodo('${t.id}', ${t.done === true})"></div>
+      <div class="todo-content">
+        <div class="todo-text">${t.text}</div>
+        ${t.date !== todayStr() ? `<div class="todo-time" style="opacity:.7;">${fmtDate(t.date)}${t.time ? ' · ' + t.time : ''}</div>` : (t.time ? `<div class="todo-time"> ${t.time}</div>` : '')}
+      </div>
+      <button class="btn-icon danger" onclick="deleteTodo('${t.id}')">🗑</button>
+    </div>
+  `).join('');
 }
 
-/* ============================================================
-   DESKTOP RESPONSIVE  ≥ 1024px
-   Layout: fixed sidebar (left) + scrollable content (right)
-   ============================================================ */
+// ===== ARCHIVE =====
+window.openArchiveModal = function() {
+  renderArchive();
+  openModal('modal-archive');
+};
 
-@media (min-width: 1024px) {
+function renderArchive() {
+  const cycleStart = currentCycleStart();
+  const past = data.todos
+    .filter(t => t.date < cycleStart)
+    .sort((a, b) => b.date.localeCompare(a.date) || (a.time || '').localeCompare(b.time || ''));
 
-  body {
-    max-width: 100%;
-    background: var(--gray-lighter);
-    overflow-x: hidden;
+  const el = document.getElementById('archive-list');
+  if (!el) return;
+
+  if (!past.length) {
+    el.innerHTML = emptyState('ยังไม่มีประวัติ');
+    return;
   }
 
-  #desktop-layout {
-    display: flex;
-    min-height: 100vh;
-  }
+  const groups = {};
+  past.forEach(t => {
+    if (!groups[t.date]) groups[t.date] = [];
+    groups[t.date].push(t);
+  });
 
-  /* SIDEBAR — reset mobile styles first */
-  .bottom-nav {
-    position: fixed;
-    left: 0; top: 0; bottom: auto;
-    width: 220px;
-    max-width: none;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
-    background: var(--white);
-    border-top: none;
-    border-right: 1px solid var(--border);
-    padding: 16px 12px;
-    transform: none;
-    overflow-y: auto;
-  }
-
-  .bottom-nav-item {
-    flex: none;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 13px;
-    text-align: left;
-  }
-
-  .bottom-nav-item.active {
-    background: var(--dusty-rose-light);
-  }
-
-  .bottom-nav-icon {
-    width: 18px;
-    height: 18px;
-    flex-shrink: 0;
-    margin: 0;
-    display: block;
-  }
-
-  /* RIGHT CONTENT */
-  .main-content {
-    margin-left: 220px;
-    width: calc(100% - 220px);
-    min-height: 100vh;
-  }
-
-  /* HEADER */
-  .app-header {
-    position: sticky;
-    top: 0;
-    height: 64px;
-    padding: 0 32px;
-    background: var(--white);
-    border-bottom: 0.5px solid var(--border);
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  /* PAGE */
-  .page {
-    padding: 32px 40px 48px;
-    min-height: calc(100vh - 64px);
-  }
-
-  /* GRID */
-  .summary-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  /* Modal centered on desktop */
-  .modal-overlay {
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-sheet {
-    border-radius: 20px;
-    max-width: 540px;
-    max-height: 85dvh;
-    margin: 0 auto;
-    padding: 28px 32px 36px;
-  }
-
-  .modal-handle { display: none; }
-
-  /* Hide FAB */
-  .todo-fab { display: none !important; }
+  el.innerHTML = Object.entries(groups).map(([date, items]) => `
+    <div class="archive-day-group">
+      <div class="archive-day-label">${fmtDate(date)}</div>
+      ${items.map(t => `
+        <div class="todo-item ${t.done ? 'done' : ''}" style="margin-bottom:6px;">
+          <div class="todo-checkbox ${t.done ? 'checked' : ''}"></div>
+          <div class="todo-content">
+            <div class="todo-text">${t.text}</div>
+            ${t.time ? `<div class="todo-time">⏰ ${t.time}</div>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
 }
 
-/* Wide desktop ≥ 1280px */
-@media (min-width: 1280px) {
-  .app-header { padding: 0 40px; }
-  .bottom-nav { width: 240px; padding: 16px; }
-  .main-content { margin-left: 240px; width: calc(100% - 240px); }
-  .page { padding: 40px 56px 48px; }
+// ===== RENDER ALL =====
+function renderAll() {
+  renderDashboard();
+  renderStock();
+  renderFinance();
+  renderOrders();
+  renderTodos();
+  renderStats();
 }
 
-/* Sidebar divider + todo btn (hidden on mobile) */
-.sidebar-divider { display: none; }
-.sidebar-todo-btn { display: none; }
+// ===== STATS =====
+let statsChartInstance = null;
 
-@media (min-width: 1024px) {
-  .sidebar-divider {
-    display: block;
-    height: 0.5px;
-    background: var(--border);
-    margin: 8px 0;
-    margin-top: auto;
+function populateStatsYearSelect() {
+  const select = document.getElementById('stats-year-select');
+  if (!select) return;
+
+  const years = new Set(data.orders.map(o => (o.date || '').slice(0, 4)).filter(Boolean));
+  years.add(String(new Date().getFullYear()));
+
+  const sorted = [...years].sort((a, b) => b.localeCompare(a));
+  const current = select.value || String(new Date().getFullYear());
+
+  select.innerHTML = sorted.map(y =>
+    `<option value="${y}" ${y === current ? 'selected' : ''}>${y}</option>`
+  ).join('');
+}
+
+const MONTH_LABELS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const MONTH_FULL   = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+window.renderStats = function() {
+  populateStatsYearSelect();
+  const select = document.getElementById('stats-year-select');
+  if (!select) return;
+  const year = select.value || String(new Date().getFullYear());
+
+  const yearOrders  = data.orders.filter(o => (o.date || '').startsWith(year));
+  const yearFinance = data.finance.filter(f => (f.date || '').startsWith(year));
+
+  const monthly = Array.from({ length: 12 }, (_, i) => {
+    const mo       = String(i + 1).padStart(2, '0');
+    const prefix   = `${year}-${mo}`;
+    const orders   = yearOrders.filter(o => (o.date || '').startsWith(prefix));
+    // 🔴 นับเฉพาะออเดอร์ที่สถานะ "เสร็จแล้ว" (finish) เท่านั้น
+    const doneCount = orders.filter(o => o.status === 'done').length;
+    const expenses = yearFinance.filter(f => f.type === 'expense' && (f.date || '').startsWith(prefix));
+    const income   = yearFinance.filter(f => f.type === 'income'  && (f.date || '').startsWith(prefix));
+    const revenue  = income.reduce((s, f) => s + (f.amount || 0), 0);
+    const expense  = expenses.reduce((s, f) => s + (f.amount || 0), 0);
+    return {
+      label: MONTH_LABELS[i],
+      full:  MONTH_FULL[i],
+      count: orders.length,
+      doneCount, // 🔴 จำนวนช่อที่ finish ในเดือนนี้
+      revenue,
+      expense,
+      profit: revenue - expense,
+      orders,
+      expenses,
+      income
+    };
+  });
+
+  const totalOrders  = yearOrders.length;
+  const totalRevenue = monthly.reduce((s, m) => s + m.revenue, 0);
+  const totalExpense = monthly.reduce((s, m) => s + m.expense, 0);
+  const activeMonths = monthly.filter(m => m.count > 0);
+  const avgMonth     = activeMonths.length ? totalRevenue / activeMonths.length : 0;
+  const bestMonth    = [...monthly].sort((a, b) => b.revenue - a.revenue)[0];
+
+  document.getElementById('stats-total-orders').textContent  = totalOrders;
+  document.getElementById('stats-total-revenue').textContent = fmtMoney(totalRevenue);
+  document.getElementById('stats-avg-month').textContent     = fmtMoney(Math.round(avgMonth));
+  document.getElementById('stats-best-month').textContent    = bestMonth.count > 0 ? bestMonth.full : '—';
+
+  const netEl = document.getElementById('stats-net-profit');
+  if (netEl) {
+    const net = totalRevenue - totalExpense;
+    netEl.textContent  = fmtMoney(net);
+    netEl.style.color  = net >= 0 ? 'var(--sage)' : 'var(--dusty-rose-dark)';
   }
-  .sidebar-todo-btn { display: flex; }
+  const expEl = document.getElementById('stats-total-expense');
+  if (expEl) expEl.textContent = fmtMoney(totalExpense);
+
+  const canvas = document.getElementById('stats-chart');
+  if (!canvas) return;
+  if (statsChartInstance) statsChartInstance.destroy();
+
+  const rose     = '#c9897a';
+  const roseFill = 'rgba(201,137,122,0.12)';
+  const sage     = '#8a9e8c';
+  const sageFill = 'rgba(138,158,140,0.10)';
+
+  statsChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: MONTH_LABELS,
+      datasets: [
+        {
+          label: 'รายรับ',
+          data: monthly.map(m => m.revenue),
+          borderColor: rose,
+          backgroundColor: roseFill,
+          borderWidth: 2.5,
+          pointBackgroundColor: monthly.map(m => m.count > 0 ? rose : 'rgba(201,137,122,0.3)'),
+          pointBorderColor: rose,
+          pointRadius: monthly.map(m => m.count > 0 ? 6 : 3),
+          pointHoverRadius: 9,
+          tension: 0.38,
+          fill: true,
+          order: 1,
+        },
+        {
+          label: 'รายจ่าย',
+          data: monthly.map(m => m.expense),
+          borderColor: sage,
+          backgroundColor: sageFill,
+          borderWidth: 2,
+          borderDash: [5, 4],
+          pointBackgroundColor: monthly.map(m => m.expense > 0 ? sage : 'rgba(138,158,140,0.3)'),
+          pointBorderColor: sage,
+          pointRadius: monthly.map(m => m.expense > 0 ? 5 : 2),
+          pointHoverRadius: 8,
+          tension: 0.38,
+          fill: true,
+          order: 2,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          align: 'end',
+          labels: {
+            boxWidth: 10,
+            boxHeight: 10,
+            borderRadius: 3,
+            useBorderRadius: true,
+            font: { family: 'DM Sans', size: 11 },
+            color: '#7a7a78',
+            padding: 12,
+          }
+        },
+        tooltip: { enabled: false }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'DM Sans', size: 11 }, color: '#7a7a78' }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(44,44,42,0.05)', drawBorder: false },
+          ticks: {
+            font: { family: 'DM Sans', size: 11 },
+            color: '#7a7a78',
+            maxTicksLimit: 6,
+            callback: v => v === 0 ? '0' : (v >= 1000 ? '฿'+(v/1000).toFixed(0)+'k' : '฿'+v)
+          }
+        }
+      },
+      onClick: (e, elements) => {
+        if (!elements.length) return;
+        const idx = elements[0].index;
+        showStatsModal(monthly[idx]);
+      },
+      onHover: (e, elements) => {
+        canvas.style.cursor = elements.length ? 'pointer' : 'default';
+      }
+    }
+  });
+
+  const listEl = document.getElementById('stats-month-list');
+  const activeList = monthly.filter(m => m.count > 0 || m.expense > 0).reverse();
+  if (!activeList.length) {
+    listEl.innerHTML = emptyState('ยังไม่มีข้อมูลในปีนี้');
+    return;
+  }
+
+  listEl.innerHTML = activeList.map(m => {
+    const profitColor = m.profit >= 0 ? 'var(--sage)' : 'var(--dusty-rose-dark)';
+    const profitSign  = m.profit >= 0 ? '+' : '';
+    return `
+    <div class="item-card stats-month-row" onclick="showStatsModal(${JSON.stringify(m).replace(/"/g,'&quot;')})" style="cursor:pointer;">
+      <div class="item-card-left">
+        <div class="item-name">${m.full}</div>
+        <div class="item-sub">รับ ${fmtMoney(m.revenue)} · จ่าย ${fmtMoney(m.expense)} · ${m.doneCount} ช่อ</div>
+      </div>
+      <div style="text-align:right;display:flex;flex-direction:column;gap:2px;align-items:flex-end;">
+        <span class="finance-amount income" style="font-size:13px;">${fmtMoney(m.revenue)}</span>
+        <span style="font-size:11px;font-weight:500;color:${profitColor};">${profitSign}${fmtMoney(m.profit)}</span>
+      </div>
+    </div>`;
+  }).join('');
+  lucide.createIcons();
+};
+
+window.showStatsModal = function(month) {
+  if (typeof month === 'string') month = JSON.parse(month);
+
+  document.getElementById('sm-month-title').textContent = month.full;
+
+  document.getElementById('sm-revenue').textContent = fmtMoney(month.revenue);
+  document.getElementById('sm-expense').textContent = fmtMoney(month.expense);
+  const profit    = month.profit;
+  const profitEl  = document.getElementById('sm-profit');
+  profitEl.textContent = (profit >= 0 ? '+' : '') + fmtMoney(profit);
+  profitEl.style.color = profit >= 0 ? 'var(--sage)' : 'var(--dusty-rose-dark)';
+
+  const ordersEl = document.getElementById('sm-orders-list');
+  
+  // เปลี่ยนหัวข้อจาก 'ออเดอร์' เป็น 'รายรับ'
+  if(ordersEl && ordersEl.previousElementSibling) {
+    ordersEl.previousElementSibling.innerHTML = '<i data-lucide="wallet" style="width:13px;height:13px;"></i> รายรับ';
+  }
+
+  if (!month.income || !month.income.length) {
+    ordersEl.innerHTML = '<div class="sm-empty">ไม่มีรายการรายรับ</div>';
+  } else {
+    ordersEl.innerHTML = month.income.map(f => `
+      <div class="sm-row">
+        <div class="sm-row-left">
+          <div class="sm-row-name">${f.name}</div>
+          ${f.cat ? `<div class="sm-row-sub">${f.cat}</div>` : ''}
+          ${f.date ? `<div class="sm-row-date">${fmtDate(f.date)}</div>` : ''}
+        </div>
+        <div class="sm-row-amount income">+${fmtMoney(f.amount)}</div>
+      </div>`).join('');
+  }
+
+  const expEl = document.getElementById('sm-expense-list');
+  if (!month.expenses || !month.expenses.length) {
+    expEl.innerHTML = '<div class="sm-empty">ไม่มีรายจ่าย</div>';
+  } else {
+    expEl.innerHTML = month.expenses.map(f => `
+      <div class="sm-row">
+        <div class="sm-row-left">
+          <div class="sm-row-name">${f.name}</div>
+          ${f.cat ? `<div class="sm-row-sub">${f.cat}</div>` : ''}
+        </div>
+        <div class="sm-row-amount expense">-${fmtMoney(f.amount)}</div>
+      </div>`).join('');
+  }
+
+  openModal('modal-stats-detail');
+};
+
+window.closeStatsTooltip = function() {
+  document.getElementById('stats-tooltip').style.display = 'none';
+};
+
+// ===== INIT =====
+function init() {
+  const now = new Date();
+  document.getElementById('headerDate').textContent =
+    now.toLocaleDateString('th-TH', {
+      weekday: 'long',
+      day:     'numeric',
+      month:   'long',
+      year:    'numeric'
+    });
+
+  const finDate = document.getElementById('fin-date');
+  if (finDate) finDate.value = todayStr();
+
+  const fab = document.getElementById('todo-fab');
+  if (fab) fab.style.display = 'flex';
+
+  loadData();
+  lucide.createIcons();
 }
