@@ -109,6 +109,11 @@
     <div class="todo-input-group">
       <input class="form-input" id="todo-text" placeholder="งานที่ต้องทำ...">
       <div class="todo-input-actions">
+        <button type="button" class="todo-time-input" id="todo-date-btn" onclick="openDatePicker()">
+          <i data-lucide="calendar" style="width:14px;height:14px;flex-shrink:0;"></i>
+          <span id="todo-date-label">วันนี้</span>
+        </button>
+        <input type="hidden" id="todo-date" value="">
         <button type="button" class="todo-time-input" id="todo-time-btn" onclick="openTimePicker()">
           <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
           <span id="todo-time-label">เวลา</span>
@@ -158,6 +163,26 @@
     </div>
 
     <button type="button" class="btn-submit" style="width:100%;margin-top:16px;" onclick="confirmTimePicker()">เสร็จสิ้น</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-datepicker">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div class="modal-title" style="margin-bottom:0;">เลือกวัน</div>
+      <button class="btn-modal-close" onclick="closeModal('modal-datepicker')"><i data-lucide="x"></i></button>
+    </div>
+
+    <div class="time-picker-quick" style="margin-bottom:16px;">
+      <button type="button" class="chip" onclick="setDatePickerToday()">วันนี้</button>
+      <button type="button" class="chip" onclick="setDatePickerTomorrow()">พรุ่งนี้</button>
+    </div>
+
+    <input type="date" id="date-picker-native" class="form-input" style="width:100%;" onchange="onDatePickerNativeChange(this.value)">
+    <div class="empty-text" id="date-picker-hint" style="margin-top:8px;text-align:center;"></div>
+
+    <button type="button" class="btn-submit" style="width:100%;margin-top:16px;" onclick="closeModal('modal-datepicker')">เสร็จสิ้น</button>
   </div>
 </div>
 

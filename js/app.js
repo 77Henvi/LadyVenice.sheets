@@ -1,7 +1,7 @@
 // app.js
 // ===== IMPORTS =====
 import { supabase } from "./supabase-config.js";
-import { todayStr, thisMonthStr, currentCycleStart, fmtDate, fmtMoney, emptyState } from "./utils.js";
+import { todayStr, thisMonthStr, currentCycleStart, currentCycleEnd, fmtDate, fmtMoney, emptyState } from "./utils.js";
 import "./auth.js"; 
 import "./catalog-admin.js";
 
@@ -540,18 +540,85 @@ window.addTodo = async () => {
   const text = document.getElementById('todo-text').value.trim();
   if (!text) return;
   const time = document.getElementById('todo-time').value || '';
+  const date = document.getElementById('todo-date').value || todayStr();
 
   await supabase.from('todos').insert([{
     text,
     time,
     done: false,
-    date: todayStr(),
+    date,
     createdAt: Date.now()
   }]);
 
   document.getElementById('todo-text').value = '';
   setTimePickerValue('');
+  setDatePickerValue(todayStr());
   loadData();
+};
+
+// ===== CUSTOM DATE PICKER =====
+function setDatePickerValue(dateStr) {
+  const hidden = document.getElementById('todo-date');
+  const label = document.getElementById('todo-date-label');
+  const native = document.getElementById('date-picker-native');
+  const hint = document.getElementById('date-picker-hint');
+
+  hidden.value = dateStr;
+  if (native) native.value = dateStr;
+
+  const today = todayStr();
+  const tmr = addDays(today, 1);
+
+  if (dateStr === today) {
+    label.textContent = 'วันนี้';
+  } else if (dateStr === tmr) {
+    label.textContent = 'พรุ่งนี้';
+  } else {
+    label.textContent = fmtDate(dateStr);
+  }
+
+  if (hint) {
+    hint.textContent = `เลือกได้ในรอบนี้: ${fmtDate(currentCycleStart())} – ${fmtDate(currentCycleEnd())}`;
+  }
+}
+
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+window.setDatePickerToday = () => {
+  setDatePickerValue(todayStr());
+};
+
+window.setDatePickerTomorrow = () => {
+  const tmr = addDays(todayStr(), 1);
+  const cycleEnd = currentCycleEnd();
+  // ถ้าพรุ่งนี้เลยรอบปัจจุบันไปแล้ว ให้ล็อกไว้ที่วันสุดท้ายของรอบแทน
+  setDatePickerValue(tmr > cycleEnd ? cycleEnd : tmr);
+};
+
+window.onDatePickerNativeChange = (val) => {
+  if (!val) return;
+  const min = currentCycleStart();
+  const max = currentCycleEnd();
+  let picked = val;
+  if (picked < min) picked = min;
+  if (picked > max) picked = max;
+  setDatePickerValue(picked);
+};
+
+window.openDatePicker = () => {
+  const native = document.getElementById('date-picker-native');
+  const min = currentCycleStart();
+  const max = currentCycleEnd();
+  native.min = min;
+  native.max = max;
+
+  const current = document.getElementById('todo-date').value || todayStr();
+  setDatePickerValue(current);
+  openModal('modal-datepicker');
 };
 
 // ===== CUSTOM TIME PICKER =====
@@ -1013,6 +1080,9 @@ function init() {
 
   const finDate = document.getElementById('fin-date');
   if (finDate) finDate.value = todayStr();
+
+  const todoDate = document.getElementById('todo-date');
+  if (todoDate) todoDate.value = todayStr();
 
   const fab = document.getElementById('todo-fab');
   if (fab) fab.style.display = 'flex';

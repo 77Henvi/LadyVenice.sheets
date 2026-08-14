@@ -31,6 +31,21 @@ export function currentCycleStart() {
   return `${cycleYear}-${mm}-02`;
 }
 
+// วันสุดท้ายของรอบปัจจุบัน (วันก่อนวันที่ 2 ของรอบถัดไป)
+export function currentCycleEnd() {
+  const start = currentCycleStart();
+  const [y, m] = start.split('-').map(Number);
+  // วันที่ 1 ของเดือนถัดจากเดือนที่รอบเริ่ม = วันสุดท้ายของรอบนี้
+  let nextMonth = m + 1;
+  let nextYear = y;
+  if (nextMonth > 12) {
+    nextMonth = 1;
+    nextYear = y + 1;
+  }
+  const mm = String(nextMonth).padStart(2, '0');
+  return `${nextYear}-${mm}-01`;
+}
+
 export function fmtDate(d) {
   if (!d) return '';
   const dt = new Date(d + 'T00:00:00');
