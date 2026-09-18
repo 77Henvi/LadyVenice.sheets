@@ -65,6 +65,15 @@ const FLOWER_TRANSLATIONS = {
   "ปอม": "Pom Pom"
 };
 
+// 🔴 backward compatible: record เก่าที่ยังไม่มี column sizes เลย (undefined/null) -> []
+// กัน error กรณี field มาเป็น string/comma-list ด้วยเผื่อไว้เหมือน flowers
+function getSizesArray(item) {
+  if (!item || !item.sizes) return [];
+  if (Array.isArray(item.sizes)) return item.sizes.filter(Boolean);
+  if (typeof item.sizes === 'string') return item.sizes.split(',').map(s => s.trim()).filter(Boolean);
+  return [];
+}
+
 function getFlowerString(item) {
   if (!item.flowers) return '';
   
@@ -170,6 +179,12 @@ function renderFlipbook(items, container) {
           ${getFlowerString(item)}
          </div>`
       : '';
+
+    // 📏 ขนาดช่อ: แสดงเฉพาะถ้ามีการตั้งค่าไว้ (record เก่าไม่มี sizes = ไม่แสดงอะไรเลย ไม่ error)
+    const sizesArr = getSizesArray(item);
+    const sizesHtml = sizesArr.length
+      ? `<div class="size-list dynamic-sizes">${sizesArr.join(' · ')}</div>`
+      : '';
       
     return `
       <div class="page product-card" data-index="${item.realIndex}">
@@ -180,6 +195,7 @@ function renderFlipbook(items, container) {
           <h3 class="product-name dynamic-name">${getItemName(item)}</h3>
           <p class="product-price">${item.price}</p>
           ${tagsHtml}
+          ${sizesHtml}
           ${descHtml}
         </div>
       </div>

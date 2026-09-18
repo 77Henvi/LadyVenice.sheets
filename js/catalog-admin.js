@@ -14,8 +14,45 @@ const FLOWER_LIST = [
   "สไปเดอร์ มัม", "คาเนชั่น", "ดาเรีย สเปรย์", "ดาเรีย",
   "ก้านยูคาแอปเปิ้ล", "เดลฟีเนี่ยม", "เยอบีร่า", "ดอกหน้าวัว",
   "พีโอนี่", "พีโอนี่แฟนซี", "ทิวลิป", "ดอกผักโขม", "ไฮเดรนเยีย",
-  "ไฮเดรนเยียวินเทจ", "สน", "เบญจมาศ", "ปอม"
+  "ไฮเดรนเยียวินเทจ", "สน", "เบญจมาศ", "ปอม",
+  // 🌸 เพิ่มใหม่ (9 ชนิด)
+  "คาร่าลิลลี่", "คาร่าลิลลี่วินเทจ", "แมคโนเรีย", "เดซี่",
+  "ต้นเขากวาง", "ผการอง", "ยิปโซ", "ตุ๊กตาเรืองระบำ", "ป๊อบปี้"
 ];
+
+// ==========================================
+// BOUQUET SIZE SYSTEM (S / M / L / XL)
+// ==========================================
+const SIZE_LIST = ["S", "M", "L", "XL"];
+
+function renderSizeChips(selectedSizes = []) {
+  const list = document.getElementById('size-chip-list');
+  if (!list) return;
+  list.innerHTML = SIZE_LIST.map(size => `
+    <button type="button"
+      class="size-chip ${selectedSizes.includes(size) ? 'selected' : ''}"
+      data-size="${size}"
+      onclick="toggleSizeChip(this)">${size}</button>
+  `).join('');
+}
+
+window.toggleSizeChip = function(el) {
+  el.classList.toggle('selected');
+};
+
+function getSelectedSizes() {
+  return [...document.querySelectorAll('#size-chip-list .size-chip.selected')]
+    .map(el => el.dataset.size);
+}
+
+function resetSizeChips() {
+  renderSizeChips([]);
+}
+
+function loadSizeChips(existingSizes) {
+  // 🔴 backward compatible: undefined/null/ไม่มี column -> ถือเป็น []
+  renderSizeChips(Array.isArray(existingSizes) ? existingSizes : []);
+}
 
 function renderFlowerCheckboxes(selectedFlowers = []) {
   const list = document.getElementById('flower-checkbox-list');
@@ -149,6 +186,7 @@ window.openCatalogModal = function() {
   document.getElementById('catalog-image-preview').style.display = 'none';
   
   resetFlowerCheckboxes();
+  resetSizeChips();
   
   const btn = document.getElementById('btn-save-catalog');
   btn.textContent = 'บันทึก';
@@ -181,6 +219,7 @@ window.editCatalog = function(id) {
   }
 
   loadFlowerCheckboxes(c.flowers);
+  loadSizeChips(c.sizes);
 
   const btn = document.getElementById('btn-save-catalog');
   btn.textContent = 'บันทึก';
@@ -227,6 +266,7 @@ window.saveCatalog = async function() {
     }
     
     const selectedFlowers = getSelectedFlowers();
+    const selectedSizes = getSelectedSizes(); // 🔴 [] ถ้าไม่เลือกเลย ไม่ใช่ null/undefined
 
     if (id) {
       // โหมดแก้ไข: เพิ่ม name_en, desc_en เข้าไปใน updateData
@@ -236,7 +276,8 @@ window.saveCatalog = async function() {
         price, 
         desc, 
         desc_en, 
-        flowers: selectedFlowers 
+        flowers: selectedFlowers,
+        sizes: selectedSizes
       }; 
       if (imageUrl) updateData.image = imageUrl;
       
@@ -252,7 +293,8 @@ window.saveCatalog = async function() {
         desc_en,
         "order": maxOrder + 1, 
         image: imageUrl || 'EMPTY',
-        flowers: selectedFlowers
+        flowers: selectedFlowers,
+        sizes: selectedSizes
       }]);
     }
     

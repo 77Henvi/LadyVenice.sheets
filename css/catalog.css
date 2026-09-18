@@ -200,7 +200,7 @@ body {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.55) 55%, rgba(0, 0, 0, 0.65) 100%);
+  background: rgba(0, 0, 0, 0.38);
   z-index: -1;
 }
 
@@ -222,7 +222,7 @@ body {
   font-size: 72px;
   font-weight: 400;
   margin: 0 0 10px 0;
-  color: #fdf6f0;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .hero-subtitle {
@@ -230,7 +230,6 @@ body {
   font-size: 11px;
   letter-spacing: 6px;
   margin: 0;
-  color: #e8d9ce;
   text-transform: uppercase;
 }
 
@@ -432,6 +431,17 @@ body {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* 📏 ขนาดช่อ - เล็ก เรียบ ไม่แย่งซีนรูป/ชื่อ/ราคา */
+.size-list {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b7a99c;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  margin: 4px 0 8px 0;
 }
 
 /* ===== 6. LUXURY MODAL ===== */

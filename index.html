@@ -106,23 +106,10 @@
       </div>
     </div>
 
-    <div class="todo-input-group">
+    <div class="todo-input-row">
       <input class="form-input" id="todo-text" placeholder="งานที่ต้องทำ...">
-      <div class="todo-input-actions">
-        <button type="button" class="todo-time-input" id="todo-date-btn" onclick="openDatePicker()">
-          <i data-lucide="calendar" style="width:14px;height:14px;flex-shrink:0;"></i>
-          <span id="todo-date-label">วันนี้</span>
-        </button>
-        <input type="hidden" id="todo-date" value="">
-        <button type="button" class="todo-time-input" id="todo-time-btn" onclick="openTimePicker()">
-          <i data-lucide="clock" style="width:14px;height:14px;flex-shrink:0;"></i>
-          <span id="todo-time-label">เวลา</span>
-        </button>
-        <input type="hidden" id="todo-time" value="">
-        <button type="button" class="btn-todo-add" onclick="addTodo()" aria-label="เพิ่มงาน">
-          <i data-lucide="plus" style="width:18px;height:18px;"></i>
-        </button>
-      </div>
+      <input class="form-input todo-time-input" id="todo-time" type="time">
+      <button class="btn-add" onclick="addTodo()">+</button>
     </div>
 
     <div class="item-list" id="todo-list" style="margin-top:16px;"></div>
@@ -138,51 +125,6 @@
     </div>
     <div class="filter-chips" id="archive-date-chips" style="margin-bottom:16px;"></div>
     <div class="item-list" id="archive-list"></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-timepicker">
-  <div class="modal-sheet time-picker-sheet">
-    <div class="modal-handle"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <div class="modal-title" style="margin-bottom:0;">เลือกเวลา</div>
-      <button class="btn-modal-close" onclick="closeTimePicker()"><i data-lucide="x"></i></button>
-    </div>
-
-    <div class="time-picker-display" id="time-picker-display">--:--</div>
-
-    <div class="time-picker-columns">
-      <div class="time-picker-col" id="time-picker-hours"></div>
-      <div class="time-picker-col-sep">:</div>
-      <div class="time-picker-col" id="time-picker-minutes"></div>
-    </div>
-
-    <div class="time-picker-quick">
-      <button type="button" class="chip" onclick="setTimePickerNow()">ตอนนี้</button>
-      <button type="button" class="chip" onclick="clearTimePicker()">ล้างเวลา</button>
-    </div>
-
-    <button type="button" class="btn-submit" style="width:100%;margin-top:16px;" onclick="confirmTimePicker()">เสร็จสิ้น</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-datepicker">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <div class="modal-title" style="margin-bottom:0;">เลือกวัน</div>
-      <button class="btn-modal-close" onclick="closeModal('modal-datepicker')"><i data-lucide="x"></i></button>
-    </div>
-
-    <div class="time-picker-quick" style="margin-bottom:16px;">
-      <button type="button" class="chip" onclick="setDatePickerToday()">วันนี้</button>
-      <button type="button" class="chip" onclick="setDatePickerTomorrow()">พรุ่งนี้</button>
-    </div>
-
-    <input type="date" id="date-picker-native" class="form-input" style="width:100%;" onchange="onDatePickerNativeChange(this.value)">
-    <div class="empty-text" id="date-picker-hint" style="margin-top:8px;text-align:center;"></div>
-
-    <button type="button" class="btn-submit" style="width:100%;margin-top:16px;" onclick="closeModal('modal-datepicker')">เสร็จสิ้น</button>
   </div>
 </div>
 
@@ -601,6 +543,14 @@
 
       <!-- Tags preview -->
       <div class="flower-tags-preview" id="flower-tags-preview"></div>
+    </div>
+
+    <!-- 📏 ขนาดช่อ (Bouquet Size) -->
+    <div class="form-group">
+      <label class="form-label">ขนาดช่อ</label>
+      <div class="size-chip-list" id="size-chip-list">
+        <!-- render โดย JS -->
+      </div>
     </div>
 
     <button class="btn-submit" id="btn-save-catalog" onclick="saveCatalog()">บันทึก</button>
