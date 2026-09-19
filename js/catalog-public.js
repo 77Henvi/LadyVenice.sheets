@@ -182,8 +182,9 @@ function renderFlipbook(items, container) {
 
     // 📏 ขนาดช่อ: แสดงเฉพาะถ้ามีการตั้งค่าไว้ (record เก่าไม่มี sizes = ไม่แสดงอะไรเลย ไม่ error)
     const sizesArr = getSizesArray(item);
+    const sizeLabel = (window.currentLang === 'th') ? 'ขนาด' : 'Size';
     const sizesHtml = sizesArr.length
-      ? `<div class="size-list dynamic-sizes">${sizesArr.join(' · ')}</div>`
+      ? `<div class="size-list dynamic-sizes">${sizeLabel} : ${sizesArr.join(' · ')}</div>`
       : '';
       
     return `
@@ -317,10 +318,16 @@ window.updateCatalogLanguage = function() {
       const nameEl = card.querySelector('.dynamic-name');
       const descEl = card.querySelector('.dynamic-desc');
       const flowersEl = card.querySelector('.dynamic-flowers'); 
+      const sizesEl = card.querySelector('.dynamic-sizes');
       
       if (nameEl) nameEl.innerHTML = getItemName(item);
       if (descEl) descEl.innerHTML = getItemDesc(item);
       if (flowersEl) flowersEl.innerHTML = getFlowerString(item); 
+      if (sizesEl) {
+        const sizesArr = getSizesArray(item);
+        const sizeLabel = (window.currentLang === 'th') ? 'ขนาด' : 'Size';
+        sizesEl.innerHTML = sizesArr.length ? `${sizeLabel} : ${sizesArr.join(' · ')}` : '';
+      }
     }
   });
 };
