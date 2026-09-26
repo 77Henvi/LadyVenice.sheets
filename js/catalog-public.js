@@ -62,7 +62,18 @@ const FLOWER_TRANSLATIONS = {
   "ไฮเดรนเยียวินเทจ": "Vintage Hydrangea",
   "สน": "Pine",
   "เบญจมาศ": "Chrysanthemum",
-  "ปอม": "Pom Pom"
+  "ปอม": "Pom Pom",
+  // 🌸 คำแปล EN สำหรับดอกไม้ที่เพิ่มใหม่ (แปลเฉพาะที่มั่นใจความหมาย)
+  "คาร่าลิลลี่": "Calla Lily",
+  "คาร่าลิลลี่วินเทจ": "Vintage Calla Lily",
+  "แมคโนเรีย": "Magnolia",
+  "เดซี่": "Daisy",
+  "ต้นเขากวาง": "Staghorn Fern",
+  "ยิปโซ": "Gypsophila",
+  "ป๊อบปี้": "Poppy",
+  "บานชื่น": "Zinnia"
+  // ⚠️ "ผการอง" และ "ตุ๊กตาเรืองระบำ" ยังไม่ใส่คำแปล เพราะไม่มั่นใจชื่อ EN ที่ถูกต้อง
+  // ถ้าไม่มีคำแปลในนี้ ระบบจะ fallback โชว์ชื่อไทยเดิมแทนอัตโนมัติ (ไม่พัง ไม่ error)
 };
 
 // 🔴 backward compatible: record เก่าที่ยังไม่มี column sizes เลย (undefined/null) -> []
