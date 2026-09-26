@@ -71,9 +71,10 @@ const FLOWER_TRANSLATIONS = {
   "ต้นเขากวาง": "Staghorn Fern",
   "ยิปโซ": "Gypsophila",
   "ป๊อบปี้": "Poppy",
-  "บานชื่น": "Zinnia"
-  // ⚠️ "ผการอง" และ "ตุ๊กตาเรืองระบำ" ยังไม่ใส่คำแปล เพราะไม่มั่นใจชื่อ EN ที่ถูกต้อง
-  // ถ้าไม่มีคำแปลในนี้ ระบบจะ fallback โชว์ชื่อไทยเดิมแทนอัตโนมัติ (ไม่พัง ไม่ error)
+  "บานชื่น": "Zinnia",
+  "ผกากรอง": "Lantana",
+  "ตุ๊กตาเริงระบำ": "Dancing Lady Orchid"
+  // ✅ ครบทั้ง 10 ชนิดใหม่แล้ว (ยืนยันชื่อ EN โดยผู้ใช้)
 };
 
 // 🔴 backward compatible: record เก่าที่ยังไม่มี column sizes เลย (undefined/null) -> []
