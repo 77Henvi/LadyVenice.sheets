@@ -196,7 +196,16 @@ function renderFlipbook(items, container) {
     const sizesArr = getSizesArray(item);
     const sizeLabel = (window.currentLang === 'th') ? 'ขนาด' : 'Size';
     const sizesHtml = sizesArr.length
-      ? `<div class="size-list dynamic-sizes">${sizeLabel} : ${sizesArr.join(' · ')}</div>`
+      ? `<div class="size-list dynamic-sizes">${sizeLabel} : ${sizesArr.join(' · ')}</div>
+         <div class="size-guide-wrapper">
+           <img src="images/sizeguide.png" alt="Bouquet Size Guide" class="size-guide-img">
+           <div class="size-labels">
+             <span>S</span>
+             <span>M</span>
+             <span>L</span>
+           </div>
+         </div>
+         <img src="images/sizereal.jpg" alt="Bouquet Size Real Photo" class="size-real-img">`
       : '';
       
     return `
