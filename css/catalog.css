@@ -808,6 +808,7 @@ body {
   grid-template-columns: 1fr 1fr 1fr; /* แบ่ง 3 คอลัมน์เท่าๆ กัน */
   text-align: center;
   margin-top: 10px;
+  margin-bottom: 24px;
   padding: 0 4%; /* บีบขอบเข้ามานิดนึงให้ Text ตรงกับศูนย์กลางของนางแบบแต่ละคน */
 }
 
@@ -819,6 +820,14 @@ body {
   letter-spacing: 1px;
 }
 
+.size-real-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
 /* ปรับขนาดให้พอดีบนหน้าจอมือถือ */
 @media (max-width: 767px) {
   .size-guide-wrapper {
@@ -826,6 +835,7 @@ body {
   }
   .size-labels {
     padding: 0 2%;
+    margin-bottom: 16px;
   }
   .size-labels span {
     font-size: 1.1rem;
